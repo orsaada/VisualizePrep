@@ -1,0 +1,54 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:01.165
+Okay, let's look at a sample problem.
+
+00:00:01.249 --> 00:00:04.627
+Suppose we're given a computer
+with a 16-bit virtual address
+
+00:00:04.711 --> 00:00:07.004
+and a page size of 256 bytes.
+
+00:00:07.923 --> 00:00:12.301
+The system uses one-level page tables
+that start at address hex 400.
+
+00:00:12.844 --> 00:00:16.013
+Maybe you want DMA on your 16-bit system.
+Who knows?
+
+00:00:16.598 --> 00:00:19.767
+The first few pages are reserved
+for hardware flags, etc.
+
+00:00:19.851 --> 00:00:22.728
+Assume page-table entries have
+eight status bits.
+
+00:00:23.271 --> 00:00:25.648
+The eight status bits would then be...
+
+00:00:25.732 --> 00:00:27.024
+Anybody?
+
+00:00:28.276 --> 00:00:30.736
+And I see we have our first surrender.
+
+00:00:30.821 --> 00:00:32.113
+Don't worry, Mr. Zuckerberg.
+
+00:00:32.197 --> 00:00:34.407
+Brighter men than you
+have tried and failed this class.
+
+00:00:34.491 --> 00:00:39.286
+One valid bit, one modified bit,
+one reference bit and five permission bits.
+
+00:00:41.289 --> 00:00:42.623
+That is correct.
+
+00:00:43.375 --> 00:00:45.584
+Does everybody see how he got there?
+

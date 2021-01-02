@@ -1,0 +1,54 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:01.999
+<i>Lowell has some security.
+They require a user name/password combo,</i>
+
+00:00:02.084 --> 00:00:05.253
+<i>and I'm gonna go ahead and say they don't
+have access to the main FAS user database,</i>
+
+00:00:05.379 --> 00:00:06.546
+<i>so they have no way
+of detecting an intrusion.</i>
+
+00:00:07.714 --> 00:00:11.467
+<i>Adams has no security, but limits
+the number of results to 20 a page.</i>
+
+00:00:11.552 --> 00:00:14.637
+<i>All I need to do is break out the same script
+I used on Lowell and we're set.</i>
+
+00:00:16.223 --> 00:00:18.224
+<i>Quincy has no online facebook.
+What a sham.</i>
+
+00:00:18.559 --> 00:00:19.600
+<i>Nothing I can do about that.</i>
+
+00:00:21.061 --> 00:00:22.103
+<i>Dunster is intense.</i>
+
+00:00:22.229 --> 00:00:24.897
+<i>Not only is there no public directory,
+but there's no directory at all.</i>
+
+00:00:24.982 --> 00:00:26.023
+<i>You have to do searches,</i>
+
+00:00:26.108 --> 00:00:28.693
+<i>and if your search returns more
+than 20 matches, nothing gets returned.</i>
+
+00:00:28.777 --> 00:00:31.028
+<i>And once you do get results,
+they don't link directly to the images.</i>
+
+00:00:31.113 --> 00:00:33.698
+<i>They link to a PHP that redirects
+or something. Weird.</i>
+
+00:00:33.782 --> 00:00:35.241
+<i>This may be difficult. I'll come back later.</i>
+

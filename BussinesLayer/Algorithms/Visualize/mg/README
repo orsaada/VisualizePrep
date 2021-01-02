@@ -1,0 +1,44 @@
+======================================
+MovieGraphs
+======================================
+Beta release
+1 March 2019
+
+
+======================================
+Files concerning list of movies
+--------------------------------------
+
+- movies_list: just a list of movies
+- split.json: train/validation/test splits
+- dvds: links to Amazon DVDs
+======================================
+
+
+======================================
+Related to video scenes
+--------------------------------------
+
+xxx - scene id, starting from 1
+yyyy - start shot for scene xxx starting from 1
+zzzz - end shot for scene xxx
+
+- startend_frame: first and last frame of every movie clip
+
+======================================
+
+
+======================================
+Graphs and Code
+--------------------------------------
+
+- py3loader
+    - 2017-11-02-51-7637_py3.pkl: main pickle file containing the parsed graph annotations
+    - GraphClasses.py: main ClipGraph and MovieGraph python classes
+        READ THIS: there are tonnes of useful functions for ClipGraphs
+    - startup.py: a little test file to make sure things are working as expected
+
+NOTE: Best with py2.7 and networkx1.10. It might work with py3 and networkx1.x but not sure
+
+======================================
+

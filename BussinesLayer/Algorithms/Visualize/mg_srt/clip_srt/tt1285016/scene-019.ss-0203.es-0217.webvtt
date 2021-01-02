@@ -1,0 +1,62 @@
+WEBVTT
+
+00:00:00.000 --> 00:00:01.708
+You and Erica split up.
+
+00:00:01.834 --> 00:00:02.876
+How did you know that?
+
+00:00:03.002 --> 00:00:04.502
+It's on your blog.
+
+00:00:05.504 --> 00:00:07.130
+- Yeah.
+- Are you all right?
+
+00:00:07.214 --> 00:00:09.549
+- I need you.
+- I'm here for you.
+
+00:00:09.759 --> 00:00:11.676
+No, I need the algorithm you use
+to rank chess players.
+
+00:00:11.761 --> 00:00:14.012
+- Are you okay?
+- We're ranking girls.
+
+00:00:16.390 --> 00:00:18.391
+- You mean other students.
+- Yeah.
+
+00:00:18.517 --> 00:00:20.185
+You think this is such a good idea?
+
+00:00:20.394 --> 00:00:21.770
+- I need the algorithm.
+- Mark...
+
+00:00:21.854 --> 00:00:23.688
+I need the algorithm.
+
+00:00:25.024 --> 00:00:27.358
+Give each girl a base rating of 1400.
+
+00:00:27.443 --> 00:00:31.905
+At any given time Girl A has a rating R-a
+and Girl B has a rating R-b.
+
+00:00:32.031 --> 00:00:34.741
+When any two girls are matched up,
+there's an expectation of which will win
+
+00:00:34.867 --> 00:00:35.950
+based on their current rating, right?
+
+00:00:36.035 --> 00:00:39.537
+Yeah. And those expectations
+are expressed this way.
+
+00:00:39.705 --> 00:00:41.039
+Let's write it.
+
