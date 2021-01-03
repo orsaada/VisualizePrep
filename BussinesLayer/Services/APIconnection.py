@@ -36,4 +36,3 @@ def upload_video(video_path, future_video_name):  # upload a video to video inde
 def export_json_to_file(json_file, future_filename):  # export json file
     with open(future_filename+'.json', 'w', encoding='utf-8') as f:
         json.dump(json_file, f, ensure_ascii=False, indent=4)
-

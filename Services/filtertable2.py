@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import pandas as pd
 
-from BussinesLayer.Data.Data import extract_actors
+from BussinesLayer.Data.Data import extract_actors, extract_emotions
 
 
 class PandasModel(QtCore.QAbstractTableModel):
@@ -174,8 +174,9 @@ class myWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    app = QtWidgets.QApplication(sys.argv)
-    main = myWindow()
-    main.show()
-    main.resize(800, 600)
-    sys.exit(app.exec_())
+    # app = QtWidgets.QApplication(sys.argv)
+    # main = myWindow()
+    # main.show()
+    # main.resize(800, 600)
+    # sys.exit(app.exec_())
+    extract_emotions('./27_DRESSES_SCALED.json')
