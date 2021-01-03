@@ -165,7 +165,7 @@ workbook.close()
 
 # Or Added
 def open_all_mg():
-    with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
+    with open('./2017-11-02-51-7637_py3.pkl', 'rb') as fid:
         all_mg = pickle.load(fid, encoding='latin1')
     return all_mg
 

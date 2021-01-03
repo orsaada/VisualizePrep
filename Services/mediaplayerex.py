@@ -9,6 +9,8 @@ from PyQt5.QtGui import QIcon, QPalette
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+
+from Services.Graphs.graph3 import ChartEmotions
 from Services.filtertable import myWindow
 # from Fronts.login import Ui_Form
 # from Fronts.login import Ui_Form
@@ -240,11 +242,10 @@ class MediaWindow(QWidget):
         self.label.setText("Error: " + self.mediaPlayer.errorString())
 
 
-
-
 class Window1(QDialog):
     def __init__(self, value, parent=None):
         super().__init__(parent)
+        self.resize(800, 600)
         self.setWindowTitle('Window1')
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
 
@@ -255,6 +256,8 @@ class Window1(QDialog):
         self.button.setIconSize(QSize(200, 200))
 
         layoutV = QVBoxLayout()
+
+        # close button
         self.pushButton = QPushButton(self)
         self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.pushButton.setText('Click me! (close page)')
@@ -273,6 +276,11 @@ class Window1(QDialog):
         combo.addItem("Faces")
         combo.addItem("Sentiments")
         combo.move(50, 50)
+
+        #call chart
+        chartClass = ChartEmotions()
+
+
         #not neccesrily need
         self.qlabel = QLabel(self)
         self.qlabel.move(50, 16)
@@ -289,6 +297,7 @@ class Window1(QDialog):
         # layoutH.addWidget(self.button)
         layoutH.addWidget(combo)
         layoutH.addWidget(self.filter_table_button)
+        layoutH.addWidget(chartClass.chartView)
         layoutV.addLayout(layoutH)
         self.setLayout(layoutV)
 
@@ -351,6 +360,7 @@ class Window1(QDialog):
     def filterAsTableButton(self):
         self.filter_table_window.show()
 
-app = QApplication(sys.argv)
-window = MediaWindow(1)
-sys.exit(app.exec_())
+
+# app = QApplication(sys.argv)
+# window = MediaWindow(1)
+# sys.exit(app.exec_())

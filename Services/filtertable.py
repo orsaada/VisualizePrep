@@ -72,6 +72,9 @@ class PandasModel(QtCore.QAbstractTableModel):
 class myWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super(myWindow, self).__init__(parent)
+
+        self.resize(800, 600)
+
         self.centralwidget  = QtWidgets.QWidget(self)
         self.lineEdit       = QtWidgets.QLineEdit(self.centralwidget)
         self.view           = QtWidgets.QTableView(self.centralwidget)
@@ -99,7 +102,7 @@ class myWindow(QtWidgets.QMainWindow):
 
     def load_sites(self):
 
-        df = pd.DataFrame(extract_actors('27_DRESSES_SCALED.json'))
+        df = pd.DataFrame(extract_actors('../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json'))
 
         self.model = PandasModel(df)
         self.proxy = QtCore.QSortFilterProxyModel(self)
