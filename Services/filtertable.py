@@ -5,7 +5,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 import pandas as pd
 
-from BussinesLayer.Data.Data import extract_actors
+from BussinesLayer.Data.data import extract_actors
 
 
 class PandasModel(QtCore.QAbstractTableModel):

@@ -2,9 +2,11 @@ import pickle
 import moviegraphs
 import videoindexer
 from imdb import IMDb
-from algo1 import algo_1
 import json
 import xlsxwriter
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.algorithm import algorithm_1
+import datetime
+import time
 
 
 def cast_list(movie_id):
@@ -44,18 +46,35 @@ def chars_in_scenes(scenes, chars):
     return res
 
 
-def char_precision(test_id, all_mg):
+def chars_in_scenes2(scenes, beforeData):
+    res = []
+    for (s, e) in scenes:
+        characters = []
+        for (start, end, name) in beforeData:
+            # if the two tuples (s,e) and (a[0], a[1]) overlap
+            x = time.strptime(start.split('.')[0], '%H:%M:%S')
+            newS = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            x = time.strptime(end.split('.')[0], '%H:%M:%S')
+            newE = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
+            if newE >= s and newS <= e:
+                characters.append(name)
+        res.append(characters)
+    return res
+
+
+def char_precision(test_id, all_mg, num, data):
     """returns the precision of the face identification
     software comparing the VI results to the information
     on the MG dataset"""
     scenes = moviegraphs.load_scenes(test_id, all_mg)
-    chars = videoindexer.get_character_app_dict(test_id)
-    chars_vi = chars_in_scenes(scenes, chars)
-
+    if num == 1:
+        chars = videoindexer.get_character_app_dict(test_id)
+        chars_vi = chars_in_scenes(scenes, chars)
+    elif num == 2:
+        chars_vi = chars_in_scenes2(scenes, data)
     actors = cast_list(test_id)
     MG = all_mg[test_id]
     res = []
-    data = []
     for i in MG.clip_graphs.values():
         res.append([actors[j] for j in i.get_nodes_of_type("entity") if j in actors])
     total, correct = 0, 0
@@ -69,7 +88,7 @@ def char_precision(test_id, all_mg):
 
     return round((correct / total * 100), 1) if total != 0 else 0
 
-# return list of diffrence - start, end, list from vi, list from manual tagging
+
 def get_diff(test_id, all_mg):
     scenes = moviegraphs.load_scenes(test_id, all_mg)
     chars = videoindexer.get_character_app_dict(test_id)
@@ -92,11 +111,39 @@ def get_diff(test_id, all_mg):
                 total += 1
     return data
 
-def print_pretty():
-    data = get_diff('tt0988595', all_mg)
+
+def print_pretty_differences(tt_movie):
+    data = get_diff(tt_movie, all_mg)
+    print("[ start , end ,[Movie Indexer Actors] , [Manual Info Actors] ]:")
     for obj in data:
         print(obj)
-    return data
+
+
+with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
+    all_mg = pickle.load(fid, encoding='latin1')
+
+
+def print_pretty_changes_algorithm_1():
+    res1 = algorithm_1("../../vi_json/tt1570728.json")
+    res2 = algorithm_1("../../vi_json/tt1907668.json")
+    res3 = algorithm_1("../../vi_json/tt0109830.json")
+    res4 = algorithm_1("../../vi_json/tt0988595.json")
+
+    print("crazy stupid love:\nbefore - " + str(char_precision('tt1570728', all_mg, 1, "")))
+    print('after - ' + str(char_precision('tt1570728', all_mg, 2, res1)) + '\n')
+
+    print("flight:\nbefore - " + str(char_precision('tt1907668', all_mg, 1, "")))
+    print('after - ' + str(char_precision('tt1907668', all_mg, 2, res2)) + '\n')
+
+    print("forest gump:\nbefore - " + str(char_precision('tt0109830', all_mg, 1, "")))
+    print('after - ' + str(char_precision('tt0109830', all_mg, 2, res3)) + '\n')
+
+    print("27 dress:\nbefore - " + str(char_precision('tt0988595', all_mg, 1, "")))
+    print('after - ' + str(char_precision('tt0988595', all_mg, 2, res4)) + '\n')
+
+
+print_pretty_changes_algorithm_1()
+print_pretty_differences('tt0988595')
 '''
 workbook = xlsxwriter.Workbook('facial_identification_precision.xlsx')
 worksheet = workbook.add_worksheet()
@@ -116,6 +163,7 @@ workbook.close()
 '''
 
 
+# Or Added
 def open_all_mg():
     with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
         all_mg = pickle.load(fid, encoding='latin1')
@@ -125,8 +173,8 @@ def open_all_mg():
 with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
     all_mg = pickle.load(fid, encoding='latin1')
 
-print(char_precision('tt0988595', all_mg))
-data_for_algo = print_pretty()
-algo_1(data_for_algo)
-with open('diff.json', 'w') as outfile:
-    json.dump(data_for_algo, outfile)
+# print(char_precision('tt0988595', all_mg))
+# data_for_algo = print_pretty()
+# algo_1(data_for_algo)
+# with open('diff.json', 'w') as outfile:
+#     json.dump(data_for_algo, outfile)
