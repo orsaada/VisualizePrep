@@ -100,23 +100,29 @@ class MediaWindow(QWidget):
         seconds = (duration / 1000) % 60
         minutes = (duration / 60000) % 60
         hours = (duration / 3600000) % 24
-        print(duration)
+        # print(duration)
         QTime(hours, minutes, seconds)
         self.positionLabel = QLabel('00:00:000')
         self.positionLabel.setStyleSheet("background-color: lightgreen")
 
 
         #logout button
-        self.pushButton = QPushButton(self)
-        self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.pushButton.setText('Click me!')
-        self.pushButton.clicked.connect(self.logout)
+        self.logoutButton = QPushButton(self)
+        self.logoutButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.logoutButton.setText('Log out')
+        self.logoutButton.clicked.connect(self.logout)
 
         #diff button
         self.diffButton = QPushButton(self)
         self.diffButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.diffButton.setText('Diff!')
         self.diffButton.clicked.connect(self.find_diffrence)
+
+        #archive button
+        self.archiveButton = QPushButton(self)
+        self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.archiveButton.setText('Archive')
+        self.archiveButton.clicked.connect(self.find_diffrence)
 
         #create hbox layout
         hboxLayout = QHBoxLayout()
@@ -128,8 +134,9 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(self.slider)
         hboxLayout.addWidget(gotoInsights)
         # hboxLayout.addWidget(self.positionLabel)
-        hboxLayout.addWidget(self.pushButton)
+        hboxLayout.addWidget(self.logoutButton)
         hboxLayout.addWidget(self.diffButton)
+        hboxLayout.addWidget(self.archiveButton)
 
         #create vbox layout
         vboxLayout = QVBoxLayout()
@@ -171,7 +178,7 @@ class MediaWindow(QWidget):
         data = find_diffrence_temp()
         self.mediaPlayer.setPosition(data[self.ind][0]*1000)
         self.ind += 1
-        print(str(data[self.ind][0]) + '   ' + str(data[self.ind][1]))
+        # print(str(data[self.ind][0]) + '   ' + str(data[self.ind][1]))
 
 
     def setInterval(self, path, start, end):

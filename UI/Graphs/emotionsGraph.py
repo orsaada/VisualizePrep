@@ -12,12 +12,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.resize(600, 400)
 
-        print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
+        # print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
         emotions = extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json")
-        for i in emotions:
-            print(i['type'])
-            for j in i['instances']:
-                print(j)
+        # for i in emotions:
+        #     print(i['type'])
+        #     for j in i['instances']:
+        #         print(j)
         set0 = QBarSet('X0')
         set1 = QBarSet('X1')
         set2 = QBarSet('X2')

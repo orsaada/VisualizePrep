@@ -26,7 +26,7 @@ class ChartEmotions(QMainWindow):
         super().__init__()
         self.resize(800, 600)
 
-        print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
+        # print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
         emotions = extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json")
         sets = []
         ranges = []
@@ -36,10 +36,10 @@ class ChartEmotions(QMainWindow):
             # arr = []
             sum_time = 0
             for idx, val in enumerate(i['instances']):
-                print(format_time(val['start']))
-                print(format_time(val['end']))
+                # print(format_time(val['start']))
+                # print(format_time(val['end']))
                 range_time = mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple())
-                print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
+                # print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
                 sum_time = sum_time + range_time
                 # format_time(val['end'])-format_time(val['start'])
             ranges.append(sum_time)
@@ -51,17 +51,17 @@ class ChartEmotions(QMainWindow):
         # re.search("", "%H:%m:%S")
         # time.
         x = datetime.strptime("1:29:37.79", "%H:%M:%S.%f")
-        print(x)
+        # print(x)
         # x = time.strptime("30 Nov 00", "%d %b %y")
-        print(x)
-        print(ranges)
+        # print(x)
+        # print(ranges)
         #
         # set0 = QBarSet('X0')
         # set1 = QBarSet('X1')
         # set2 = QBarSet('X2')
         # set3 = QBarSet('X3')
         # set4 = QBarSet('X4')
-        print([random.randint(0, 10) for i in range(6)])
+        # print([random.randint(0, 10) for i in range(6)])
         set0.append(ranges[0])
         set1.append(ranges[1])
         set2.append(ranges[2])
