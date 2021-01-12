@@ -1,5 +1,5 @@
 from PyQt5 import QtCore
-from Services.login import Ui_Form # added by me
+from UI.login import Ui_Form # added by me
 from login import *
 from BussinesLayer.Services.Register import registration
 from PyQt5 import QtWidgets

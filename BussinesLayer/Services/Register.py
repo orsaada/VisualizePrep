@@ -1,4 +1,5 @@
 from DB.DB import register
+from BussinesLayer.Services.Logger import info
 
 
 def registration(name, lastname, phone, mail, username, password):
@@ -6,4 +7,5 @@ def registration(name, lastname, phone, mail, username, password):
             (len(phone) > 3) & (len(username) > 1) & (len(password) > 1):
         return register(name, lastname, phone, mail, username, password)
     else:
+        info("Failed to register - " + username)
         return "FAILED - empty field/short passwords"

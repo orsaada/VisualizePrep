@@ -1,19 +1,17 @@
 from DB.DB import login
+from BussinesLayer.Services.Logger import info
 
 
 def log_in(username, password):
-    try:
-        val = login(username, password)
-        if len(val) > 0:
-            for x in val:
-                if username == x[0] and password == x[1]:
-                    return "Successfully Login"
-                    found = 1
-                else:
-                    pass
-            if found == 0:
-                return 'No user Found'
-        else:
-            return 'No user Found'
-    except:
+    val = login()
+    if len(val) > 0:
+        for x in val:
+            if username == x[0] and password == x[1]:
+                info("Successfully Login - " + username)
+                return "Successfully Login"
+        info('No user Found - ' + username)
         return 'No user Found'
+    else:
+        info('No user Found - ' + username)
+        return 'No user Found'
+

@@ -2,7 +2,7 @@ from BussinesLayer.Services.APIconnection import upload_video, get_info_json_fro
 from DB.DB import add_new_video
 
 
-def load_video(path,future_name):
+def load_video(path, future_name):
     return upload_video(path, future_name)  # return video id
 
 

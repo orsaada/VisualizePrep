@@ -1,6 +1,7 @@
 # from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, \
 #     QSlider, QStyle, QSizePolicy, QFileDialog
 import json
+import os
 import sys
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
@@ -10,8 +11,9 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from Services.Graphs.graph3 import ChartEmotions
-from Services.filtertable import myWindow
+from BussinesLayer.Services.APIconnection import upload_video
+from UI.Graphs.graph3 import ChartEmotions
+from UI.filtertable import myWindow
 # from Fronts.login import Ui_Form
 # from Fronts.login import Ui_Form
 
@@ -155,7 +157,7 @@ class MediaWindow(QWidget):
     #     self.close()
 
     def logout(self):
-        from Services.login import Ui_Form
+        from UI.login import Ui_Form
         self.mediaPlayer.stop()
         window = QtWidgets.QMainWindow()
         ui = Ui_Form()
@@ -202,6 +204,8 @@ class MediaWindow(QWidget):
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn.setEnabled(True)
             self.video_name = filename
+            # added
+            upload_video(filename, os.path.splitext(os.path.basename(filename))[0])
 
 
     def play_video(self):
@@ -361,6 +365,6 @@ class Window1(QDialog):
         self.filter_table_window.show()
 
 
-# app = QApplication(sys.argv)
-# window = MediaWindow(1)
-# sys.exit(app.exec_())
+app = QApplication(sys.argv)
+window = MediaWindow(1)
+sys.exit(app.exec_())

@@ -1,6 +1,6 @@
 from PyQt5 import QtCore
 
-from Services.mediaplayerex import MediaWindow
+from UI.mediaplayerex import MediaWindow
 from newuser import *
 from BussinesLayer.Services.Login import log_in
 from PyQt5 import QtWidgets
