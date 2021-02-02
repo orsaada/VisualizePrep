@@ -5,15 +5,22 @@ from BussinesLayer.Services.Register import registration
 from PyQt5 import QtWidgets
 
 
-class Ui_Newuser(object):
-    def openwindow(self):
+class Ui_Newuser(PageWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("NewUserWindow")
+        Newuser = QtWidgets.QWidget()
+        ui = Ui_Newuser()
+        ui.setupUi(Newuser)
+        Newuser.show()
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_Form()
         self.ui.setupUi(self.window)
         self.window.show()
 
-
     def setupUi(self, Newuser):
+
         Newuser.setObjectName("Newuser")
         Newuser.resize(645, 449)
         self.gridLayoutWidget = QtWidgets.QWidget(Newuser)
@@ -144,8 +151,4 @@ class Ui_Newuser(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Newuser = QtWidgets.QWidget()
-    ui = Ui_Newuser()
-    ui.setupUi(Newuser)
-    Newuser.show()
     sys.exit(app.exec_())

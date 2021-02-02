@@ -27,8 +27,6 @@ class ChartEmotions(QMainWindow):
         super().__init__()
         self.resize(800, 600)
 
-        # print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
-
         base_path = Path(__file__).parent.parent
         file_path = (base_path / "../DB/jsonsFolder/tt0988595.json").resolve()
         emotions = extract_emotions(file_path)

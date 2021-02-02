@@ -1,23 +1,33 @@
 from PyQt5 import QtCore
 
+# from UI.PageWindow import PageWindow
+from UI.mainPage import PageWindow
 from UI.mediaplayerex import MediaWindow
 from newuser import *
 from BussinesLayer.Services.Login import log_in
 from PyQt5 import QtWidgets
 
-class Ui_Form(object):
 
-    def openwindow(self):
+
+
+
+class Ui_Form(PageWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("MainWindow")
         self.window = QtWidgets.QMainWindow()
         self.ui = Ui_Newuser()
-        self.ui.setupUi(self.window)
         self.window.show()
-        Form.hide()
 
 
-    def setupUi(self, Form):
-        self.mediawindo = MediaWindow(1)
-        self.mediawindo.hide()
+    def setupUi(self):
+        # self.mediawindo = MediaWindow(1)
+        # self.mediawindo.hide()
+        Form = QtWidgets.QWidget()
+        ui = Ui_Form()
+        ui.setupUi(Form)
+
         Form.setObjectName("Form")
         Form.resize(650, 380)
         self.textBrowser = QtWidgets.QTextBrowser(Form)
@@ -102,7 +112,7 @@ class Ui_Form(object):
             self.pop_message(res)
             # if res == Successfully Login -> jump load video
             if res == "Successfully Login":
-                Form.hide()
+                # Form.hide()
                 self.mediawindo.show()
             # ****  need to be logout button that back to login page  ****
 
@@ -110,8 +120,6 @@ class Ui_Form(object):
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
-    Form = QtWidgets.QWidget()
-    ui = Ui_Form()
-    ui.setupUi(Form)
-    Form.show()
+    window = Ui_Form()
+    window.show()
     sys.exit(app.exec_())

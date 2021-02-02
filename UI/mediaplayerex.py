@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import *
 
 from BussinesLayer.Services.APIconnection import upload_video
 from UI.Graphs.graph3 import ChartEmotions
+from UI.PageWindow import PageWindow
 from UI.filtertable import myWindow
 # from Fronts.login import Ui_Form
 # from Fronts.login import Ui_Form
@@ -27,7 +28,13 @@ def find_diffrence_temp():
         #     print('From: ' + p['from'])
         #     print('')
         return data
-    # print(1)
+
+class MyMainWindow(PageWindow):
+
+    def __init__(self):
+        super(MyMainWindow, self).__init__()
+        self.form_widget = MediaWindow(self)
+        self.setCentralWidget(self.form_widget)
 
 
 class MediaWindow(QWidget):
@@ -82,7 +89,6 @@ class MediaWindow(QWidget):
         self.playBtn.clicked.connect(self.play_video)
 
 
-
         #create slider
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
@@ -124,9 +130,15 @@ class MediaWindow(QWidget):
         self.archiveButton.setText('Archive')
         self.archiveButton.clicked.connect(self.find_diffrence)
 
+        #goback button
+        self.goBackButton = QPushButton(self)
+        self.goBackButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.goBackButton.setText('GO BACK')
+        self.goBackButton.clicked.connect(self.goMainWindow)
+
         #create hbox layout
         hboxLayout = QHBoxLayout()
-        hboxLayout.setContentsMargins(0,0,0,0)
+        hboxLayout.setContentsMargins(0, 0, 0, 0)
 
         #set widgets to the hbox layout
         hboxLayout.addWidget(openBtn)
@@ -137,6 +149,7 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(self.logoutButton)
         hboxLayout.addWidget(self.diffButton)
         hboxLayout.addWidget(self.archiveButton)
+        hboxLayout.addWidget(self.goBackButton)
 
         #create vbox layout
         vboxLayout = QVBoxLayout()
@@ -162,6 +175,8 @@ class MediaWindow(QWidget):
     #     # self.cams = Window1(self.lineEdit1.text())
     #     self.cams.show()
     #     self.close()
+    def goMainWindow(self):
+        self.parent().goto('main')
 
     def logout(self):
         from UI.login import Ui_Form
@@ -212,7 +227,7 @@ class MediaWindow(QWidget):
             self.playBtn.setEnabled(True)
             self.video_name = filename
             # added
-            upload_video(filename, os.path.splitext(os.path.basename(filename))[0])
+            # upload_video(filename, os.path.splitext(os.path.basename(filename))[0])
 
 
     def play_video(self):
@@ -313,9 +328,8 @@ class Window1(QDialog):
         self.setLayout(layoutV)
 
     def goMainWindow(self):
-        # self.cams = Window()
-        # self.cams.show()
-        self.close()
+        self.goto("main")
+        # self.close()
 
     def onChanged(self, text):
         self.qlabel.setText(text)
@@ -372,6 +386,6 @@ class Window1(QDialog):
         self.filter_table_window.show()
 
 
-app = QApplication(sys.argv)
-window = MediaWindow(1)
-sys.exit(app.exec_())
+# app = QApplication(sys.argv)
+# window = MediaWindow(1)
+# sys.exit(app.exec_())
