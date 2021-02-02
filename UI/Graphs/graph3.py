@@ -1,4 +1,5 @@
 import sys, random
+from pathlib import Path
 from time import mktime
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow)
@@ -27,7 +28,10 @@ class ChartEmotions(QMainWindow):
         self.resize(800, 600)
 
         # print(extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"))
-        emotions = extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json")
+
+        base_path = Path(__file__).parent.parent
+        file_path = (base_path / "../DB/jsonsFolder/tt0988595.json").resolve()
+        emotions = extract_emotions(file_path)
         sets = []
         ranges = []
         for idx2, i in enumerate(emotions):
@@ -36,8 +40,6 @@ class ChartEmotions(QMainWindow):
             # arr = []
             sum_time = 0
             for idx, val in enumerate(i['instances']):
-                # print(format_time(val['start']))
-                # print(format_time(val['end']))
                 range_time = mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple())
                 # print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
                 sum_time = sum_time + range_time
