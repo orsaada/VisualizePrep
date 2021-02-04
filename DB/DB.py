@@ -1,4 +1,5 @@
 import sqlite3
+from BussinesLayer.Services.Logger import info, error
 
 
 def connect():
@@ -23,14 +24,24 @@ def add_new_video(username, video_id, path_video):
         conn.commit()
         cursor.close()
         conn.close()
+        info("Success add new video - " + username + ", video_id - " + video_id)
         return 'success'
     except Exception as e:
         print(e)
 
-def login(username, password):
+
+def login():
     cursor, conn = connect()
     cursor.execute("SELECT username,password FROM Members")
-    return cursor.fetchall()
+    res = cursor.fetchall()
+    return res
+
+
+def get_my_movies(username):
+    cursor, conn = connect()
+    cursor.execute("SELECT video_name FROM MembersVideos WHERE username=?", (username,))
+    res = cursor.fetchall()
+    return res
 
 
 def register(txt_firstname_v, txt_lastname_v, txt_phone_v, txt_emailid_v, txt_username_v, txt_password_v):
@@ -70,10 +81,13 @@ def register(txt_firstname_v, txt_lastname_v, txt_phone_v, txt_emailid_v, txt_us
             conn.commit()
             cursor.close()
             conn.close()
+            info("Successfully Registration - " + txt_username_v)
             return "Successfully Registration"
         else:
+            info("Failed Registration: duplicate username - " + txt_username_v)
             return "username has exist"
     except Exception as e:
         print(e)
+        error(" " + e)
         return "Cannot add to Database"
 
