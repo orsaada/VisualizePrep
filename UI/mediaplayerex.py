@@ -2,21 +2,15 @@
 #     QSlider, QStyle, QSizePolicy, QFileDialog
 import json
 import os
-import sys
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPalette
-# from PyQt5.QtCore import Qt, QUrl
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
-
 from BussinesLayer.Services.APIconnection import upload_video
-from UI.Graphs.graph3 import ChartEmotions
 from UI.PageWindow import PageWindow
 from UI.filtertable import myWindow
-# from Fronts.login import Ui_Form
-# from Fronts.login import Ui_Form
 
 
 def find_diffrence_temp():
@@ -28,6 +22,7 @@ def find_diffrence_temp():
         #     print('From: ' + p['from'])
         #     print('')
         return data
+
 
 class MyMainWindow(PageWindow):
 
@@ -53,7 +48,7 @@ class MediaWindow(QWidget):
 
         self.init_ui()
 
-    # new window opening for qwidget
+        # new window opening for qwidget
         self.newindow = Window1(self)
 
         # if want to check start app only from the mediaplayer cancell the comment
@@ -116,7 +111,7 @@ class MediaWindow(QWidget):
         self.logoutButton = QPushButton(self)
         self.logoutButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.logoutButton.setText('Log out')
-        self.logoutButton.clicked.connect(self.logout)
+        self.logoutButton.clicked.connect(self.goMainWindow)
 
         #diff button
         self.diffButton = QPushButton(self)
@@ -127,14 +122,14 @@ class MediaWindow(QWidget):
         #archive button
         self.archiveButton = QPushButton(self)
         self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.archiveButton.setText('Archive')
-        self.archiveButton.clicked.connect(self.find_diffrence)
+        self.archiveButton.setText('My Archive')
+        self.archiveButton.clicked.connect(self.goMyArchive)
 
         #goback button
         self.goBackButton = QPushButton(self)
         self.goBackButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.goBackButton.setText('GO BACK')
-        self.goBackButton.clicked.connect(self.goMainWindow)
+        self.goBackButton.clicked.connect(self.goMediaWindow)
 
         #create hbox layout
         hboxLayout = QHBoxLayout()
@@ -175,19 +170,27 @@ class MediaWindow(QWidget):
     #     # self.cams = Window1(self.lineEdit1.text())
     #     self.cams.show()
     #     self.close()
+
     def goMainWindow(self):
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+            data['UserLoggedIn'] = ""
+        print(data['UserLoggedIn'])
+        os.remove('./../config.json')
+        with open('./../config.json', 'w') as f:
+            json.dump(data, f, indent=4)
         self.parent().goto('main')
 
+    def goMyArchive(self):
+        self.parent().goto('archive')
+
+    def goMediaWindow(self):
+        self.parent().goto('media')
+
     def logout(self):
-        from UI.login import Ui_Form
+
         self.mediaPlayer.stop()
-        window = QtWidgets.QMainWindow()
-        ui = Ui_Form()
-        # ui.setupUi(self.window)
-        window.show()
-        # self.cams = self.parent()
-        # self.cams.show()
-        self.close()
+        self.parent().goto('main')
 
     def find_diffrence(self):
         data = find_diffrence_temp()
@@ -214,21 +217,21 @@ class MediaWindow(QWidget):
     #         if position > self._end:
     #             self.mediaPlayer.stop()
 
-
     def btn_clk(self):
         self.newindow.show()
 
-
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
-
         if filename != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn.setEnabled(True)
             self.video_name = filename
-            # added
-            # upload_video(filename, os.path.splitext(os.path.basename(filename))[0])
-
+            with open('./../config.json') as f:
+                data = json.load(f)
+            if data["ENV_MODE"] == 'production':
+                upload_video(filename, os.path.splitext(os.path.basename(filename))[0])
+            elif data["ENV_MODE"] == 'development':
+                i = 0  # to delete jsut to example
 
     def play_video(self):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -304,7 +307,7 @@ class Window1(QDialog):
         combo.move(50, 50)
 
         #call chart
-        chartClass = ChartEmotions()
+        #chartClass = ChartEmotions()
 
 
         #not neccesrily need
@@ -323,7 +326,7 @@ class Window1(QDialog):
         # layoutH.addWidget(self.button)
         layoutH.addWidget(combo)
         layoutH.addWidget(self.filter_table_button)
-        layoutH.addWidget(chartClass.chartView)
+        #layoutH.addWidget(chartClass.chartView)
         layoutV.addLayout(layoutH)
         self.setLayout(layoutV)
 
