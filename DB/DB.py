@@ -3,7 +3,7 @@ from BussinesLayer.Services.Logger import info, error
 
 
 def connect():
-    conn = sqlite3.connect('user.db')
+    conn = sqlite3.connect('../UI/user.db')
     cursor = conn.cursor()
     return cursor, conn
 

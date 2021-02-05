@@ -11,7 +11,12 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.resize(600, 400)
 
-        emotions = extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json")
+        from pathlib import Path
+
+        path = Path(__file__).parent.parent.parent / "BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json"
+        emotions = extract_emotions(path)
+
+        # emotions = extract_emotions("/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visPrep/BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json")
 
         set0 = QBarSet('X0')
         set1 = QBarSet('X1')

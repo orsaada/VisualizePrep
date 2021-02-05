@@ -174,9 +174,9 @@ class myWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    # app = QtWidgets.QApplication(sys.argv)
-    # main = myWindow()
-    # main.show()
-    # main.resize(800, 600)
-    # sys.exit(app.exec_())
+    app = QtWidgets.QApplication(sys.argv)
+    main = myWindow()
+    main.show()
+    main.resize(800, 600)
     extract_emotions('./27_DRESSES_SCALED.json')
+    sys.exit(app.exec_())

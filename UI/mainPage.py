@@ -1,5 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton
+
+from UI.InsightsWindow import MyInsightsWindow
 from UI.PageWindow import PageWindow
 from UI.mediaplayerex import MyMainWindow
 from UI.archiveWindow import MyArchive
@@ -165,6 +167,7 @@ class Window(QtWidgets.QMainWindow):
         self.register(MyMainWindow(), "media")
         self.register(MyRegister(), "register")
         self.register(MyArchive(), "archive")
+        self.register(MyInsightsWindow(), "insights")
         self.goto("main")
 
     def register(self, widget, name):

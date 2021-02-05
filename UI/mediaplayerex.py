@@ -2,6 +2,8 @@
 #     QSlider, QStyle, QSizePolicy, QFileDialog
 import json
 import os
+import sys
+
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPalette
@@ -10,7 +12,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from BussinesLayer.Services.APIconnection import upload_video
 from UI.PageWindow import PageWindow
-from UI.filtertable import myWindow
+from UI.dataAsTable import myWindow
 
 
 def find_diffrence_temp():
@@ -38,6 +40,8 @@ class MediaWindow(QWidget):
         self.ind = 0
         self.setWindowTitle("VisualizeBGU")
         self.setGeometry(350, 100, 700, 500)
+        self.resize(1000, 500)
+
         self.setWindowIcon(QIcon('player.png'))
 
         p = self.palette()
@@ -49,7 +53,7 @@ class MediaWindow(QWidget):
         self.init_ui()
 
         # new window opening for qwidget
-        self.newindow = Window1(self)
+        # self.newindow = Window1(self)
 
         # if want to check start app only from the mediaplayer cancell the comment
         self.show()
@@ -218,7 +222,8 @@ class MediaWindow(QWidget):
     #             self.mediaPlayer.stop()
 
     def btn_clk(self):
-        self.newindow.show()
+        self.parent().goto("insights")
+        # self.newindow.show()
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
@@ -388,6 +393,15 @@ class Window1(QDialog):
     def filterAsTableButton(self):
         self.filter_table_window.show()
 
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+
+    window = MediaWindow(1)
+    window.show()
+
+    sys.exit(app.exec_())
 
 # app = QApplication(sys.argv)
 # window = MediaWindow(1)
