@@ -18,7 +18,7 @@ class MyInsightsWindow(PageWindow):
 
 class MyInsightsWidget(QDialog):
     def __init__(self, parent=None):
-        super().__init__(parent)
+        super().__init__()
         self.resize(800, 600)
         self.setWindowTitle('Window1')
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
@@ -38,11 +38,36 @@ class MyInsightsWidget(QDialog):
         self.pushButton.clicked.connect(self.goMainWindow)
         layoutV.addWidget(self.pushButton)
 
+        # close button
+        self.archiveButton = QPushButton(self)
+        self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.archiveButton.setText('Go To Archive')
+        self.archiveButton.clicked.connect(self.goToArchive)
+        layoutV.addWidget(self.archiveButton)
+
+        # export json
+        self.exportButton = QPushButton(self)
+        self.exportButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.exportButton.setText('export')
+        self.exportButton.clicked.connect(self.exportJson)
+        layoutV.addWidget(self.exportButton)
+
+        # show improvment
+        self.comparisonButton = QPushButton(self)
+        self.comparisonButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.comparisonButton.setText('comparison improvement')
+        self.comparisonButton.clicked.connect(self.compareImprovments)
+        layoutV.addWidget(self.comparisonButton)
+
+
         #filter as table button
         self.filter_table_window = myWindow()
         self.filter_table_button = QPushButton("Filter as table")
         self.filter_table_button.clicked.connect(self.filterAsTableButton)
 
+        #show graph
+        self.showGraphButton = QPushButton("Show Graph")
+        self.showGraphButton.clicked.connect(self.showGraph)
 
         #dropdown choosing
         combo = QComboBox(self)
@@ -71,6 +96,7 @@ class MyInsightsWidget(QDialog):
         # layoutH.addWidget(self.button)
         layoutH.addWidget(combo)
         layoutH.addWidget(self.filter_table_button)
+        layoutH.addWidget(self.showGraphButton)
         widget = ChartEmotions()
 
         layoutH.addWidget(widget)
@@ -135,6 +161,18 @@ class MyInsightsWidget(QDialog):
 
     def filterAsTableButton(self):
         self.filter_table_window.show()
+
+    def exportJson(self):
+        pass
+
+    def compareImprovments(self):
+        pass
+
+    def showGraph(self):
+        pass
+
+    def goToArchive(self):
+        self.parent().goto('archive')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

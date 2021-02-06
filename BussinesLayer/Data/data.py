@@ -1,6 +1,6 @@
 import json
 
-
+# attr - keywords(most talked), faces, emotions .....
 def extract_attribute(json_file_path, attr):
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
@@ -28,3 +28,6 @@ def get_specific_emotion_appearances(json_file_path, emotion_type):
     for emotion in emotions:
         if emotion["name"] == emotion_type:
             return emotion["instances"]
+
+def numpy_fix():
+    pass
