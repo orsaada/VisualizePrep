@@ -3,24 +3,31 @@ from BussinesLayer.Services.Logger import info, error
 
 
 def connect():
-    conn = sqlite3.connect('../UI/user.db')
+    conn = sqlite3.connect('user.db')
     cursor = conn.cursor()
     return cursor, conn
 
 
-def add_new_video(username, video_id, path_video):
+def get_movieId(username, name):
+    cursor, conn = connect()
+    cursor.execute("SELECT video_id FROM MembersVideos WHERE username=? and video_name=? ", (username, name, ))
+    res = cursor.fetchall()
+    return res
+
+
+def add_new_video(username, video_name, video_id):
     try:
         cursor, conn = connect()
-        cursor.execute(""" INSERT INTO members_video_insights 
+        cursor.execute(""" INSERT INTO MembersVideos 
                             (
-                            userName,
-                            video_id,
-                            path_json_info
+                            username,
+                            video_name,
+                            video_id
                             )
-    
+
                         VALUES 
                         (?,?,?)
-                        """, (username, video_id, path_video))
+                        """, (username, video_name, video_id))
         conn.commit()
         cursor.close()
         conn.close()
@@ -73,7 +80,7 @@ def register(txt_firstname_v, txt_lastname_v, txt_phone_v, txt_emailid_v, txt_us
                     email,
                     username, 
                     password)
-    
+
                 VALUES 
                 (?,?,?,?,?,?)
                 """, (txt_firstname_v, txt_lastname_v, txt_phone_v, txt_emailid_v, txt_username_v, txt_password_v))

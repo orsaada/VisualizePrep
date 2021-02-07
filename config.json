@@ -1,4 +1,5 @@
 {
-    "ENV_MODE": "delopement",
-    "UserLoggedIn": "aaaa"
+    "UserLoggedIn": "aaaa",
+    "SpecificMoviePage": "bad santa",
+    "ENV_MODE": "development"
 }

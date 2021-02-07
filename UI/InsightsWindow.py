@@ -1,9 +1,11 @@
 import sys
+import json
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog, QStyle, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QComboBox, QHBoxLayout, \
     QWidget, QStackedLayout, QApplication
 
+from BussinesLayer.Services.VideoInsights import get_movie_id
 from UI.Graphs.ChartEmotion import ChartEmotions
 from UI.PageWindow import PageWindow
 from UI.dataAsTable import myWindow
@@ -23,6 +25,13 @@ class MyInsightsWidget(QDialog):
         self.setWindowTitle('Window1')
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
 
+
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+        video_name = data["SpecificMoviePage"]
+        username = data["UserLoggedIn"]
+        video_id = get_movie_id(username,video_name)
+        print(video_id)
         # label1 = QLabel(value)
         self.button = QPushButton()
         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)

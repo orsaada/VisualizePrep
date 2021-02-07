@@ -42,10 +42,3 @@ def export_json_to_file(json_file, future_filename):  # export json file
     with open(future_filename+'.json', 'w', encoding='utf-8') as f:
         json.dump(json_file, f, ensure_ascii=False, indent=4)
 
-
-def checkAPI():
-    res = get_info_json_from_video("88ee0b48d8")
-    print(res)
-
-
-checkAPI()

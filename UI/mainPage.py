@@ -5,10 +5,12 @@ from UI.InsightsWindow import MyInsightsWindow
 from UI.PageWindow import PageWindow
 from UI.mediaplayerex import MyMainWindow
 from UI.archiveWindow import MyArchive
+from UI.moviePage import MyMovie
 from BussinesLayer.Services.Login import log_in
 from BussinesLayer.Services.Register import registration
 import json
 import os
+
 
 # Register Page
 class MyRegister(PageWindow):
@@ -118,9 +120,11 @@ class MainWidg(QWidget):
                 with open('./../config.json', 'w') as f:
                     json.dump(data, f, indent=4)
                 self.cleanFields()
+
                 self.parent().goto("media")
             else:
                 self.pop_message(res)
+
 
     def gotoRegister(self):
         self.cleanFields()
@@ -137,7 +141,6 @@ class MainWidg(QWidget):
         formLayout.addRow("Login Page", QLabel())
         formLayout.addRow("Username:", self.username)
         formLayout.addRow("Password:", self.password)
-
         # Add a button login
         self.btnLoginBox = QPushButton()
         self.btnLoginBox.setText('Login')
@@ -162,12 +165,13 @@ class Window(QtWidgets.QMainWindow):
         self.setCentralWidget(self.stacked_widget)
 
         self.m_pages = {}
-
         self.register(MainWindow(), "main")
         self.register(MyMainWindow(), "media")
         self.register(MyRegister(), "register")
         self.register(MyArchive(), "archive")
-        self.register(MyInsightsWindow(), "insights")
+        self.register(MyMovie(), 'movie')
+        self.register(MyInsightsWindow() ,'insights')
+
         self.goto("main")
 
     def register(self, widget, name):
@@ -180,6 +184,14 @@ class Window(QtWidgets.QMainWindow):
     def goto(self, name):
         if name in self.m_pages:
             widget = self.m_pages[name]
+            if name == 'archive':
+                widget = MyArchive()
+                self.stacked_widget.addWidget(widget)
+                widget.gotoSignal.connect(self.goto)
+            elif name == 'movie':
+                widget = MyMovie()
+                self.stacked_widget.addWidget(widget)
+                widget.gotoSignal.connect(self.goto)
             self.stacked_widget.setCurrentWidget(widget)
             self.setWindowTitle(widget.windowTitle())
 
