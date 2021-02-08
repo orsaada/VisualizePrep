@@ -105,8 +105,6 @@ def create_csvs():
                 df = df.append(y, ignore_index=True)
         df.to_csv('{}.csv'.format(x))
 # os.remove("/tmp/<file_name>.txt")
-
-
 #try
 if __name__ == '__main__':
     # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
