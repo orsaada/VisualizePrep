@@ -1,6 +1,6 @@
 import json
-import pandas as pd
-# attr - keywords(most talked), faces, emotions .....
+
+
 def extract_attribute(json_file_path, attr):
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
@@ -15,6 +15,42 @@ def extract_actors(json_file_path):
 def extract_emotions(json_file_path):
     return extract_attribute(json_file_path, "emotions")
 
+#Nati
+def extract_shots(json_file_path):
+    json_file = open(json_file_path, encoding="utf-8")
+    data = json.load(json_file)
+    shots = []
+    for i in data["videos"][0]["insights"]["shots"]:
+        shots.append((i["instances"][0]["start"], i["instances"][0]["end"]))
+    return shots
+#Nati
+def extract_speakers_list_from_transcript_data(json_file_path):
+    json_file = open(json_file_path, encoding="utf-8")
+    data = json.load(json_file)
+    speakers = []
+    for transcript_data in data["videos"][0]["insights"]["transcript"]:
+        if transcript_data["text"] != "":
+            speaker_name = "Speaker #"+ str(transcript_data["speakerId"])
+            start = transcript_data["instances"][0]["start"]
+            end = transcript_data["instances"][0]["end"]
+            speakers.append((start,end,speaker_name))
+        #else:
+         #   print( transcript_data["text"])
+    #print(sorted(speakers))
+    return  sorted(speakers)
+#extract_speakers_list_from_transcript_data("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json")
+
+#Nati
+def extract_speakers_list(json_file_path):
+    json_file = open(json_file_path, encoding="utf-8")
+    data = json.load(json_file)
+    speakers = []
+    for speaker_instances_data in data["videos"][0]["insights"]["speakers"]:
+        speaker_name = speaker_instances_data["name"]
+        for sid in speaker_instances_data["instances"]:
+            speakers.append((sid["start"],sid["end"],speaker_name))
+
+    return  sorted(speakers)
 
 def get_actor_appearances(json_file_path, actor_name):
     faces = extract_actors(json_file_path)
@@ -28,95 +64,3 @@ def get_specific_emotion_appearances(json_file_path, emotion_type):
     for emotion in emotions:
         if emotion["name"] == emotion_type:
             return emotion["instances"]
-
-def numpy_fix():
-    pass
-
-
-# transcript
-def transcript(json_file_path):
-    return extract_attribute(json_file_path, "transcript")
-
-# ocr
-def ocr():
-    pass
-# keywords
-def keywords():
-    pass
-# topics
-def topics():
-    pass
-# faces
-def faces():
-    pass
-# labels
-def labels():
-    pass
-# scenes
-def scenes():
-    pass
-# shots
-def shots():
-    pass
-# brands
-def brands():
-    pass
-# namedLocations
-def namedLocations():
-    pass
-# namedPeople
-def namedPeople():
-    pass
-# audioEffects
-def audioEffects():
-    pass
-# sentiments
-def sentiments():
-    pass
-# visualContentModeration
-def visualContentModeration():
-    pass
-# blocks
-def blocks():
-    pass
-# framePatterns
-def framePatterns():
-    pass
-# speakers
-def speakers():
-    pass
-# textualContentModeration
-def textualContentModeration():
-    pass
-# statistics
-def statistics():
-    pass
-
-def create_csvs():
-    json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
-    json_file = open(json_file_path, encoding="utf-8")
-    parsed_json = json.load(json_file)
-    result = parsed_json["videos"][0]["insights"]
-    for x in result:
-        category = parsed_json["videos"][0]["insights"][x]
-        df = pd.DataFrame()
-        for y in category:
-            if not isinstance(y, str):
-                df = df.append(y, ignore_index=True)
-        df.to_csv('{}.csv'.format(x))
-# os.remove("/tmp/<file_name>.txt")
-
-
-#try
-if __name__ == '__main__':
-    # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
-    # json_file = open("../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json", encoding="utf-8")
-    # parsed_json = json.load(json_file)
-    # result = transcript(json_str)
-    # data = {'row_1': [3, 2, 1, 0], 'row_2': ['a', 'b', 'c', 'd']}
-    # df = pd.DataFrame()
-    # for x in result:
-    #     df = df.append(x, ignore_index=True)
-    # print(df)
-    # df.to_csv('transcript.csv')
-    create_csvs()
