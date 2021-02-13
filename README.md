@@ -1,1 +1,13 @@
 
+
+please install the requirments before running the project by the command:
+
+
+
+open a user on  Microsoft Video Indexer on the link:
+https://www.videoindexer.ai/
+and set the data to the project
+
+
+enjoy a media player with video insights, graphs and see the results of improvment of video analysis
+
