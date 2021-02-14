@@ -105,6 +105,18 @@ def create_csvs():
                 df = df.append(y, ignore_index=True)
         df.to_csv('{}.csv'.format(x))
 # os.remove("/tmp/<file_name>.txt")
+
+def delete_csv():
+    import os
+    json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
+    json_file = open(json_file_path, encoding="utf-8")
+    parsed_json = json.load(json_file)
+    result = parsed_json["videos"][0]["insights"]
+    for x in result:
+      os.remove("{}.csv".format(x))
+
+
+
 #try
 if __name__ == '__main__':
     # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
@@ -118,3 +130,6 @@ if __name__ == '__main__':
     # print(df)
     # df.to_csv('transcript.csv')
     create_csvs()
+    delete_csv()
+
+

@@ -1,29 +1,40 @@
+import sys
 from pathlib import Path
 
-from PyQt5 import QtWidgets
-from datetime import datetime
-from pyqtgraph import PlotWidget, plot
-import pyqtgraph as pg
-import sys  # We need sys so that we can pass argv to QApplication
-import os
-import pandas as pd
 import matplotlib.pyplot as plt
-import numpy as np
-
+from PyQt5.QtChart import QChartView
+from PyQt5.QtWidgets import QVBoxLayout, QMainWindow
+from matplotlib import rcParams
+import matplotlib.ticker as mticker
 
 from BussinesLayer.Data.data import extract_speakers
 
-
-class MainWindow(QtWidgets.QMainWindow):
-
-    def __init__(self, *args, **kwargs):
-        super(MainWindow, self).__init__(*args, **kwargs)
-
-        self.graphWidget = pg.PlotWidget()
-        self.setCentralWidget(self.graphWidget)
+# matplotlib.use('Qt5Agg')
+from PyQt5 import QtCore, QtWidgets
+import pandas as pd
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
+from matplotlib.figure import Figure
 
 
-        # plot colab
+class MplCanvas(FigureCanvasQTAgg):
+
+    def __init__(self, parent=None, width=5, height=4, dpi=100):
+        fig = Figure(figsize=(width, height), dpi=dpi)
+        self.axes = fig.add_subplot(111)
+        super(MplCanvas, self).__init__(fig)
+
+
+class SpeakersGraph(QMainWindow):
+
+    def __init__(self):
+        super().__init__()
+        self.resize(1000,1000)
+        self.sc = self.init_chart(1)
+        self.setCentralWidget(self.sc)
+        self.show()
+
+    def init_chart(self, path):
+        # changes
         base_path = Path(__file__).parent.parent
         file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
         speakers = extract_speakers(file_path)
@@ -54,31 +65,19 @@ class MainWindow(QtWidgets.QMainWindow):
         # print(by_instance)
         plt.plot(by_instance['instance'], by_instance['range'])
         plt.xticks(rotation=90)
-        # print(by_instance['range'])
-        # print(np.array(['1','2','3']).astype(np.float))
-        # # a = np.array(by_instance['instance']).astype(np.float)
-        # b = np.array(by_instance['range']).astype(np.float)
-        # self.graphWidget.plot(list(by_instance['instance']), b)
-        print()
 
-
-
-
-
-        # working plot
-        hour = [1,2,3,4,5,6,7,8,9,10]
-        temperature = [30,32,34,32,33,31,29,32,35,45]
-
-        # plot data: x, y values
-        self.graphWidget.plot(hour, temperature)
-
-
-def main():
-    app = QtWidgets.QApplication(sys.argv)
-    main = MainWindow()
-    main.show()
-    sys.exit(app.exec_())
+        # Create the maptlotlib FigureCanvas object,
+        # which defines a single set of axes as self.axes.
+        sc = MplCanvas(self, width=5, height=4, dpi=100)
+        sc.axes.plot(by_instance['instance'], by_instance['range'])
+        sc.axes.set_xticks(by_instance['instance'])
+        sc.axes.set_xticklabels(by_instance['instance'], rotation=45, rotation_mode="default")
+        sc.axes.set_xlabel('named People')
+        sc.axes.set_ylabel('time spoke')
+        return sc
 
 
 if __name__ == '__main__':
-    main()
+    app = QtWidgets.QApplication(sys.argv)
+    w = SpeakersGraph()
+    app.exec_()

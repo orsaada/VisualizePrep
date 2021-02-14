@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import QDialog, QStyle, QLabel, QPushButton, QSizePolicy, Q
 
 from BussinesLayer.Services.VideoInsights import get_movie_id
 from UI.Graphs.ChartEmotion import ChartEmotions
+from UI.Graphs.speakersGraph import SpeakersGraph
 from UI.PageWindow import PageWindow
 from UI.dataAsTable import myWindow
 
@@ -106,7 +107,13 @@ class MyInsightsWidget(QDialog):
         layoutH.addWidget(combo)
         layoutH.addWidget(self.filter_table_button)
         layoutH.addWidget(self.showGraphButton)
-        widget = ChartEmotions()
+
+        # graphs
+        # widget = ChartEmotions()
+        widget = SpeakersGraph()
+
+
+
 
         layoutH.addWidget(widget)
         #layoutH.addWidget(chartClass.chartView)
