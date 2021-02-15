@@ -192,6 +192,10 @@ class Window(QtWidgets.QMainWindow):
                 widget = MyMovie()
                 self.stacked_widget.addWidget(widget)
                 widget.gotoSignal.connect(self.goto)
+            elif name == 'insights':
+                widget = MyInsightsWindow()
+                self.stacked_widget.addWidget(widget)
+                widget.gotoSignal.connect(self.goto)
             self.stacked_widget.setCurrentWidget(widget)
             self.setWindowTitle(widget.windowTitle())
 

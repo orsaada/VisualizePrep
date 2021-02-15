@@ -1,13 +1,14 @@
+import json
 import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
 from PyQt5.QtChart import QChartView
-from PyQt5.QtWidgets import QVBoxLayout, QMainWindow
+from PyQt5.QtWidgets import QVBoxLayout, QMainWindow, QGridLayout
 from matplotlib import rcParams
 import matplotlib.ticker as mticker
 
-from BussinesLayer.Data.data import extract_speakers
+from BussinesLayer.Data.data import extract_speakers, get_attibute_json
 
 # matplotlib.use('Qt5Agg')
 from PyQt5 import QtCore, QtWidgets
@@ -30,26 +31,25 @@ class SpeakersGraph(QMainWindow):
         super().__init__()
         self.resize(1000,1000)
         self.sc = self.init_chart(1)
+        # self.setContentsMargins(20,20,20,20)
+
         self.setCentralWidget(self.sc)
+
+        # grid = QGridLayout()
+        # grid.setSpacing(10)
+        # grid.addWidget(self.sc, 1, 1)
+        # self.setLayout(grid)
         self.show()
 
     def init_chart(self, path):
         # changes
-        base_path = Path(__file__).parent.parent
-        file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
-        speakers = extract_speakers(file_path)
-        df = pd.DataFrame()
-        for y in speakers:
-            if not isinstance(y, str):
-                df = df.append(y, ignore_index=True)
-            else:
-                pass
-        instances_arr = df
-        cp_df = instances_arr.copy()
-        print(cp_df)
+        df = get_attibute_json("speakers")
+        # instances_arr = df
+        # cp_df = instances_arr.copy()
+        # print(cp_df)
 
         by_instance = pd.DataFrame(columns=['instance', 'start', 'end'])
-        for instances, name in zip(cp_df['instances'], cp_df['name']):
+        for instances, name in zip(df['instances'], df['name']):
             for y in instances:
                 by_instance = by_instance.append({'instance': name, 'start': y['start'],
                                                   'end': y['end']}, ignore_index=True)
@@ -68,12 +68,14 @@ class SpeakersGraph(QMainWindow):
 
         # Create the maptlotlib FigureCanvas object,
         # which defines a single set of axes as self.axes.
-        sc = MplCanvas(self, width=5, height=4, dpi=100)
+        sc = MplCanvas(self, width=5, height=5, dpi=100)
         sc.axes.plot(by_instance['instance'], by_instance['range'])
         sc.axes.set_xticks(by_instance['instance'])
         sc.axes.set_xticklabels(by_instance['instance'], rotation=45, rotation_mode="default")
         sc.axes.set_xlabel('named People')
         sc.axes.set_ylabel('time spoke')
+        sc.axes.title.set_text('time spoke per named people')
+
         return sc
 
 

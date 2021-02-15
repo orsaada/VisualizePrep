@@ -19,6 +19,7 @@ class MyInsightsWindow(PageWindow):
         self.setWindowTitle("MyInsightsWindow")
         self.setCentralWidget(self.form_widget)
 
+
 class MyInsightsWidget(QDialog):
     def __init__(self, parent=None):
         super().__init__()
@@ -32,7 +33,7 @@ class MyInsightsWidget(QDialog):
         video_name = data["SpecificMoviePage"]
         username = data["UserLoggedIn"]
         video_id = get_movie_id(username,video_name)
-        print(video_id)
+        # print(video_id)
         # label1 = QLabel(value)
         self.button = QPushButton()
         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -73,7 +74,7 @@ class MyInsightsWidget(QDialog):
         #filter as table button
         self.filter_table_window = myWindow()
         self.filter_table_button = QPushButton("Filter as table")
-        self.filter_table_button.clicked.connect(self.filterAsTableButton)
+        self.filter_table_button.clicked.connect(self.filterAsTable)
 
         #show graph
         self.showGraphButton = QPushButton("Show Graph")
@@ -111,7 +112,7 @@ class MyInsightsWidget(QDialog):
         # graphs
         # widget = ChartEmotions()
         widget = SpeakersGraph()
-
+        self.graphs = {"speakers": SpeakersGraph, "emotions": ChartEmotions}
 
 
 
@@ -125,6 +126,7 @@ class MyInsightsWidget(QDialog):
         # self.close()
 
     def onChanged(self, text):
+        self.graphs["emotions"]()
         self.qlabel.setText(text)
         self.qlabel.adjustSize()
 
@@ -175,7 +177,7 @@ class MyInsightsWidget(QDialog):
         # WHICH WIDGET IS ON THE FRONT
         self.front_wid = 1
 
-    def filterAsTableButton(self):
+    def filterAsTable(self):
         self.filter_table_window.show()
 
     def exportJson(self):
@@ -189,6 +191,13 @@ class MyInsightsWidget(QDialog):
 
     def goToArchive(self):
         self.parent().goto('archive')
+
+    # replace widget
+    def update(self):
+        self.layout().removeWidget(self.child)
+        self.child.setParent(None)
+        self.child = QLabel("bar", self)
+        self.layout().addWidget(self.child)
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

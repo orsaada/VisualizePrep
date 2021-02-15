@@ -73,8 +73,10 @@ class KeywordGraph(QMainWindow):
         sc.axes.set_xticks(langs)
         sc.axes.set_xticklabels(langs, rotation=90, rotation_mode="default")
 
-        sc.axes.set_xlabel('named People')
-        sc.axes.set_ylabel('time spoke')
+        sc.axes.set_xlabel('keywords')
+        sc.axes.set_ylabel('instances')
+        sc.axes.title.set_text('number of instances per keyword')
+
         return sc
 
 

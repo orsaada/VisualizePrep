@@ -217,6 +217,7 @@ class MediaWindow(QWidget):
     #             self.mediaPlayer.stop()
 
     def btn_clk(self):
+        self.mediaPlayer.stop()
         self.parent().goto('insights')
 
     def open_file(self):

@@ -1,13 +1,31 @@
 import json
+from pathlib import Path
+
 import pandas as pd
 
 
 def extract_attribute(json_file_path, attr):
+    print(json_file_path)
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
     result = parsed_json["videos"][0]["insights"][attr]
     return result
 
+def get_attibute_json(attr):
+    base_path = Path(__file__).parent.parent.parent
+    with open((base_path / 'config.json').resolve(), 'r') as f:
+        data = json.load(f)
+    movie_name = data["SpecificMoviePage"]
+    movie_name = movie_name.replace(' ', '_')
+    file_path = (base_path / "BussinesLayer/Algorithms/Visualize/vi_json/{}.json".format(movie_name)).resolve()
+    attribute_json = extract_attribute(file_path, attr)
+    df = pd.DataFrame()
+    for y in attribute_json:
+        if not isinstance(y, str):
+            df = df.append(y, ignore_index=True)
+        else:
+            pass
+    return df
 
 def extract_attribute_to_df(json_file_path, attr):
     attribute = extract_attribute(json_file_path, attr)

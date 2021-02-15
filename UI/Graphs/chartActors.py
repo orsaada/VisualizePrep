@@ -24,7 +24,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
 
         # plot colab
-        base_path = Path(__file__).parent.parent
+        base_path = Path(__file__).parent.parent.parent
         file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
         speakers = extract_speakers(file_path)
         df = pd.DataFrame()

@@ -58,6 +58,8 @@ class NamedPeopleGraph(QMainWindow):
         sc.axes.tick_params(labelbottom=False)
         sc.axes.set_xlabel('named People')
         sc.axes.set_ylabel('confidence')
+        sc.axes.title.set_text('confidence per named people')
+
         return sc
 
 

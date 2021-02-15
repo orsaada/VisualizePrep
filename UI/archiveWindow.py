@@ -26,7 +26,9 @@ class MyArchiveWidget(QWidget):
         os.remove('./../config.json')
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
-        self.parent().goto("movie")
+        # changed
+        self.parent().goto("insights")
+        # self.parent().goto("movie")
 
     def __init__(self):
         super().__init__()

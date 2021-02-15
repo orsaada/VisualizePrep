@@ -81,6 +81,8 @@ class KeywordGraph(QMainWindow):
 
         sc.axes.set_xlabel('locations')
         sc.axes.set_ylabel('appearances in shots')
+        sc.axes.title.set_text('location per shots')
+
         return sc
 
 
