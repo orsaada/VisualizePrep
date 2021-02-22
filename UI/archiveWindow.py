@@ -27,8 +27,8 @@ class MyArchiveWidget(QWidget):
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
         # changed
-        self.parent().goto("insights")
-        # self.parent().goto("movie")
+        # self.parent().goto("insights")
+        self.parent().goto("movie")
 
     def __init__(self):
         super().__init__()
@@ -38,7 +38,7 @@ class MyArchiveWidget(QWidget):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
         name = data["UserLoggedIn"]
-        title = "                                                           Archive Info Movies Of: " + name
+        title = "Archive Info Movies Of: " + name
         formLayout.addRow(title, QLabel())
         my_videos = get_my_uploaded_videos(name)
         buttons = []

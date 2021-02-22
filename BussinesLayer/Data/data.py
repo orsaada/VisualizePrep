@@ -1,7 +1,10 @@
 import json
 from pathlib import Path
+from time import mktime
 
+import dateutil.parser
 import pandas as pd
+from PyQt5.QtChart import QBarSet
 
 
 def extract_attribute(json_file_path, attr):
@@ -11,7 +14,7 @@ def extract_attribute(json_file_path, attr):
     result = parsed_json["videos"][0]["insights"][attr]
     return result
 
-def get_attibute_json(attr):
+def extract_attribute_to_df(attr):
     base_path = Path(__file__).parent.parent.parent
     with open((base_path / 'config.json').resolve(), 'r') as f:
         data = json.load(f)
@@ -27,15 +30,16 @@ def get_attibute_json(attr):
             pass
     return df
 
-def extract_attribute_to_df(json_file_path, attr):
-    attribute = extract_attribute(json_file_path, attr)
-    df1 = pd.DataFrame()
-    for y in attribute:
-        if not isinstance(y, str):
-            df1 = df1.append(y, ignore_index=True)
-        else:
-            pass
-    return df1
+
+# def extract_attribute_to_df(json_file_path, attr):
+#     attribute = extract_attribute(json_file_path, attr)
+#     df1 = pd.DataFrame()
+#     for y in attribute:
+#         if not isinstance(y, str):
+#             df1 = df1.append(y, ignore_index=True)
+#         else:
+#             pass
+#     return df1
 
 
 def extract_actors(json_file_path):
@@ -146,61 +150,68 @@ def numpy_fix():
 # transcript
 def transcript(json_file_path):
     return extract_attribute(json_file_path, "transcript")
+#
+# # ocr
+# def ocr():
+#     pass
+# # keywords
+# def keywords():
+#     pass
+# # topics
+# def topics():
+#     pass
+# # faces
+# def faces():
+#     pass
+# # labels
+# def labels():
+#     pass
+# # scenes
+# def scenes():
+#     pass
+# # shots
+# def shots():
+#     pass
+# # brands
+# def brands():
+#     pass
+# # namedLocations
+# def namedLocations():
+#     pass
+# # namedPeople
+# def namedPeople():
+#     pass
+# # audioEffects
+# def audioEffects():
+#     pass
+# # sentiments
+# def sentiments():
+#     pass
+# # visualContentModeration
+# def visualContentModeration():
+#     pass
+# # blocks
+# def blocks():
+#     pass
+# # framePatterns
+# def framePatterns():
+#     pass
+# # speakers
+# def speakers():
+#     pass
+# # textualContentModeration
+# def textualContentModeration():
+#     pass
+# # statistics
+# def statistics():
+#     pass
 
-# ocr
-def ocr():
-    pass
-# keywords
-def keywords():
-    pass
-# topics
-def topics():
-    pass
-# faces
-def faces():
-    pass
-# labels
-def labels():
-    pass
-# scenes
-def scenes():
-    pass
-# shots
-def shots():
-    pass
-# brands
-def brands():
-    pass
-# namedLocations
-def namedLocations():
-    pass
-# namedPeople
-def namedPeople():
-    pass
-# audioEffects
-def audioEffects():
-    pass
-# sentiments
-def sentiments():
-    pass
-# visualContentModeration
-def visualContentModeration():
-    pass
-# blocks
-def blocks():
-    pass
-# framePatterns
-def framePatterns():
-    pass
-# speakers
-def speakers():
-    pass
-# textualContentModeration
-def textualContentModeration():
-    pass
-# statistics
-def statistics():
-    pass
+def format_time(str):
+    return dateutil.parser.parse(str)
+    # return datetime.strptime(str, "%H:%M:%S.%f")
+
+def to_integer(dt_time):
+    return 10000*dt_time.year + 100*dt_time.month + dt_time.day
 
 def create_csvs():
     json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
@@ -215,6 +226,7 @@ def create_csvs():
                 df = df.append(y, ignore_index=True)
         df.to_csv('{}.csv'.format(x))
 
+
 def delete_csv():
     import os
     json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
@@ -222,11 +234,52 @@ def delete_csv():
     parsed_json = json.load(json_file)
     result = parsed_json["videos"][0]["insights"]
     for x in result:
-      os.remove("{}.csv".format(x))
+        os.remove("{}.csv".format(x))
 
 
+def manage_config():
+    base_path = Path(__file__).parent.parent.parent
+    with open((base_path / 'config.json').resolve(), 'r') as f:
+        data = json.load(f)
+    movie_name = data["SpecificMoviePage"]
+    movie_name = movie_name.replace(' ', '_')
+    file_path = (base_path / "BussinesLayer/Algorithms/Visualize/vi_json/{}.json".format(movie_name)).resolve()
+    return file_path
 
-#try
+
+def analyze_emotions_graph():
+    sets = []
+    ranges = []
+    file_path = manage_config()
+    emotions = extract_emotions(file_path)
+    for idx2, i in enumerate(emotions):
+        sets.append(QBarSet(i['type']))
+        sum_time = 0
+        for idx, val in enumerate(i['instances']):
+            range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
+            sum_time = sum_time + range_time
+        ranges.append(sum_time)
+    return sets,ranges
+
+
+def analyze_keywords_graph():
+    file_path = manage_config()
+    keywords = extract_keywords(file_path)
+    df1 = pd.DataFrame()
+    for y in keywords:
+        if not isinstance(y, str):
+            df1 = df1.append(y, ignore_index=True)
+        else:
+            pass
+    print(df1)
+    number_of_instances = []
+    for x in df1.instances:
+        number_of_instances.append(len(x))
+    df1['number_of_instances'] = number_of_instances
+    langs = df1['text']  # ['C', 'C++', 'Java', 'Python', 'PHP']
+    students = df1['number_of_instances']  # [23,17,35,29,12]
+    return langs, students
+
 if __name__ == '__main__':
     # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
     # json_file = open("../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json", encoding="utf-8")

@@ -27,7 +27,7 @@ class MplCanvas(FigureCanvasQTAgg):
         super(MplCanvas, self).__init__(fig)
 
 
-class KeywordGraph(QMainWindow):
+class shotsGraph(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -35,7 +35,7 @@ class KeywordGraph(QMainWindow):
         self.sc = self.init_chart(1)
         self.setCentralWidget(self.sc)
 
-        self.show()
+        # self.show()
 
     def init_chart(self, path):
         # changes
@@ -64,12 +64,12 @@ class KeywordGraph(QMainWindow):
             # for a in ar:
             #   print(type(a))
             #   counter.update(a)
-        print(counter)
+        # print(counter)
         plt.bar(counter.keys(), counter.values())
         plt.xticks(rotation=90)
 
-        print(counter.keys())
-        print(counter.values())
+        # print(counter.keys())
+        # print(counter.values())
         x = list(counter.keys())
         y = list(counter.values())
         # Create the maptlotlib FigureCanvas object,
@@ -88,5 +88,5 @@ class KeywordGraph(QMainWindow):
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
-    w = KeywordGraph()
+    w = shotsGraph()
     app.exec_()

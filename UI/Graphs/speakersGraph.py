@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QMainWindow, QGridLayout
 from matplotlib import rcParams
 import matplotlib.ticker as mticker
 
-from BussinesLayer.Data.data import extract_speakers, get_attibute_json
+from BussinesLayer.Data.data import extract_speakers, extract_attribute_to_df
 
 # matplotlib.use('Qt5Agg')
 from PyQt5 import QtCore, QtWidgets
@@ -35,19 +35,9 @@ class SpeakersGraph(QMainWindow):
 
         self.setCentralWidget(self.sc)
 
-        # grid = QGridLayout()
-        # grid.setSpacing(10)
-        # grid.addWidget(self.sc, 1, 1)
-        # self.setLayout(grid)
-        self.show()
-
     def init_chart(self, path):
         # changes
-        df = get_attibute_json("speakers")
-        # instances_arr = df
-        # cp_df = instances_arr.copy()
-        # print(cp_df)
-
+        df = extract_attribute_to_df("speakers")
         by_instance = pd.DataFrame(columns=['instance', 'start', 'end'])
         for instances, name in zip(df['instances'], df['name']):
             for y in instances:

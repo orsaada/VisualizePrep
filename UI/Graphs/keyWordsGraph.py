@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QMainWindow
 from matplotlib import rcParams
 import matplotlib.ticker as mticker
 
-from BussinesLayer.Data.data import extract_speakers, extract_keywords
+from BussinesLayer.Data.data import extract_speakers, extract_keywords, analyze_keywords_graph
 
 # matplotlib.use('Qt5Agg')
 from PyQt5 import QtCore, QtWidgets
@@ -31,40 +31,10 @@ class KeywordGraph(QMainWindow):
         self.resize(1000,1000)
         self.sc = self.init_chart(1)
         self.setCentralWidget(self.sc)
-
-        self.show()
+        # self.show()
 
     def init_chart(self, path):
-        # changes
-        base_path = Path(__file__).parent.parent
-        file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
-        keywords = extract_keywords(file_path)
-        df1 = pd.DataFrame()
-        for y in keywords:
-            if not isinstance(y, str):
-                df1 = df1.append(y, ignore_index=True)
-            else:
-                pass
-        print(df1)
-        number_of_instances = []
-        for x in df1.instances:
-            number_of_instances.append(len(x))
-        df1['number_of_instances'] = number_of_instances
-
-        import matplotlib.pyplot as plt
-        fig = plt.figure()
-        ax = fig.add_axes([0, 0, 1, 1])
-        langs = df1['text']  # ['C', 'C++', 'Java', 'Python', 'PHP']
-        students = df1['number_of_instances']  # [23,17,35,29,12]
-        ax.bar(langs, students)
-        # ax.set_xticks(ax.get_xticks()[::2])
-        # plt.xticks(x[::5],  rotation='vertical')
-        # plt.margins(0.2)
-        plt.xticks(rotation=90)
-
-        plt.show()
-
-
+        langs, students = analyze_keywords_graph()
 
         # Create the maptlotlib FigureCanvas object,
         # which defines a single set of axes as self.axes.
@@ -74,7 +44,7 @@ class KeywordGraph(QMainWindow):
         sc.axes.set_xticklabels(langs, rotation=90, rotation_mode="default")
 
         sc.axes.set_xlabel('keywords')
-        sc.axes.set_ylabel('instances')
+        sc.axes.set_ylabel('number of instances')
         sc.axes.title.set_text('number of instances per keyword')
 
         return sc

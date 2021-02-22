@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow)
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.Qt import Qt
 from datetime import datetime
-from BussinesLayer.Data.data import extract_emotions
+from BussinesLayer.Data.data import extract_emotions, manage_config, analyze_emotions_graph
 
 
 def format_time(str):
@@ -25,51 +25,34 @@ class ChartEmotions(QMainWindow):
     def __init__(self):
         super().__init__()
         self.resize(800, 600)
-
+        file_path = manage_config()
+        self.emotions = extract_emotions(file_path)
+        self.df = pd.DataFrame(self.emotions)
         chart = self.init_chart(' ')
         self.chartView = QChartView(chart)
         self.setCentralWidget(self.chartView)
 
     def init_chart(self, path):
-        base_path = Path(__file__).parent.parent.parent
-        with open((base_path / 'config.json').resolve(), 'r') as f:
-            data = json.load(f)
-        movie_name = data["SpecificMoviePage"]
-        movie_name = movie_name.replace(' ', '_')
-        file_path = (base_path / "BussinesLayer/Algorithms/Visualize/vi_json/{}.json".format(movie_name)).resolve()
-        emotions = extract_emotions(file_path)
-        df = pd.DataFrame(emotions)
-        sets = []
-        ranges = []
-        for idx2, i in enumerate(emotions):
-            sets.append(QBarSet(i['type']))
-            sum_time = 0
-            for idx, val in enumerate(i['instances']):
-                range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
-                # print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
-                sum_time = sum_time + range_time
-                # format_time(val['end'])-format_time(val['start'])
-            ranges.append(sum_time)
+        sets, ranges = analyze_emotions_graph()
+        # sets = []
+        # ranges = []
+        # for idx2, i in enumerate(self.emotions):
+        #     sets.append(QBarSet(i['type']))
+        #     sum_time = 0
+        #     for idx, val in enumerate(i['instances']):
+        #         range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
+        #         # print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
+        #         sum_time = sum_time + range_time
+        #         # format_time(val['end'])-format_time(val['start'])
+        #     ranges.append(sum_time)
+
         set0 = sets[0]
         set1 = sets[1]
         set2 = sets[2]
         set3 = sets[3]
         print(set3)
         print(ranges[3])
-        # 1:29:37.79 regex
-        # re.search("", "%H:%m:%S")
-        x = datetime.strptime("1:29:37.79", "%H:%M:%S.%f")
-        # print(x)
-        # x = time.strptime("30 Nov 00", "%d %b %y")
-        # print(x)
-        # print(ranges)
-        #
-        # set0 = QBarSet('X0')
-        # set1 = QBarSet('X1')
-        # set2 = QBarSet('X2')
-        # set3 = QBarSet('X3')
-        # set4 = QBarSet('X4')
-        # print([random.randint(0, 10) for i in range(6)])
+        # x = datetime.strptime("1:29:37.79", "%H:%M:%S.%f")
         set0.append(ranges[0])
         set1.append(ranges[1])
         set2.append(ranges[2])
@@ -101,6 +84,9 @@ class ChartEmotions(QMainWindow):
         chart.legend().setVisible(True)
         chart.legend().setAlignment(Qt.AlignBottom)
         return chart
+
+    def get_df(self):
+        return self.df
 
 
 if __name__ == '__main__':

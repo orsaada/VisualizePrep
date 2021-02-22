@@ -3,10 +3,15 @@ import json
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog, QStyle, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QComboBox, QHBoxLayout, \
-    QWidget, QStackedLayout, QApplication
+    QWidget, QStackedLayout, QApplication, QTableView
 
 from BussinesLayer.Services.VideoInsights import get_movie_id
+from UI.Graphs import pandasWindow
+from UI.Graphs.pandasWindow import pandasModel
+from UI.Graphs.shotsGraph import shotsGraph
 from UI.Graphs.ChartEmotion import ChartEmotions
+from UI.Graphs.keyWordsGraph import KeywordGraph
+from UI.Graphs.namedPeopleGraph import NamedPeopleGraph
 from UI.Graphs.speakersGraph import SpeakersGraph
 from UI.PageWindow import PageWindow
 from UI.dataAsTable import myWindow
@@ -18,6 +23,7 @@ class MyInsightsWindow(PageWindow):
         self.form_widget = MyInsightsWidget()
         self.setWindowTitle("MyInsightsWindow")
         self.setCentralWidget(self.form_widget)
+        # self.form_widget.update()
 
 
 class MyInsightsWidget(QDialog):
@@ -43,54 +49,65 @@ class MyInsightsWidget(QDialog):
         layoutV = QVBoxLayout()
 
         # close button
-        self.pushButton = QPushButton(self)
-        self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.pushButton.setText('Click me! (close page)')
-        self.pushButton.clicked.connect(self.goMainWindow)
-        layoutV.addWidget(self.pushButton)
+        # self.pushButton = QPushButton(self)
+        # self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        # self.pushButton.setText('Back To Media Window')
+        # self.pushButton.clicked.connect(self.goMainWindow)
+        # layoutV.addWidget(self.pushButton)
 
         # close button
         self.archiveButton = QPushButton(self)
         self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.archiveButton.setText('Go To Archive')
-        self.archiveButton.clicked.connect(self.goToArchive)
+        self.archiveButton.setText('Back To Movie')
+        self.archiveButton.clicked.connect(self.goToMovie)
         layoutV.addWidget(self.archiveButton)
 
         # export json
-        self.exportButton = QPushButton(self)
-        self.exportButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.exportButton.setText('export')
-        self.exportButton.clicked.connect(self.exportJson)
-        layoutV.addWidget(self.exportButton)
+        # self.exportButton = QPushButton(self)
+        # self.exportButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        # self.exportButton.setText('export')
+        # self.exportButton.clicked.connect(self.exportJson)
+        # layoutV.addWidget(self.exportButton)
 
         # show improvment
-        self.comparisonButton = QPushButton(self)
-        self.comparisonButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.comparisonButton.setText('comparison improvement')
-        self.comparisonButton.clicked.connect(self.compareImprovments)
-        layoutV.addWidget(self.comparisonButton)
+        # self.comparisonButton = QPushButton(self)
+        # self.comparisonButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        # self.comparisonButton.setText('comparison improvement')
+        # self.comparisonButton.clicked.connect(self.compareImprovments)
+        # layoutV.addWidget(self.comparisonButton)
 
 
         #filter as table button
-        self.filter_table_window = myWindow()
-        self.filter_table_button = QPushButton("Filter as table")
-        self.filter_table_button.clicked.connect(self.filterAsTable)
+        # self.filter_table_window = myWindow()
+        # self.filter_table_button = QPushButton("Filter as table")
+        # self.filter_table_button.clicked.connect(self.filterAsTable)
 
         #show graph
-        self.showGraphButton = QPushButton("Show Graph")
-        self.showGraphButton.clicked.connect(self.showGraph)
+        # self.showGraphButton = QPushButton("Show Graph")
+        # self.showGraphButton.clicked.connect(self.showGraph)
+
+
+
+
+
+
+        # graphs
+        # widget = ChartEmotions()
+        self.child = SpeakersGraph()
+        self.graphs = {"Speakers": SpeakersGraph,
+                       "Emotions": ChartEmotions,
+                       "Faces": NamedPeopleGraph,
+                       # "Sentiments": anotherGraph,
+                       "Keywords": KeywordGraph,
+                       "Shots": shotsGraph}
+        self.showingGraphName = list(self.graphs.keys())[0]
+        self.graphs = {k: v() for k, v in self.graphs.items()}
 
         #dropdown choosing
         combo = QComboBox(self)
-        combo.addItem("Emotions")
-        combo.addItem("Faces")
-        combo.addItem("Sentiments")
+        for k in self.graphs.keys():
+            combo.addItem(k)
         combo.move(50, 50)
-
-        #call chart
-        #chartClass = ChartEmotions()
-
-
         #not neccesrily need
         self.qlabel = QLabel(self)
         self.qlabel.move(50, 16)
@@ -102,23 +119,12 @@ class MyInsightsWidget(QDialog):
         self.button_switch()
 
         # layout and
-        layoutH = QHBoxLayout()
-        # layoutH.addWidget(label1)
-        # layoutH.addWidget(self.button)
-        layoutH.addWidget(combo)
-        layoutH.addWidget(self.filter_table_button)
-        layoutH.addWidget(self.showGraphButton)
-
-        # graphs
-        # widget = ChartEmotions()
-        widget = SpeakersGraph()
-        self.graphs = {"speakers": SpeakersGraph, "emotions": ChartEmotions}
-
-
-
-        layoutH.addWidget(widget)
-        #layoutH.addWidget(chartClass.chartView)
-        layoutV.addLayout(layoutH)
+        self.layoutH = QHBoxLayout()
+        self.layoutH.addWidget(combo)
+        # self.layoutH.addWidget(self.filter_table_button)
+        # self.layoutH.addWidget(self.showGraphButton)
+        self.layoutH.addWidget(self.child)
+        layoutV.addLayout(self.layoutH)
         self.setLayout(layoutV)
 
     def goMainWindow(self):
@@ -126,9 +132,13 @@ class MyInsightsWidget(QDialog):
         # self.close()
 
     def onChanged(self, text):
-        self.graphs["emotions"]()
-        self.qlabel.setText(text)
-        self.qlabel.adjustSize()
+        self.showingGraphName = text
+        self.layoutH.removeWidget(self.child)
+        self.child.setParent(None)
+        print(type(self.graphs[text]))
+        # self.child = self.graphs[text]()
+        self.child = self.graphs[text]
+        self.layoutH.addWidget(self.child)
 
     def switch_wids(self):
 
@@ -151,7 +161,6 @@ class MyInsightsWidget(QDialog):
         self.btn_switch = QPushButton("Switch")
         self.btn_switch.clicked.connect(self.switch_wids)
         self.btn_switch.setFixedSize(50, 50)
-        # self.btn_switch
 
         # 2 WIDGETS
         self.wid1 = QWidget()
@@ -177,27 +186,41 @@ class MyInsightsWidget(QDialog):
         # WHICH WIDGET IS ON THE FRONT
         self.front_wid = 1
 
-    def filterAsTable(self):
-        self.filter_table_window.show()
-
-    def exportJson(self):
-        pass
-
-    def compareImprovments(self):
-        pass
+    # def filterAsTable(self):
+    #     self.filter_table_window.show()
+    #
+    # def exportJson(self):
+    #     pass
+    #
+    # def compareImprovments(self):
+    #     pass
 
     def showGraph(self):
-        pass
+        df = self.graphs[self.showingGraphName].get_df()
+        model = pandasModel(df)
+        view = QTableView()
+        view.setModel(model)
+        view.resize(800, 600)
+        view.show()
 
     def goToArchive(self):
         self.parent().goto('archive')
 
+    def goToMovie(self):
+        self.parent().goto('movie')
+
+
     # replace widget
     def update(self):
-        self.layout().removeWidget(self.child)
+        # self.layout().removeWidget(self.child)
+        # self.child.setParent(None)
+        # self.child = QLabel("bar", self)
+        # self.layout().addWidget(self.child)
+        self.layoutH.removeWidget(self.child)
         self.child.setParent(None)
         self.child = QLabel("bar", self)
-        self.layout().addWidget(self.child)
+        self.layoutH.addWidget(self.child)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

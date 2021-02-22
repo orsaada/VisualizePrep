@@ -2,6 +2,8 @@
 #     QSlider, QStyle, QSizePolicy, QFileDialog
 import json
 import os
+import sys
+
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
 from PyQt5.QtGui import QIcon, QPalette
@@ -25,7 +27,6 @@ def find_diffrence_temp():
 
 
 class MyMainWindow(PageWindow):
-
     def __init__(self):
         super(MyMainWindow, self).__init__()
         self.form_widget = MediaWindow(self)
@@ -70,8 +71,8 @@ class MediaWindow(QWidget):
         openBtn.clicked.connect(self.open_file)
 
         #insights button
-        gotoInsights = QPushButton('Go to insights')
-        gotoInsights.clicked.connect(self.btn_clk)
+        # gotoInsights = QPushButton('Go to insights')
+        # gotoInsights.clicked.connect(self.btn_clk)
 
 
         # self.lineEdit1 = QLineEdit("Type here what you want to transfer for [Window1].", self)
@@ -114,10 +115,13 @@ class MediaWindow(QWidget):
         self.logoutButton.clicked.connect(self.goMainWindow)
 
         #diff button
-        self.diffButton = QPushButton(self)
-        self.diffButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.diffButton.setText('Diff!')
-        self.diffButton.clicked.connect(self.find_diffrence)
+        # self.diffButton = QPushButton(self)
+        # self.diffButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        # self.diffButton.setText('Diff!')
+        # self.diffButton.clicked.connect(self.fi        # self.diffButton = QPushButton(self)
+        #         # self.diffButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        #         # self.diffButton.setText('Diff!')
+        #         # self.diffButton.clicked.connect(self.find_diffrence)nd_diffrence)
 
         #archive button
         self.archiveButton = QPushButton(self)
@@ -139,10 +143,10 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(openBtn)
         hboxLayout.addWidget(self.playBtn)
         hboxLayout.addWidget(self.slider)
-        hboxLayout.addWidget(gotoInsights)
+        # hboxLayout.addWidget(gotoInsights)
         # hboxLayout.addWidget(self.positionLabel)
         hboxLayout.addWidget(self.logoutButton)
-        hboxLayout.addWidget(self.diffButton)
+        # hboxLayout.addWidget(self.diffButton)
         hboxLayout.addWidget(self.archiveButton)
         hboxLayout.addWidget(self.goBackButton)
 
@@ -216,9 +220,9 @@ class MediaWindow(QWidget):
     #         if position > self._end:
     #             self.mediaPlayer.stop()
 
-    def btn_clk(self):
-        self.mediaPlayer.stop()
-        self.parent().goto('insights')
+    # def btn_clk(self):
+    #     self.mediaPlayer.stop()
+    #     self.parent().goto('insights')
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
@@ -392,6 +396,7 @@ class Window1(QDialog):
         self.filter_table_window.show()
 
 
-# app = QApplication(sys.argv)
-# window = MediaWindow(1)
-# sys.exit(app.exec_())
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+    window = MediaWindow(1)
+    sys.exit(app.exec_())

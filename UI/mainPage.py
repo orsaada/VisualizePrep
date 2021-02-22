@@ -1,6 +1,7 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton
 
+from UI.ComparisonWindow import ComparisonWindow
 from UI.InsightsWindow import MyInsightsWindow
 from UI.PageWindow import PageWindow
 from UI.mediaplayerex import MyMainWindow
@@ -170,7 +171,8 @@ class Window(QtWidgets.QMainWindow):
         self.register(MyRegister(), "register")
         self.register(MyArchive(), "archive")
         self.register(MyMovie(), 'movie')
-        self.register(MyInsightsWindow() ,'insights')
+        self.register(MyInsightsWindow(), 'insights')
+        self.register(ComparisonWindow("wow"), 'comparison')
 
         self.goto("main")
 
@@ -204,6 +206,6 @@ if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
     w = Window()
-    w.resize(400, 400)
+    w.resize(800, 500)
     w.show()
     sys.exit(app.exec_())

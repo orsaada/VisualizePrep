@@ -1,4 +1,8 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton
+import sys
+
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
+
+from UI.Graphs.comparisonGraph import ComparisonGraph
 from UI.PageWindow import PageWindow
 import json
 
@@ -8,6 +12,7 @@ class MyMovie(PageWindow):
     def __init__(self):
         super().__init__()
         self.form_widget = MyMovieWidget()
+        self.resize(500, 500)
         self.setCentralWidget(self.form_widget)
 
 
@@ -32,9 +37,19 @@ class MyMovieWidget(QWidget):
         self.btnCharacters.setText('show Characters')
         self.btnKeywords = QPushButton()
         self.btnKeywords.setText('show Keywords')
+        self.insights = QPushButton()
+        self.insights.setText('insights graphs')
+        self.insights.clicked.connect(self.gotToInsights)
+        self.comparisonGraph = QPushButton()
+        self.comparisonGraph.setText('comparison Graph')
+        self.comparisonGraph.clicked.connect(self.compareGraph)
+
+
         dlgLayout.addWidget(self.btnEmotions)
         dlgLayout.addWidget(self.btnCharacters)
         dlgLayout.addWidget(self.btnKeywords)
+        dlgLayout.addWidget(self.insights)
+        dlgLayout.addWidget(self.comparisonGraph)
 
         self.btnBackBox = QPushButton()
         self.btnBackBox.setText('Back')
@@ -42,3 +57,18 @@ class MyMovieWidget(QWidget):
         dlgLayout.addWidget(self.btnBackBox)
         self.setLayout(dlgLayout)
 
+    def compareGraph(self):
+        self.parent().goto("comparison")
+        print(1)
+
+    def gotToInsights(self):
+        self.parent().goto("insights")
+
+
+if __name__ == '__main__':
+    app = QApplication(sys.argv)
+
+    window = MyMovie()
+    window.show()
+
+    sys.exit(app.exec_())

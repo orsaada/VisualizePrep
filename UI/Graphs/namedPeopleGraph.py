@@ -31,7 +31,7 @@ class NamedPeopleGraph(QMainWindow):
         self.resize(1000,1000)
         self.sc = self.init_chart(1)
         self.setCentralWidget(self.sc)
-        self.show()
+        # self.show()
 
     def init_chart(self, path):
         # changes
