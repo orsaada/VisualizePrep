@@ -209,7 +209,6 @@ class MyInsightsWidget(QDialog):
     def goToMovie(self):
         self.parent().goto('movie')
 
-
     # replace widget
     def update(self):
         # self.layout().removeWidget(self.child)

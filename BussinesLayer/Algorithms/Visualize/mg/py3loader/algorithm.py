@@ -18,31 +18,31 @@ def create_faces_list(json):
     return sorted(objects)
 
 
-# Nati
-def faces_in_same_shot_bool(shots,starttime_face_before, starttime_face_current,starttime_face_next) :
+def faces_in_same_shot_bool(shots, starttime_face_before, starttime_face_current, starttime_face_next):
     for (start, end) in shots:
-        if face_in_shot_bool(start,end,starttime_face_before) & face_in_shot_bool(start,end,starttime_face_current) and face_in_shot_bool(start,end,starttime_face_next):
+        if face_in_shot_bool(start, end, starttime_face_before) & face_in_shot_bool(start, end, starttime_face_current)\
+                and face_in_shot_bool(start, end, starttime_face_next):
             return True
     return False
 
 
-def face_in_shot_bool(starttime_shot,endtime_shot,starttime_face) :
+def face_in_shot_bool(starttime_shot, endtime_shot, starttime_face):
     return starttime_shot <= starttime_face < endtime_shot
 
 
-def get_previous_face(faces,curr_face_idx,curr_face_start_time):
+def get_previous_face(faces, curr_face_idx, curr_face_start_time):
     if curr_face_idx == 1:
         return faces[0]
-    (s,e,name) = faces[curr_face_idx -1]
+    (s, e, name) = faces[curr_face_idx - 1]
     if curr_face_start_time >= e:
-        return faces[curr_face_idx -1]
-    return get_previous_face(faces,curr_face_idx -1,curr_face_start_time)
+        return faces[curr_face_idx - 1]
+    return get_previous_face(faces, curr_face_idx -1, curr_face_start_time)
 
 
-def get_next_face(faces,curr_face_idx,curr_face_end_time):
-    if curr_face_idx == len(faces) - 2 :
+def get_next_face(faces, curr_face_idx, curr_face_end_time):
+    if curr_face_idx == len(faces) - 2:
         return faces[len(faces)-1]
-    (s,e,name) = faces[curr_face_idx +1]
+    (s, e, name) = faces[curr_face_idx + 1]
     if curr_face_end_time <= s:
         return faces[curr_face_idx +1]
     return get_next_face(faces,curr_face_idx +1,curr_face_end_time)
@@ -74,9 +74,9 @@ in other words , face recognition instance can be spreads on more than one shot
 
 
 def faces_shots_verification(shots, prev_face_end, cur_face_start, cur_face_end, next_face_start):
-    for (shot_start,shot_end) in shots:
+    for (shot_start, shot_end) in shots:
         if shot_start < prev_face_end <= cur_face_start < shot_end:
-            for(shot_start_2,shot_end_2) in shots:
+            for(shot_start_2, shot_end_2) in shots:
                 if shot_start_2 < cur_face_end <= next_face_start < shot_end_2:
                     return True
             return False
@@ -109,7 +109,6 @@ def algorithm_2_improved(json,faces_instances):
 #  Nati
 def algorithm_2(json,faces_instances):
     shots = extract_shots(json)
-    #faces_instances = create_faces_list(json)
     result = []
     for idx, (start, end, name) in enumerate(faces_instances):
         if "Unknown" in name:
@@ -131,7 +130,6 @@ def algorithm_2(json,faces_instances):
 
 
 def algorithm_1(json,faces_instances):
-    #faces_instances = create_faces_list(json)
     result = []
     for idx, (start, end, name) in enumerate(faces_instances):
         if "Unknown" in name:
@@ -165,11 +163,11 @@ def map_face_to_speaker(speakers_instances,faces_instances):
             speaker_start_float = time_to_secs(str(speaker_start))
             speaker_end_float = time_to_secs(str(speaker_end))
             if face_start<=speaker_start<speaker_end<=face_end:
-            #if 0<=abs(face_start_float - speaker_start_float)<=0.5 and 0<=abs(face_end_float - speaker_end_float)<=0.5 :
-            #if speaker_start < face_start < speaker_end or speaker_start < face_end < speaker_end or
-            #if  face_start<=speaker_start<speaker_end<=face_end:
-             #   print(str(time_to_secs(face_end) - time_to_secs(face_start)))
-             #   print([face_start,speaker_start,speaker_end,face_end])
+            # if 0<=abs(face_start_float - speaker_start_float)<=0.5 and 0<=abs(face_end_float - speaker_end_float)<=0.5 :
+            # if speaker_start < face_start < speaker_end or speaker_start < face_end < speaker_end or
+            # if  face_start<=speaker_start<speaker_end<=face_end:
+            #   print(str(time_to_secs(face_end) - time_to_secs(face_start)))
+            #   print([face_start,speaker_start,speaker_end,face_end])
                 faces.append(name)
         #print([speaker_id,speaker_start,speaker_end,faces])
         result.append((str(speaker_id),faces))
@@ -182,36 +180,31 @@ def map_face_to_speaker(speakers_instances,faces_instances):
         t = [lis[1] for lis in list(group)]
 
         r2.append((key,sorted([item for sublist in t for item in sublist])))
-    print(r2)
+    #print(r2)
     mapping = []
     for (speaker_id,faces) in r2:
         if len(faces)>0:
             faces_grouping_counter = {i: faces.count(i) for i in faces}
             actor_speaker = max(faces_grouping_counter, key=faces_grouping_counter.get)
-            print ([speaker_id,actor_speaker])
+            #print ([speaker_id,actor_speaker])
             mapping.append((speaker_id,actor_speaker))
 
     return dict(mapping)
 
-#map_face_to_speaker(extract_speakers_list_from_transcript_data("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json"),create_faces_list("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json"))
-#print (create_faces_list("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json"))
 
-def get_speakers(speakers_instances,start,end):
-    res =[]
-    for (speaker_start,speaker_end,speaker_id) in speakers_instances:
-        if start<=speaker_start<end or start<speaker_end<=end:
+def get_speakers(speakers_instances, start, end):
+    res = []
+    for (speaker_start, speaker_end, speaker_id) in speakers_instances:
+        if start <= speaker_start < end or start < speaker_end <= end:
             res.append(speaker_id)
 
     return res
 
-#Nati
-def algorithm_faces_speakers(json,faces_instances):
-    #faces_instances = create_faces_list(json)
+
+def algorithm_faces_speakers(json, faces_instances):
     speakers_instances = extract_speakers_list_from_transcript_data(json)
-    speakers_actors_mapping = map_face_to_speaker(speakers_instances,faces_instances)
-
+    speakers_actors_mapping = map_face_to_speaker(speakers_instances, faces_instances)
     result = []
-
     for idx, (start, end, name) in enumerate(faces_instances):
         if "Unknown" in name:
             speakers = get_speakers(speakers_instances, start, end)
@@ -229,34 +222,9 @@ def algorithm_faces_speakers(json,faces_instances):
 
     return result
 
-#algorithm_faces_speakers("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json")
 
-def pipeline_algorithm(algorithms,json):
-    res  = create_faces_list(json)
+def pipeline_algorithm(algorithms, json):
+    res = create_faces_list(json)
     for algorithm in algorithms:
-        res = algorithm(json,res)
+        res = algorithm(json, res)
     return res
-def union_algorithm(algorithm1,algorithm2,json):
-    faces_list= create_faces_list(json)
-    res1 = algorithm1(json,faces_list)
-    res2 = algorithm2(json,faces_list)
-    union_res =[]
-    idx =0
-    while idx < len(res1):
-        (s1,e1,name1) = res1[idx]
-        [s2,e2,name2] = res2[idx]
-        #both algorithm substituted unknwon with known actor , but 2 different actors, so the identification of face
-        # would be unknown (default unknown1)
-        if (("Unknown" not in name1) and ("Unknown" not in name2)) and name1 != name2:
-            union_res.append((s1,e1,"Unknown #1"))
-        # if one of the algorithms did substitution , save the substitution
-        elif ("Unknown" in name1) and ("Unknown" not in name2) :
-            union_res.append((s1,e1,name2))
-        elif ("Unknown" in name2) and ("Unknown" not in name1):
-            union_res.append((s1, e1, name1))
-        elif name1 == name2:
-            union_res.append((s1,e1,name1))
-        else:
-            print("ERROR")
-        idx =idx+1
-    return union_res

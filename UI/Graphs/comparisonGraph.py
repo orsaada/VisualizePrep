@@ -12,6 +12,7 @@ class ComparisonGraph(QMainWindow):
         set0 = QBarSet('Microsoft Video Indexer')
         set1 = QBarSet('Microsoft Video Indexer After Improvement Algorithm')
 
+        # a, b = get_insights(data[])
         set0.append([1,2,5,4])
         set1.append([3,3,3,4])
         series = QBarSeries()

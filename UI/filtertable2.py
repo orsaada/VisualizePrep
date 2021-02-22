@@ -99,7 +99,7 @@ class myWindow(QtWidgets.QMainWindow):
 
     def load_sites(self):
 
-        df = pd.DataFrame(extract_actors('27_DRESSES_SCALED.json'))
+        df = pd.DataFrame(extract_actors('../BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json'))
 
         self.model = PandasModel(df)
         self.proxy = QtCore.QSortFilterProxyModel(self)
@@ -178,5 +178,5 @@ if __name__ == "__main__":
     main = myWindow()
     main.show()
     main.resize(800, 600)
-    extract_emotions('./27_DRESSES_SCALED.json')
+    extract_emotions('../BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json')
     sys.exit(app.exec_())

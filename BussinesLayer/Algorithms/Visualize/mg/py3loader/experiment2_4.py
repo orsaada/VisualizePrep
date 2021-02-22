@@ -1,11 +1,32 @@
 import pickle
-import moviegraphs
-import videoindexer
+from BussinesLayer.Algorithms.Visualize.mg.py3loader import moviegraphs
+from BussinesLayer.Algorithms.Visualize.mg.py3loader import videoindexer
 from imdb import IMDb
-from BussinesLayer.Algorithms.Visualize.mg.py3loader.algorithm import union_algorithm,pipeline_algorithm,algorithm_1,algorithm_2_improved,algorithm_faces_speakers,create_faces_list
-import datetime
-import time
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.algorithm import pipeline_algorithm, algorithm_1,\
+    algorithm_2_improved, algorithm_faces_speakers, create_faces_list
 from BussinesLayer.Algorithms.Visualize.mg.py3loader.videoindexer import time_to_secs
+
+dress_27 = "./../../vi_json/tt0988595.json"
+crazy_stupid_love = "./../../vi_json/tt1570728.json"
+flight = "./../../vi_json/tt1907668.json"
+forrest_gump = "./../../vi_json/tt0109830.json"
+up_in_the_air = "./../../vi_json/tt1193138.json"
+the_help = "./../../vi_json/tt1454029.json"
+the_godfather = "./../../vi_json/tt0068646.json"
+the_ugly_truth = "./../../vi_json/tt1142988.json"
+the_lost_weekend = "./../../vi_json/tt0037884.json"
+knocked_up = "./../../vi_json/tt0478311.json"
+as_good_as_it_gets = "./../../vi_json/tt0119822.json"
+four_weddings_and_a_funeral = "./../../vi_json/tt0109831.json"
+one_flew_over_the_cuckoos_nest = "./../../vi_json/tt0073486.json"
+juno = "./../../vi_json/tt0467406.json"
+lincoln_lawyer = "./../../vi_json/tt1189340.json"
+match_point = "./../../vi_json/tt0416320.json"
+ocean_eleven = "./../../vi_json/tt0240772.json"
+pulp_fiction = "./../../vi_json/tt0110912.json"
+the_day_the_earth_stood_still = "./../../vi_json/tt0970416.json"
+the_social_network = "./../../vi_json/tt1285016.json"
+
 
 def cast_list(movie_id):
     """given the imdb id of a movie,
@@ -50,10 +71,6 @@ def chars_in_scenes_with_duplicate2(scenes, beforeData):  # maybe need to fix
         characters = []
         for (start, end, name) in beforeData:
             # if the two tuples (s,e) and (a[0], a[1]) overlap
-            #x = time.strptime(start.split('.')[0], '%H:%M:%S')
-            #newS = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
-            #x = time.strptime(end.split('.')[0], '%H:%M:%S')
-            #newE = datetime.timedelta(hours=x.tm_hour, minutes=x.tm_min, seconds=x.tm_sec).total_seconds()
             newS = time_to_secs(start)
             newE = time_to_secs(end)
             if newE >= s and newS <= e:
@@ -93,6 +110,56 @@ def char_precision(test_id, all_mg, num, data, kind):
                     correct += 1  # true positive
                 total += 1  # false positive + true positive
     return round((correct / total * 100), 1) if total != 0 else 0
+
+
+def jaccard_per_scene(vi_actors_in_scene, mg_actors_in_scene):
+    vi_actors_group = set(vi_actors_in_scene)
+    mg_actors_group = set(mg_actors_in_scene)
+    intersection = vi_actors_group.intersection(mg_actors_group)
+    union = vi_actors_group.union(mg_actors_group)
+    if len(union) == 0:
+        return 0
+    return len(intersection) / len(union)
+
+
+def jaccard_avarage(jaccard_per_scene_list):
+    return sum(jaccard_per_scene_list) / len(jaccard_per_scene_list)
+
+
+def jaccard(test_id, all_mg, num, data, kind):
+    """returns the precision of the face identification
+    software comparing the VI results to the information
+    on the MG dataset"""
+    scenes = moviegraphs.load_scenes(test_id, all_mg)
+    if kind == 'with':
+        if num == 1:
+            chars = videoindexer.get_character_app_dict(test_id)
+            chars_vi = chars_in_scenes_with_duplicate(scenes, chars)
+        elif num == 2:
+            chars_vi = chars_in_scenes_with_duplicate2(scenes, data)
+    else:
+        if num == 1:
+            chars = videoindexer.get_character_app_dict(test_id)
+            chars_vi = chars_in_scenes_without_duplicate(scenes, chars)
+        elif num == 2:
+            chars_vi = chars_in_scenes_without_duplicate2(scenes, data)
+    actors = cast_list(test_id)
+    MG = all_mg[test_id]
+    res = []
+    for i in MG.clip_graphs.values():
+        res.append([actors[j] for j in i.get_nodes_of_type("entity") if j in actors])
+    jaccard_list = []
+
+    for i in range(len(chars_vi)):
+        jaccard_list.append(jaccard_per_scene(chars_vi[i], res[i]))
+
+    return jaccard_avarage(jaccard_list)
+
+
+def f_score(precision, recall):
+    if float(precision) + float(recall) != 0:
+        return 2 * (float(precision) * float(recall)) / (float(precision) + float(recall))
+    return 0
 
 
 def char_recall(test_id, all_mg, num, data, kind):
@@ -229,111 +296,185 @@ with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
 
 
 def print_pretty_changes_algorithm(kind, algorithm):
-    dress_27 = "./../../vi_json/tt0988595.json"
-    crazy_stupid_love = "./../../vi_json/tt1570728.json"
-    flight = "./../../vi_json/tt1907668.json"
-    forrest_gump = "./../../vi_json/tt0109830.json"
-    up_in_the_air = "./../../vi_json/tt1193138.json"
-
+    movies = []
     if algorithm == 1:
-        res4 = algorithm_1(dress_27, create_faces_list(dress_27))
-        res1 = algorithm_1(crazy_stupid_love, create_faces_list(crazy_stupid_love))
-        res2 = algorithm_1(flight, create_faces_list(flight))
-        res3 = algorithm_1(forrest_gump, create_faces_list(forrest_gump))
-        res5 = algorithm_1(up_in_the_air, create_faces_list(up_in_the_air))
+        movies = [
+            ("dress 27", dress_27, 'tt0988595', algorithm_1(dress_27, create_faces_list(dress_27))),
+            ("crazy stupid love", crazy_stupid_love, 'tt1570728', algorithm_1(crazy_stupid_love, create_faces_list(crazy_stupid_love))),
+            ("flight", flight, 'tt1907668', algorithm_1(flight, create_faces_list(flight))),
+            ("forrest gump", forrest_gump, 'tt0109830', algorithm_1(forrest_gump, create_faces_list(forrest_gump))),
+            ("up in the air", up_in_the_air, 'tt1193138', algorithm_1(up_in_the_air, create_faces_list(up_in_the_air))),
+            ("the help", the_help, 'tt1454029', algorithm_1(the_help, create_faces_list(the_help))),
+            ("the godfather", the_godfather, 'tt0068646', algorithm_1(the_godfather, create_faces_list(the_godfather))),
+            ("the ugly truth", the_ugly_truth, 'tt1142988', algorithm_1(the_ugly_truth, create_faces_list(the_ugly_truth))),
+            ("the_lost_weekend", the_lost_weekend, 'tt0037884', algorithm_1(the_lost_weekend, create_faces_list(the_lost_weekend))),
+            ("knocked up", knocked_up, 'tt0478311', algorithm_1(knocked_up, create_faces_list(knocked_up))),
+            ("as_good_as_it_gets", as_good_as_it_gets, 'tt0119822', algorithm_1(as_good_as_it_gets, create_faces_list(as_good_as_it_gets))),
+            ("four weddings and a funeral", four_weddings_and_a_funeral, 'tt0109831', algorithm_1(four_weddings_and_a_funeral, create_faces_list(four_weddings_and_a_funeral))),
+            ("one flew over the cuckoos nest", one_flew_over_the_cuckoos_nest, 'tt0073486', algorithm_1(one_flew_over_the_cuckoos_nest, create_faces_list(one_flew_over_the_cuckoos_nest))),
+            ("juno", juno, 'tt0467406', algorithm_1(juno, create_faces_list(juno))),
+            ("lincoln lawyer", lincoln_lawyer, 'tt1189340', algorithm_1(lincoln_lawyer, create_faces_list(lincoln_lawyer))),
+            ("match point", match_point, 'tt0416320', algorithm_1(match_point, create_faces_list(match_point))),
+            ("ocean eleven", ocean_eleven, 'tt0240772', algorithm_1(ocean_eleven, create_faces_list(ocean_eleven))),
+            ("pulp fiction", pulp_fiction, 'tt0110912', algorithm_1(pulp_fiction, create_faces_list(pulp_fiction))),
+            ("the day the earth stood still", the_day_the_earth_stood_still, 'tt0970416', algorithm_1(the_day_the_earth_stood_still, create_faces_list(the_day_the_earth_stood_still))),
+            ("the social network", the_social_network, 'tt1285016', algorithm_1(the_social_network, create_faces_list(the_social_network)))
+        ]
     if algorithm == 2:
-        res1 = algorithm_2_improved(crazy_stupid_love,create_faces_list(crazy_stupid_love))
-        res2 = algorithm_2_improved(flight,create_faces_list(flight))
-        res3 = algorithm_2_improved(forrest_gump,create_faces_list(forrest_gump))
-        res4 = algorithm_2_improved(dress_27,create_faces_list(dress_27))
-        res5 = algorithm_2_improved(up_in_the_air,create_faces_list(up_in_the_air))
+        movies = [
+            ("dress 27", dress_27, 'tt0988595', algorithm_2_improved(dress_27, create_faces_list(dress_27))),
+            ("crazy stupid love", crazy_stupid_love, 'tt1570728',
+             algorithm_2_improved(crazy_stupid_love, create_faces_list(crazy_stupid_love))),
+            ("flight", flight, 'tt1907668', algorithm_2_improved(flight, create_faces_list(flight))),
+            ("forrest gump", forrest_gump, 'tt0109830', algorithm_2_improved(forrest_gump, create_faces_list(forrest_gump))),
+            ("up in the air", up_in_the_air, 'tt1193138', algorithm_2_improved(up_in_the_air, create_faces_list(up_in_the_air))),
+            ("the help", the_help, 'tt1454029', algorithm_2_improved(the_help, create_faces_list(the_help))),
+            ("the godfather", the_godfather, 'tt0068646', algorithm_2_improved(the_godfather, create_faces_list(the_godfather))),
+            ("the ugly truth", the_ugly_truth, 'tt1142988',
+             algorithm_2_improved(the_ugly_truth, create_faces_list(the_ugly_truth))),
+            ("the_lost_weekend", the_lost_weekend, 'tt0037884',
+             algorithm_2_improved(the_lost_weekend, create_faces_list(the_lost_weekend))),
+            ("knocked up", knocked_up, 'tt0478311', algorithm_2_improved(knocked_up, create_faces_list(knocked_up))),
+            ("as_good_as_it_gets", as_good_as_it_gets, 'tt0119822',
+             algorithm_2_improved(as_good_as_it_gets, create_faces_list(as_good_as_it_gets))),
+            ("four weddings and a funeral", four_weddings_and_a_funeral, 'tt0109831',
+             algorithm_2_improved(four_weddings_and_a_funeral, create_faces_list(four_weddings_and_a_funeral))),
+            ("one flew over the cuckoos nest", one_flew_over_the_cuckoos_nest, 'tt0073486',
+             algorithm_2_improved(one_flew_over_the_cuckoos_nest, create_faces_list(one_flew_over_the_cuckoos_nest))),
+            ("juno", juno, 'tt0467406', algorithm_2_improved(juno, create_faces_list(juno))),
+            ("lincoln lawyer", lincoln_lawyer, 'tt1189340',
+             algorithm_2_improved(lincoln_lawyer, create_faces_list(lincoln_lawyer))),
+            ("match point", match_point, 'tt0416320', algorithm_2_improved(match_point, create_faces_list(match_point))),
+            ("ocean eleven", ocean_eleven, 'tt0240772', algorithm_2_improved(ocean_eleven, create_faces_list(ocean_eleven))),
+            ("pulp fiction", pulp_fiction, 'tt0110912', algorithm_2_improved(pulp_fiction, create_faces_list(pulp_fiction))),
+            ("the day the earth stood still", the_day_the_earth_stood_still, 'tt0970416',
+             algorithm_2_improved(the_day_the_earth_stood_still, create_faces_list(the_day_the_earth_stood_still))),
+            ("the social network", the_social_network, 'tt1285016',
+             algorithm_2_improved(the_social_network, create_faces_list(the_social_network)))
+        ]
     if algorithm == 3:
-        res1 = algorithm_faces_speakers( crazy_stupid_love,create_faces_list(crazy_stupid_love))
-        res2 = algorithm_faces_speakers(flight,create_faces_list(flight))
-        res3 = algorithm_faces_speakers( forrest_gump,create_faces_list(forrest_gump))
-        res4 = algorithm_faces_speakers(dress_27,create_faces_list(dress_27))
-        res5 = algorithm_faces_speakers(up_in_the_air,create_faces_list(up_in_the_air))
+        movies = [
+            ("dress 27", dress_27, 'tt0988595', algorithm_faces_speakers(dress_27, create_faces_list(dress_27))),
+            ("crazy stupid love", crazy_stupid_love, 'tt1570728',
+             algorithm_faces_speakers(crazy_stupid_love, create_faces_list(crazy_stupid_love))),
+            ("flight", flight, 'tt1907668', algorithm_faces_speakers(flight, create_faces_list(flight))),
+            ("forrest gump", forrest_gump, 'tt0109830', algorithm_faces_speakers(forrest_gump, create_faces_list(forrest_gump))),
+            ("up in the air", up_in_the_air, 'tt1193138', algorithm_faces_speakers(up_in_the_air, create_faces_list(up_in_the_air))),
+            ("the help", the_help, 'tt1454029', algorithm_faces_speakers(the_help, create_faces_list(the_help))),
+            ("the godfather", the_godfather, 'tt0068646', algorithm_faces_speakers(the_godfather, create_faces_list(the_godfather))),
+            ("the ugly truth", the_ugly_truth, 'tt1142988',
+             algorithm_faces_speakers(the_ugly_truth, create_faces_list(the_ugly_truth))),
+            ("the_lost_weekend", the_lost_weekend, 'tt0037884',
+             algorithm_faces_speakers(the_lost_weekend, create_faces_list(the_lost_weekend))),
+            ("knocked up", knocked_up, 'tt0478311', algorithm_faces_speakers(knocked_up, create_faces_list(knocked_up))),
+            ("as_good_as_it_gets", as_good_as_it_gets, 'tt0119822',
+             algorithm_faces_speakers(as_good_as_it_gets, create_faces_list(as_good_as_it_gets))),
+            ("four weddings and a funeral", four_weddings_and_a_funeral, 'tt0109831',
+             algorithm_faces_speakers(four_weddings_and_a_funeral, create_faces_list(four_weddings_and_a_funeral))),
+            ("one flew over the cuckoos nest", one_flew_over_the_cuckoos_nest, 'tt0073486',
+             algorithm_faces_speakers(one_flew_over_the_cuckoos_nest, create_faces_list(one_flew_over_the_cuckoos_nest))),
+            ("juno", juno, 'tt0467406', algorithm_faces_speakers(juno, create_faces_list(juno))),
+            ("lincoln lawyer", lincoln_lawyer, 'tt1189340',
+             algorithm_faces_speakers(lincoln_lawyer, create_faces_list(lincoln_lawyer))),
+            ("match point", match_point, 'tt0416320', algorithm_faces_speakers(match_point, create_faces_list(match_point))),
+            ("ocean eleven", ocean_eleven, 'tt0240772', algorithm_faces_speakers(ocean_eleven, create_faces_list(ocean_eleven))),
+            ("pulp fiction", pulp_fiction, 'tt0110912', algorithm_faces_speakers(pulp_fiction, create_faces_list(pulp_fiction))),
+            ("the day the earth stood still", the_day_the_earth_stood_still, 'tt0970416',
+             algorithm_faces_speakers(the_day_the_earth_stood_still, create_faces_list(the_day_the_earth_stood_still))),
+            ("the social network", the_social_network, 'tt1285016',
+             algorithm_faces_speakers(the_social_network, create_faces_list(the_social_network)))
+        ]
     if algorithm == 4:
-        res1 = pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved],
-            crazy_stupid_love
-            )
-        res2 = pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved],
-            flight)
-        res3 = pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved],
-            forrest_gump)
-        res4 = pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved],
-            dress_27)
-        res5 = pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved],
-            up_in_the_air)
-    if algorithm == 5:
-        res1 = pipeline_algorithm([algorithm_2_improved,algorithm_faces_speakers],
-            crazy_stupid_love
-            )
-        res2 = pipeline_algorithm([algorithm_2_improved,algorithm_faces_speakers],
-            flight)
-        res3 = pipeline_algorithm([algorithm_2_improved,algorithm_faces_speakers],
-            forrest_gump)
-        res4 = pipeline_algorithm([algorithm_2_improved,algorithm_faces_speakers],
-            dress_27)
-        res5 = pipeline_algorithm([algorithm_2_improved,algorithm_faces_speakers],
-            up_in_the_air)
-    if algorithm == 6:
-        res1 = union_algorithm(algorithm_2_improved,algorithm_faces_speakers,
-            crazy_stupid_love
-            )
-        res2 =union_algorithm(algorithm_2_improved,algorithm_faces_speakers,
-            flight)
-        res3 = union_algorithm(algorithm_2_improved,algorithm_faces_speakers,
-            forrest_gump)
-        res4 = union_algorithm(algorithm_2_improved,algorithm_faces_speakers,
-            dress_27)
-        res5 = union_algorithm(algorithm_2_improved,algorithm_faces_speakers,
-            up_in_the_air)
-
-    print("27 dress:\nprecision before - " + str(char_precision('tt0988595', all_mg, 1, "", kind)))
-    print('precision after - ' + str(char_precision('tt0988595', all_mg, 2, res4, kind)))
-    print('recall before - ' + str(char_recall('tt0988595', all_mg, 1, "", kind)))
-    print('recall after - ' + str(char_recall('tt0988595', all_mg, 2, res4, kind)) + '\n')
-
-    print("crazy stupid love:\nprecision before - " + str(char_precision('tt1570728', all_mg, 1, "", kind)))
-    print('precision after - ' + str(char_precision('tt1570728', all_mg, 2, res1, kind)))
-    print('recall before - ' + str(char_recall('tt1570728', all_mg, 1, "", kind)))
-    print('recall after - ' + str(char_recall('tt1570728', all_mg, 2, res1, kind)) + '\n')
-
-    print("flight:\nprecision before - " + str(char_precision('tt1907668', all_mg, 1, "", kind)))
-    print('precision after - ' + str(char_precision('tt1907668', all_mg, 2, res2, kind)))
-    print('recall before - ' + str(char_recall('tt1907668', all_mg, 1, "", kind)))
-    print('recall after - ' + str(char_recall('tt1907668', all_mg, 2, res2, kind)) + '\n')
-
-    print("forest gump:\nprecision before - " + str(char_precision('tt0109830', all_mg, 1, "", kind)))
-    print('precision after - ' + str(char_precision('tt0109830', all_mg, 2, res3, kind)))
-    print('recall before - ' + str(char_recall('tt0109830', all_mg, 1, "", kind)))
-    print('recall after - ' + str(char_recall('tt0109830', all_mg, 2, res3, kind)) + '\n')
-
-    print("up in the air:\nprecision before - " + str(char_precision('tt1193138', all_mg, 1, "", kind)))
-    print('precision after - ' + str(char_precision('tt1193138', all_mg, 2, res5, kind)))
-    print('recall before - ' + str(char_recall('tt1193138', all_mg, 1, "", kind)))
-    print('recall after - ' + str(char_recall('tt1193138', all_mg, 2, res5, kind)) + '\n')
+        movies = [
+            ("dress 27", dress_27, 'tt0988595', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], dress_27)),
+            ("crazy stupid love", crazy_stupid_love, 'tt1570728',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], crazy_stupid_love)),
+            ("flight", flight, 'tt1907668', pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved, algorithm_1], flight)),
+            ("forrest gump", forrest_gump, 'tt0109830', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], forrest_gump)),
+            ("up in the air", up_in_the_air, 'tt1193138', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], up_in_the_air)),
+            ("the help", the_help, 'tt1454029', pipeline_algorithm([algorithm_faces_speakers,algorithm_2_improved, algorithm_1], the_help)),
+            ("the godfather", the_godfather, 'tt0068646', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], the_godfather)),
+            ("the ugly truth", the_ugly_truth, 'tt1142988',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], the_ugly_truth)),
+            ("the_lost_weekend", the_lost_weekend, 'tt0037884',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], the_lost_weekend)),
+            ("knocked up", knocked_up, 'tt0478311', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], knocked_up)),
+            ("as_good_as_it_gets", as_good_as_it_gets, 'tt0119822',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], as_good_as_it_gets)),
+            ("four weddings and a funeral", four_weddings_and_a_funeral, 'tt0109831',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], four_weddings_and_a_funeral)),
+            ("one flew over the cuckoos nest", one_flew_over_the_cuckoos_nest, 'tt0073486',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], one_flew_over_the_cuckoos_nest)),
+            ("juno", juno, 'tt0467406', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], juno)),
+            ("lincoln lawyer", lincoln_lawyer, 'tt1189340',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], lincoln_lawyer)),
+            ("match point", match_point, 'tt0416320', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], match_point)),
+            ("ocean eleven", ocean_eleven, 'tt0240772', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], ocean_eleven)),
+            ("pulp fiction", pulp_fiction, 'tt0110912', pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], pulp_fiction)),
+            ("the day the earth stood still", the_day_the_earth_stood_still, 'tt0970416',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], the_day_the_earth_stood_still)),
+            ("the social network", the_social_network, 'tt1285016',
+             pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], the_social_network))
+        ]
+    for (name, path, tt, alg) in movies:
+        before_precision = str(char_precision(tt, all_mg, 1, "", kind))
+        after_precision = str(char_precision(tt, all_mg, 2, alg, kind))
+        before_recall = str(char_recall(tt, all_mg, 1, "", kind))
+        after_recall = str(char_recall(tt, all_mg, 2, alg, kind))
+        before_jaccard = str(jaccard(tt, all_mg, 1, "", kind))
+        after_jaccard = str(jaccard(tt, all_mg, 2, alg, kind))
+        print(name+":\nprecision before - " + before_precision)
+        print('precision after - ' + after_precision)
+        print('recall before - ' + before_recall)
+        print('recall after - ' + after_recall)
+        print('jaccard before - ' + before_jaccard)
+        print('jaccard after - ' + after_jaccard)
+        print('f score before - ' + str(f_score(before_precision, before_recall)))
+        print('f score after - ' + str(f_score(after_precision, after_recall)) + '\n')
 
 
-print_pretty_changes_algorithm('with', 1)
-print_pretty_changes_algorithm('without', 1)
+def get_insight(tt, movie_path, algorithm):
+    alg = ""
+    if algorithm == 1:
+        alg = algorithm_1(movie_path, create_faces_list(movie_path))
+    elif algorithm == 2:
+        alg = algorithm_2_improved(movie_path, create_faces_list(movie_path))
+    elif algorithm == 3:
+        alg = algorithm_faces_speakers(movie_path, create_faces_list(movie_path))
+    elif algorithm == 4:
+        alg = pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], movie_path)
+    before_precision = str(char_precision(tt, all_mg, 1, "", 'with'))
+    after_precision = str(char_precision(tt, all_mg, 2, alg, 'with'))
+    before_recall = str(char_recall(tt, all_mg, 1, "", 'with'))
+    after_recall = str(char_recall(tt, all_mg, 2, alg, 'with'))
+    before_jaccard = str(jaccard(tt, all_mg, 1, "", 'with'))
+    after_jaccard = str(jaccard(tt, all_mg, 2, alg, 'with'))
+    before_f_score = f_score(before_precision, before_recall)
+    after_f_score = f_score(after_precision, after_recall)
+    return [before_precision, before_recall, before_jaccard, before_f_score], [after_precision, after_recall, after_jaccard, after_f_score]
 
-print_pretty_changes_algorithm('with', 2)
-print_pretty_changes_algorithm('without', 2)
 
-print_pretty_changes_algorithm('with', 3)
-print_pretty_changes_algorithm('without', 3)
-'''
-print_pretty_changes_algorithm('with', 4)
-print_pretty_changes_algorithm('without', 4)
+if __name__ == '__main__':
+# print(get_insight('tt0988595', dress_27, 1))
+    print_pretty_changes_algorithm('with', 1)
+# print_pretty_changes_algorithm('without', 1)
 
-print_pretty_changes_algorithm('with', 5)
-print_pretty_changes_algorithm('without', 5)
 
+# print_pretty_changes_algorithm('with', 2)
+# print_pretty_changes_algorithm('without', 2)
+
+# print_pretty_changes_algorithm('with', 3)
+# print_pretty_changes_algorithm('without', 3)
+
+# print_pretty_changes_algorithm('with', 4)
+# print_pretty_changes_algorithm('without', 4)
+
+# print_pretty_changes_algorithm('with', 5)
+# print_pretty_changes_algorithm('without', 5)
+"""
 print_pretty_changes_algorithm('with', 6)
 print_pretty_changes_algorithm('without', 6)
 
 print_pretty_differences('tt0988595', 'with')
 print_pretty_differences_test('tt0988595')
-'''
+"""

@@ -44,6 +44,16 @@ def load_scenes(data):
     return scenes
 
 
+# Nati
+def load_shots(data):
+    """returns a list of tuples of the start and ending timestamp of
+    each shot"""
+    shots = []
+    for i in data["videos"][0]["insights"]["shots"]:
+        shots.append((i["instances"][0]["start"], i["instances"][0]["end"]))
+    return shots
+
+
 def load_faces(data):
     """returns a dictionary where the keys are the names and the
     values are the list of timestamps apperared"""
@@ -65,6 +75,9 @@ def get_character_app_dict(name):
     with open(json_dir + name + '.json', encoding="utf8") as infile:
         data = json.load(infile)
     char_app = dict()
+    # for i in data["videos"][0]["insights"]["faces"]:
+    #   char_app[i["name"]] = [(j['start'], j['end']) for j in i["instances"]]
     for i in data["summarizedInsights"]["faces"]:
-        char_app[i["name"]] = [(j['startSeconds'], j['endSeconds']) for j in i["appearances"]]
+        char_app[i["name"]] = [(j['startTime'], j['endTime']) for j in i["appearances"]]
     return char_app
+

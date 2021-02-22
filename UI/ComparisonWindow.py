@@ -17,7 +17,8 @@ class ComparisonWindow(PageWindow):
         # Need to create a QWidget and set it as the central widget
         widget = QWidget()
         layout = QVBoxLayout()
-
+        # for all algorithms:
+        # loading 1/5 2/5 3/5 4/5 5/5
         b1 = QPushButton('Back To Movie Page')
         b1.setStyleSheet("background-color: red;")
         b1.clicked.connect(self.goToMovie)

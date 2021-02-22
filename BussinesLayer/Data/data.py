@@ -72,7 +72,7 @@ def extract_all_data_to_csv(json_file_path):
     import pandas as pd
 
     path = ''
-    json_file_path = "BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
+    json_file_path = "BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json"
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
     df_array = {}
@@ -214,7 +214,7 @@ def to_integer(dt_time):
     return 10000*dt_time.year + 100*dt_time.month + dt_time.day
 
 def create_csvs():
-    json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
+    json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_dresses.json"
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
     result = parsed_json["videos"][0]["insights"]
@@ -229,7 +229,7 @@ def create_csvs():
 
 def delete_csv():
     import os
-    json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
+    json_file_path = "../Algorithms/Visualize/vi_json/bad_santa.json"
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
     result = parsed_json["videos"][0]["insights"]
@@ -281,8 +281,8 @@ def analyze_keywords_graph():
     return langs, students
 
 if __name__ == '__main__':
-    # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json"
-    # json_file = open("../../BussinesLayer/Algorithms/Visualize/vi_json/27_DRESSES_SCALED.json", encoding="utf-8")
+    # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json"
+    # json_file = open("../../BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json", encoding="utf-8")
     # parsed_json = json.load(json_file)
     # result = transcript(json_str)
     # data = {'row_1': [3, 2, 1, 0], 'row_2': ['a', 'b', 'c', 'd']}
