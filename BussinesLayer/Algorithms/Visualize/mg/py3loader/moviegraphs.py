@@ -5,8 +5,7 @@
 
 import pickle
 
-with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
-    all_mg = pickle.load(fid, encoding='latin1')
+
 
 # all_mg is a dictionary of MovieGraph objects
 # indexed by imdb unique movie identifiers

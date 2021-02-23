@@ -1,4 +1,6 @@
 import pickle
+from pathlib import Path
+
 from BussinesLayer.Algorithms.Visualize.mg.py3loader import moviegraphs
 from BussinesLayer.Algorithms.Visualize.mg.py3loader import videoindexer
 from imdb import IMDb
@@ -271,6 +273,7 @@ def chars_in_scenes_without_duplicate2(scenes, beforeData):  # maybe need to fix
 
 
 def print_pretty_differences_test(tt_movie, kind):
+    all_mg = get_mg()
     print("[ start , end ,[Movie Indexer Actors] , [Manual Info Actors] , percentage ]:")
     data_b = get_diff(tt_movie, all_mg, 1, "", kind)
     for obj in data_b:
@@ -278,6 +281,7 @@ def print_pretty_differences_test(tt_movie, kind):
 
 
 def print_pretty_differences(json_movie_id, kind):
+    all_mg = get_mg()
     faces_list = create_faces_list("./../../vi_json/"+json_movie_id+".json")
     res1 = algorithm_2_improved("./../../vi_json/"+json_movie_id+".json", faces_list)
     print("[ start , end ,[Movie Indexer Actors] , [Manual Info Actors] , percentage ]:")
@@ -291,11 +295,18 @@ def print_pretty_differences(json_movie_id, kind):
         print(obj)
 
 
-with open('2017-11-02-51-7637_py3.pkl', 'rb') as fid:
-    all_mg = pickle.load(fid, encoding='latin1')
+def get_mg():
+    base_path = Path(__file__).parent.parent.parent
+    # file_path = (base_path / 'config.json').resolve()
+
+    with open(base_path / '2017-11-02-51-7637_py3.pkl', 'rb') as fid:
+        all_mg = pickle.load(fid, encoding='latin1')
+    return all_mg
 
 
 def print_pretty_changes_algorithm(kind, algorithm):
+    all_mg = get_mg()
+
     movies = []
     if algorithm == 1:
         movies = [
@@ -434,6 +445,8 @@ def print_pretty_changes_algorithm(kind, algorithm):
 
 
 def get_insight(tt, movie_path, algorithm):
+    all_mg = get_mg()
+
     alg = ""
     if algorithm == 1:
         alg = algorithm_1(movie_path, create_faces_list(movie_path))
