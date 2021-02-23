@@ -6,22 +6,41 @@ import dateutil.parser
 import pandas as pd
 from PyQt5.QtChart import QBarSet
 
+aaa = []
 
-def extract_attribute(json_file_path, attr):
-    print(json_file_path)
+
+def check_attributes_exists(json_file_path):
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
-    result = parsed_json["videos"][0]["insights"][attr]
+    for i in parsed_json["videos"][0]["insights"]:
+        aaa.append(i)
+    return aaa
+
+def extract_attribute(json_file_path, attr):
+    json_file = open(json_file_path, encoding="utf-8")
+    parsed_json = json.load(json_file)
+    try:
+        result = parsed_json["videos"][0]["insights"][attr]
+    except KeyError:
+        result = []
     return result
 
-def extract_attribute_to_df(attr):
+
+def manage_config():
     base_path = Path(__file__).parent.parent.parent
     with open((base_path / 'config.json').resolve(), 'r') as f:
         data = json.load(f)
-    movie_name = data["SpecificMoviePage"]
+    movie_name = data["ttMovie"]
     movie_name = movie_name.replace(' ', '_')
     file_path = (base_path / "BussinesLayer/Algorithms/Visualize/vi_json/{}.json".format(movie_name)).resolve()
+    return file_path
+
+
+def extract_attribute_to_df(attr):
+    file_path = manage_config()
+    print(file_path)
     attribute_json = extract_attribute(file_path, attr)
+    print(attribute_json)
     df = pd.DataFrame()
     for y in attribute_json:
         if not isinstance(y, str):
@@ -61,11 +80,13 @@ def extract_keywords(json_file_path):
 def extract_namedPeople(json_file_path):
     return extract_attribute(json_file_path, "namedPeople")
 
+
 def extract_shots_or(json_file_path):
     return extract_attribute(json_file_path, "shots")
 
 
 insights_array = []
+
 
 def extract_all_data_to_csv(json_file_path):
     import json
@@ -100,7 +121,9 @@ def extract_shots(json_file_path):
     for i in data["videos"][0]["insights"]["shots"]:
         shots.append((i["instances"][0]["start"], i["instances"][0]["end"]))
     return shots
-#Nati
+
+
+# Nati
 def extract_speakers_list_from_transcript_data(json_file_path):
     json_file = open(json_file_path, encoding="utf-8")
     data = json.load(json_file)
@@ -117,7 +140,8 @@ def extract_speakers_list_from_transcript_data(json_file_path):
     return  sorted(speakers)
 #extract_speakers_list_from_transcript_data("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json")
 
-#Nati
+
+# Nati
 def extract_speakers_list(json_file_path):
     json_file = open(json_file_path, encoding="utf-8")
     data = json.load(json_file)
@@ -237,14 +261,7 @@ def delete_csv():
         os.remove("{}.csv".format(x))
 
 
-def manage_config():
-    base_path = Path(__file__).parent.parent.parent
-    with open((base_path / 'config.json').resolve(), 'r') as f:
-        data = json.load(f)
-    movie_name = data["SpecificMoviePage"]
-    movie_name = movie_name.replace(' ', '_')
-    file_path = (base_path / "BussinesLayer/Algorithms/Visualize/vi_json/{}.json".format(movie_name)).resolve()
-    return file_path
+
 
 
 def analyze_emotions_graph():
@@ -252,13 +269,19 @@ def analyze_emotions_graph():
     ranges = []
     file_path = manage_config()
     emotions = extract_emotions(file_path)
+    all_emotions_list = ['Sad', 'Joy', 'Fear', 'Angry']
     for idx2, i in enumerate(emotions):
+        if i['type'] in all_emotions_list:
+            all_emotions_list.remove(i['type'])
         sets.append(QBarSet(i['type']))
         sum_time = 0
         for idx, val in enumerate(i['instances']):
             range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
             sum_time = sum_time + range_time
         ranges.append(sum_time)
+    for ttype in all_emotions_list:
+        sets.append(QBarSet(ttype))
+        ranges.append(0)
     return sets,ranges
 
 

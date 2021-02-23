@@ -1,9 +1,12 @@
 import sqlite3
+from pathlib import Path
+
 from BussinesLayer.Services.Logger import info, error
 
 
 def connect():
-    conn = sqlite3.connect('user.db')
+    base_path = Path(__file__).parent.parent
+    conn = sqlite3.connect(str((base_path / 'UI/user.db').resolve()))
     cursor = conn.cursor()
     return cursor, conn
 

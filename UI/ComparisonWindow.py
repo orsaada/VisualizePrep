@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QPushButton, QVBoxLayout, QWidget
+from PyQt5.QtWidgets import QApplication, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel
 
 from UI.Graphs.comparisonGraph import ComparisonGraph
 from UI.PageWindow import PageWindow
@@ -23,8 +23,11 @@ class ComparisonWindow(PageWindow):
         b1.setStyleSheet("background-color: red;")
         b1.clicked.connect(self.goToMovie)
         b3 = ComparisonGraph("name")
+
+        details = QLabel("Details about algorithm: ")
         layout.addWidget(b1)
         layout.addWidget(b3)
+        layout.addWidget(details)
 
         widget.setLayout(layout)
         self.setCentralWidget(widget)

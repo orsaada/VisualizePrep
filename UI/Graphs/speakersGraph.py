@@ -38,8 +38,13 @@ class SpeakersGraph(QMainWindow):
     def init_chart(self, path):
         # changes
         df = extract_attribute_to_df("speakers")
+
         by_instance = pd.DataFrame(columns=['instance', 'start', 'end'])
-        for instances, name in zip(df['instances'], df['name']):
+        if df.empty:
+            a, b = [], []
+        else:
+            a, b = df['instances'], df['name']
+        for instances, name in zip(a, b):
             for y in instances:
                 by_instance = by_instance.append({'instance': name, 'start': y['start'],
                                                   'end': y['end']}, ignore_index=True)

@@ -31,25 +31,36 @@ class MyMovieWidget(QWidget):
         formLayout.addRow(name + " Page - Menu", QLabel())
         dlgLayout.addLayout(formLayout)
 
-        self.btnEmotions = QPushButton()
-        self.btnEmotions.setText('show Emotions')
-        self.btnCharacters = QPushButton()
-        self.btnCharacters.setText('show Characters')
-        self.btnKeywords = QPushButton()
-        self.btnKeywords.setText('show Keywords')
+        algo_buttons_list = list(map(lambda x: QPushButton, range(4)))
+        self.btn_algo1 = QPushButton()
+        self.btn_algo1.setText('algo 1')
+        self.btn_algo1.clicked.connect(lambda: self.compareGraph('algo 1'))
+
+        self.btn_algo2 = QPushButton()
+        self.btn_algo2.setText('algo 2')
+        self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 1'))
+
+        self.btn_algo3 = QPushButton()
+        self.btn_algo3.setText('algo 3')
+        self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 1'))
+
+        self.btn_algo4 = QPushButton()
+        self.btn_algo4.setText('algo 4')
+        self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 1'))
+
         self.insights = QPushButton()
         self.insights.setText('insights graphs')
         self.insights.clicked.connect(self.gotToInsights)
-        self.comparisonGraph = QPushButton()
-        self.comparisonGraph.setText('comparison Graph')
-        self.comparisonGraph.clicked.connect(self.compareGraph)
+        # self.comparisonGraph = QPushButton()
+        # self.comparisonGraph.setText('comparison Graph')
+        # self.comparisonGraph.clicked.connect(self.compareGraph)
 
-
-        dlgLayout.addWidget(self.btnEmotions)
-        dlgLayout.addWidget(self.btnCharacters)
-        dlgLayout.addWidget(self.btnKeywords)
+        dlgLayout.addWidget(self.btn_algo1)
+        dlgLayout.addWidget(self.btn_algo2)
+        dlgLayout.addWidget(self.btn_algo3)
+        dlgLayout.addWidget(self.btn_algo4)
         dlgLayout.addWidget(self.insights)
-        dlgLayout.addWidget(self.comparisonGraph)
+        # dlgLayout.addWidget(self.comparisonGraph)
 
         self.btnBackBox = QPushButton()
         self.btnBackBox.setText('Back')
@@ -57,7 +68,8 @@ class MyMovieWidget(QWidget):
         dlgLayout.addWidget(self.btnBackBox)
         self.setLayout(dlgLayout)
 
-    def compareGraph(self):
+    def compareGraph(self, algo_name):
+        algo_name
         self.parent().goto("comparison")
         print(1)
 

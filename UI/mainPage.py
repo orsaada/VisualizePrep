@@ -126,7 +126,6 @@ class MainWidg(QWidget):
             else:
                 self.pop_message(res)
 
-
     def gotoRegister(self):
         self.cleanFields()
         self.parent().goto("register")

@@ -1,5 +1,6 @@
 # from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, \
 #     QSlider, QStyle, QSizePolicy, QFileDialog
+import datetime
 import json
 import os
 import sys
@@ -46,6 +47,8 @@ class MediaWindow(QWidget):
         self.setPalette(p)
 
         self.video_name = ''
+
+
 
         self.init_ui()
 
@@ -144,7 +147,7 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(self.playBtn)
         hboxLayout.addWidget(self.slider)
         # hboxLayout.addWidget(gotoInsights)
-        # hboxLayout.addWidget(self.positionLabel)
+        hboxLayout.addWidget(self.positionLabel)
         hboxLayout.addWidget(self.logoutButton)
         # hboxLayout.addWidget(self.diffButton)
         hboxLayout.addWidget(self.archiveButton)
@@ -247,7 +250,6 @@ class MediaWindow(QWidget):
         else:
             self.mediaPlayer.play()
 
-
     def mediastate_changed(self, state):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
             self.playBtn.setIcon(
@@ -263,10 +265,21 @@ class MediaWindow(QWidget):
 
     def position_changed(self, position):
         self.slider.setValue(position)
+        # seconds = (duration / 1000) % 60
+        # minutes = (duration / 60000) % 60
+        import pandas as pd
+        print(pd.to_datetime(position, unit='ms').to_pydatetime())
+        # time = pd.to_datetime(position, unit='ms').to_pydatetime().seconds
+        # print(time)
+        # print(datetime.datetime.fromtimestamp(position/1000.0))
+        hours = (position / 3600000) % 24
+        # print(hours)
+
 
 
     def duration_changed(self, duration):
         self.slider.setRange(0, duration)
+        # print(duration)
 
 
     def set_position(self, position):

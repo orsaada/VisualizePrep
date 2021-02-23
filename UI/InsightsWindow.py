@@ -62,6 +62,9 @@ class MyInsightsWidget(QDialog):
         self.archiveButton.clicked.connect(self.goToMovie)
         layoutV.addWidget(self.archiveButton)
 
+        movie_name_label = QLabel()
+        movie_name_label.setText(video_name)
+        layoutV.addWidget(movie_name_label)
         # export json
         # self.exportButton = QPushButton(self)
         # self.exportButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
@@ -113,6 +116,7 @@ class MyInsightsWidget(QDialog):
         self.qlabel.move(50, 16)
 
         combo.activated[str].connect(self.onChanged)
+
 
 
         #button switch

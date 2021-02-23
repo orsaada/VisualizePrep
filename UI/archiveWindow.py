@@ -1,6 +1,8 @@
 import sys
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
+
+from DB.DB import get_movieId
 from UI.PageWindow import PageWindow
 from BussinesLayer.Services.VideoInsights import get_my_uploaded_videos
 import json
@@ -22,7 +24,9 @@ class MyArchiveWidget(QWidget):
     def gotoMovie(self, video_name):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
+            print(get_movieId(data['UserLoggedIn'], video_name))
             data['SpecificMoviePage'] = video_name
+            data['ttMovie'] = get_movieId(data['UserLoggedIn'], video_name)[0][0]
         os.remove('./../config.json')
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)

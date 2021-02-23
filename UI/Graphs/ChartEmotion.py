@@ -45,7 +45,7 @@ class ChartEmotions(QMainWindow):
         #         sum_time = sum_time + range_time
         #         # format_time(val['end'])-format_time(val['start'])
         #     ranges.append(sum_time)
-
+        print(sets)
         set0 = sets[0]
         set1 = sets[1]
         set2 = sets[2]
