@@ -7,7 +7,7 @@ import sys
 
 from PyQt5.QtMultimedia import QMediaPlayer, QMediaContent
 from PyQt5.QtMultimediaWidgets import QVideoWidget
-from PyQt5.QtGui import QIcon, QPalette
+from PyQt5.QtGui import QIcon, QPalette, QPixmap
 from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -48,8 +48,6 @@ class MediaWindow(QWidget):
 
         self.video_name = ''
 
-
-
         self.init_ui()
 
         # new window opening for qwidget
@@ -58,49 +56,40 @@ class MediaWindow(QWidget):
         # if want to check start app only from the mediaplayer cancell the comment
         self.show()
 
-
     def init_ui(self):
 
-        #create media player object
+        # create media player object
         self.mediaPlayer = QMediaPlayer(None, QMediaPlayer.VideoSurface)
 
-
-        #create videowidget object
+        # create videowidget object
         videowidget = QVideoWidget()
 
-
-        #create open button
+        # create open button
         openBtn = QPushButton('Open Video')
         openBtn.clicked.connect(self.open_file)
 
-        #insights button
+        # insights button
         # gotoInsights = QPushButton('Go to insights')
         # gotoInsights.clicked.connect(self.btn_clk)
 
-
         # self.lineEdit1 = QLineEdit("Type here what you want to transfer for [Window1].", self)
 
-
-        #create button for playing
+        # create button for playing
         self.playBtn = QPushButton()
         self.playBtn.setEnabled(False)
         self.playBtn.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.playBtn.clicked.connect(self.play_video)
 
-
-        #create slider
+        # create slider
         self.slider = QSlider(Qt.Horizontal)
         self.slider.setRange(0, 0)
         self.slider.sliderMoved.connect(self.set_position)
 
-
-
-        #create label
+        # create label
         self.label = QLabel()
         self.label.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Maximum)
 
-
-        #position label
+        # position label
         duration = self.mediaPlayer.duration()
         seconds = (duration / 1000) % 60
         minutes = (duration / 60000) % 60
@@ -110,14 +99,13 @@ class MediaWindow(QWidget):
         self.positionLabel = QLabel('00:00:000')
         self.positionLabel.setStyleSheet("background-color: lightgreen")
 
-
-        #logout button
+        # logout button
         self.logoutButton = QPushButton(self)
         self.logoutButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.logoutButton.setText('Log out')
         self.logoutButton.clicked.connect(self.goMainWindow)
 
-        #diff button
+        # diff button
         # self.diffButton = QPushButton(self)
         # self.diffButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         # self.diffButton.setText('Diff!')
@@ -126,19 +114,29 @@ class MediaWindow(QWidget):
         #         # self.diffButton.setText('Diff!')
         #         # self.diffButton.clicked.connect(self.find_diffrence)nd_diffrence)
 
-        #archive button
+        # archive button
         self.archiveButton = QPushButton(self)
         self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.archiveButton.setText('My Archive')
         self.archiveButton.clicked.connect(self.goMyArchive)
 
-        #goback button
+        # goback button
         self.goBackButton = QPushButton(self)
         self.goBackButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
         self.goBackButton.setText('GO BACK')
         self.goBackButton.clicked.connect(self.goMediaWindow)
 
-        #create hbox layout
+        # volume
+        self.sld = QSlider(Qt.Horizontal, self)
+        self.sld.setFocusPolicy(Qt.NoFocus)
+        # self.sld.setGeometry(30, 40, 100, 30)
+        self.sld.valueChanged[int].connect(self.changeValue)
+
+        self.sldlabel = QLabel(self)
+        self.sldlabel.setPixmap(QPixmap('mid.png'))
+        # self.sldlabel.setGeometry(160, 40, 80, 30)
+
+        # create hbox layout
         hboxLayout = QHBoxLayout()
         hboxLayout.setContentsMargins(0, 0, 0, 0)
 
@@ -152,6 +150,8 @@ class MediaWindow(QWidget):
         # hboxLayout.addWidget(self.diffButton)
         hboxLayout.addWidget(self.archiveButton)
         hboxLayout.addWidget(self.goBackButton)
+        hboxLayout.addWidget(self.sld)
+        # hboxLayout.addWidget(self.sldlabel)
 
         #create vbox layout
         vboxLayout = QVBoxLayout()
@@ -204,7 +204,6 @@ class MediaWindow(QWidget):
         self.ind += 1
         # print(str(data[self.ind][0]) + '   ' + str(data[self.ind][1]))
 
-
     def setInterval(self, path, start, end):
         """
             path: path of video
@@ -217,15 +216,16 @@ class MediaWindow(QWidget):
         # self._end = end
         self.mediaPlayer.play()
 
-    # @QtCore.pyqtSlot('qint64')
-    # def on_positionChanged(self, position):
-    #     if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
-    #         if position > self._end:
-    #             self.mediaPlayer.stop()
-
-    # def btn_clk(self):
-    #     self.mediaPlayer.stop()
-    #     self.parent().goto('insights')
+    def changeValue(self, value):
+        self.mediaPlayer.setVolume(value)
+        if value == 0:
+            self.label.setPixmap(QPixmap('mute.png'))
+        elif value > 0 and value <=30:
+            self.label.setPixmap(QPixmap('min.png'))
+        elif value >30 and value <= 80:
+            self.label.setPixmap(QPixmap('mid.png'))
+        else:
+            self.label.setPixmap(QPixmap('max.png'))
 
     def open_file(self):
         filename, _ = QFileDialog.getOpenFileName(self, "Open Video")
@@ -249,6 +249,8 @@ class MediaWindow(QWidget):
 
         else:
             self.mediaPlayer.play()
+            self.sld.setSliderPosition(50)
+            self.mediaPlayer.setVolume(50)
 
     def mediastate_changed(self, state):
         if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
@@ -408,6 +410,15 @@ class Window1(QDialog):
     def filterAsTableButton(self):
         self.filter_table_window.show()
 
+    # @QtCore.pyqtSlot('qint64')
+    # def on_positionChanged(self, position):
+    #     if self.mediaPlayer.state() == QMediaPlayer.PlayingState:
+    #         if position > self._end:
+    #             self.mediaPlayer.stop()
+
+    # def btn_clk(self):
+    #     self.mediaPlayer.stop()
+    #     self.parent().goto('insights')
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

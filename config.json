@@ -1,6 +1,7 @@
 {
     "UserLoggedIn": "aaaa",
-    "SpecificMoviePage": "THE_DAY_THE_EARTH_STOOD_STILL_SCALED",
-    "ttMovie": "tt0970416",
+    "SpecificMoviePage": "",
+    "ttMovie": "",
+    "algo": "",
     "ENV_MODE": "development"
 }

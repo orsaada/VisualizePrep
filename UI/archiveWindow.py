@@ -1,8 +1,9 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication, QScrollArea
 
-from DB.DB import get_movieId
+from DB.db_api import get_movieId
 from UI.PageWindow import PageWindow
 from BussinesLayer.Services.VideoInsights import get_my_uploaded_videos
 import json
@@ -43,23 +44,56 @@ class MyArchiveWidget(QWidget):
             data = json.load(f)
         name = data["UserLoggedIn"]
         title = "Archive Info Movies Of: " + name
-        formLayout.addRow(title, QLabel())
+        qlabel_title = QLabel()
+        qlabel_title.setText(title)
+        # formLayout.addRow(title, QLabel())
         my_videos = get_my_uploaded_videos(name)
         buttons = []
-        for video in my_videos:
-            self.btnBox = QPushButton()
-            self.btnBox.setText(video[0])
-            self.btnBox.clicked.connect(lambda state, x=video[0]: self.gotoMovie(x))
-            buttons.append(self.btnBox)
+        # for video in my_videos:
+        #     self.btnBox = QPushButton()
+        #     self.btnBox.setText(video[0])
+        #     self.btnBox.clicked.connect(lambda state, x=video[0]: self.gotoMovie(x))
+        #     buttons.append(self.btnBox)
 
         self.btnBackBox = QPushButton()
         self.btnBackBox.setText('Back')
         self.btnBackBox.clicked.connect(self.gotoBack)
+        self.btnBackBox.setStyleSheet("background-color: red;")
+
+        # Scrolling
+        self.scroll = QScrollArea()             # Scroll Area which contains the widgets, set as the centralWidget
+        self.widget = QWidget()  # Widget that contains the collection of Vertical Box
+        self.vbox = QVBoxLayout()  # The Vertical Box that contains the Horizontal Boxes of  labels and buttons
+
+        # for i in range(1, 50):
+        #     object = QLabel("TextLabel")
+        #     self.vbox.addWidget(object)
+        for video in my_videos:
+            self.btnBox = QPushButton()
+            self.btnBox.setText(video[0])
+            self.btnBox.clicked.connect(lambda state, x=video[0]: self.gotoMovie(x))
+            self.vbox.addWidget(self.btnBox)
+
+
+        self.widget.setLayout(self.vbox)
+        #Scroll Area Properties
+        self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
+        self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
+        self.scroll.setWidgetResizable(True)
+        self.scroll.setWidget(self.widget)
+
+        # self.setCentralWidget(self.scroll)
+
+
         # Set the layout on the dialog
+
         dlgLayout.addLayout(formLayout)
-        for btn in buttons:
-            dlgLayout.addWidget(btn)
+        # for btn in buttons:
+        #     dlgLayout.addWidget(btn)
         dlgLayout.addWidget(self.btnBackBox)
+        dlgLayout.addWidget(qlabel_title)
+        dlgLayout.addWidget(self.scroll)
+
         self.setLayout(dlgLayout)
 
 

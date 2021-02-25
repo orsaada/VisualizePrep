@@ -1,4 +1,5 @@
 import json
+from pathlib import Path
 
 json_dir = '../../vi_json/'  # change to your path
 
@@ -72,7 +73,10 @@ def get_character_app_dict(name):
     name in the VideoIndexer dataset, and the value is the
    intervals (in seconds) at which they appear"""
 
-    with open(json_dir + name + '.json', encoding="utf8") as infile:
+    base_path = Path(__file__).parent.parent.parent
+    path_file = base_path / 'vi_json/{}.json'.format(name)
+    temp = json_dir + name + '.json'
+    with open(path_file, encoding="utf8") as infile:
         data = json.load(infile)
     char_app = dict()
     # for i in data["videos"][0]["insights"]["faces"]:

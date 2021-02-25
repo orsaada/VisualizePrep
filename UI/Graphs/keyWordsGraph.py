@@ -4,14 +4,10 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 from PyQt5.QtChart import QChartView
 from PyQt5.QtWidgets import QVBoxLayout, QMainWindow
-from matplotlib import rcParams
-import matplotlib.ticker as mticker
 
 from BussinesLayer.Data.data import extract_speakers, extract_keywords, analyze_keywords_graph
 
-# matplotlib.use('Qt5Agg')
 from PyQt5 import QtCore, QtWidgets
-import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 

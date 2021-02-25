@@ -1,7 +1,7 @@
 
 
 please install the requirments before running the project by the command:
-
+pip install -r requirements.txt
 
 
 open a user on  Microsoft Video Indexer on the link:

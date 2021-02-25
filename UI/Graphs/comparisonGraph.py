@@ -1,27 +1,35 @@
+import json
 import sys
+from pathlib import Path
 from PyQt5.QtWidgets import (QApplication, QMainWindow)
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.Qt import Qt
+from BussinesLayer.Services.VideoInsights import get_analyzed_data
 
 
 class ComparisonGraph(QMainWindow):
-    def __init__(self, algoName):
+    def __init__(self, algo_name, a, b):
         super().__init__()
         self.resize(800, 600)
 
         set0 = QBarSet('Microsoft Video Indexer')
         set1 = QBarSet('Microsoft Video Indexer After Improvement Algorithm')
 
-        # a, b = get_insights(data[])
-        set0.append([1,2,5,4])
-        set1.append([3,3,3,4])
+
+        # print(data['algo'])
+        print(algo_name)
+        print(a)
+        print(b)
+
+        set0.append(a)
+        set1.append(b)
         series = QBarSeries()
         series.append(set0)
         series.append(set1)
 
         chart = QChart()
         chart.addSeries(series)
-        chart.setTitle(algoName + ' - Improvement Results Analytics')
+        chart.setTitle(algo_name + ' - Improvement Results Analytics')
         chart.setAnimationOptions(QChart.SeriesAnimations)
 
         months = ('Precision', 'Recall', 'Jaccard', 'F score')
@@ -30,7 +38,7 @@ class ComparisonGraph(QMainWindow):
         axisX.append(months)
 
         axisY = QValueAxis()
-        axisY.setRange(0, 5)
+        axisY.setRange(0, 100)
 
         chart.addAxis(axisX, Qt.AlignBottom)
         chart.addAxis(axisY, Qt.AlignLeft)

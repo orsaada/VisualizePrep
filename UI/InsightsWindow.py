@@ -20,9 +20,13 @@ from UI.dataAsTable import myWindow
 class MyInsightsWindow(PageWindow):
     def __init__(self):
         super().__init__()
-        self.form_widget = MyInsightsWidget()
-        self.setWindowTitle("MyInsightsWindow")
-        self.setCentralWidget(self.form_widget)
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+        video_name = data["SpecificMoviePage"]
+        if video_name != '':
+            self.form_widget = MyInsightsWidget()
+            self.setWindowTitle("MyInsightsWindow")
+            self.setCentralWidget(self.form_widget)
         # self.form_widget.update()
 
 
@@ -32,7 +36,6 @@ class MyInsightsWidget(QDialog):
         self.resize(800, 600)
         self.setWindowTitle('Window1')
         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
-
 
         with open('./../config.json', 'r') as f:
             data = json.load(f)

@@ -1,3 +1,4 @@
+import os
 import sys
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
@@ -38,15 +39,15 @@ class MyMovieWidget(QWidget):
 
         self.btn_algo2 = QPushButton()
         self.btn_algo2.setText('algo 2')
-        self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 1'))
+        self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 2'))
 
         self.btn_algo3 = QPushButton()
         self.btn_algo3.setText('algo 3')
-        self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 1'))
+        self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 3'))
 
         self.btn_algo4 = QPushButton()
         self.btn_algo4.setText('algo 4')
-        self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 1'))
+        self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 4'))
 
         self.insights = QPushButton()
         self.insights.setText('insights graphs')
@@ -69,9 +70,13 @@ class MyMovieWidget(QWidget):
         self.setLayout(dlgLayout)
 
     def compareGraph(self, algo_name):
-        algo_name
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+            data["algo"] = algo_name
+        os.remove('./../config.json')
+        with open('./../config.json', 'w') as f:
+            json.dump(data, f, indent=4)
         self.parent().goto("comparison")
-        print(1)
 
     def gotToInsights(self):
         self.parent().goto("insights")

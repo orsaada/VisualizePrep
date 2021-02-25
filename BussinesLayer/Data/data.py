@@ -16,6 +16,7 @@ def check_attributes_exists(json_file_path):
         aaa.append(i)
     return aaa
 
+
 def extract_attribute(json_file_path, attr):
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)

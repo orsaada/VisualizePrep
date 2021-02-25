@@ -1,4 +1,4 @@
-from DB.DB import register
+from DB.db_api import register
 from BussinesLayer.Services.Logger import info
 
 

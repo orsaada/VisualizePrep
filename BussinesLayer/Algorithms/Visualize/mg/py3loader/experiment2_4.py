@@ -1,6 +1,5 @@
 import pickle
 from pathlib import Path
-
 from BussinesLayer.Algorithms.Visualize.mg.py3loader import moviegraphs
 from BussinesLayer.Algorithms.Visualize.mg.py3loader import videoindexer
 from imdb import IMDb
@@ -35,10 +34,23 @@ def cast_list(movie_id):
     returns a dictionary where the keys are associcated to the
     characters and the values are the actors that play them"""
     roles = dict()
+    print(movie_id[2:])
+    base_path = Path(__file__).parent.parent.parent
+    print(base_path / 'vi_json/{}.json'.format(movie_id))
 
-    ia = IMDb()
-    movie = ia.get_movie(movie_id[2:])
+    try:
+        ia = IMDb(accessSystem='http', reraiseExceptions=True)
+        movie = ia.get_movie(movie_id[2:])
+    except:
+        print("error")
+    # print(movie['cast'])
+    # try:
+    #     ia = IMDb(accessSystem='http', reraiseExceptions=True)
+    #     movie = ia.get_movie(movie_id[2:])
+    # except:
+    #     print("error")
 
+    print(movie['cast'])
     for i in movie['cast']:
         actor = i["name"]
         character = i.currentRole
@@ -296,7 +308,7 @@ def print_pretty_differences(json_movie_id, kind):
 
 
 def get_mg():
-    base_path = Path(__file__).parent.parent.parent
+    base_path = Path(__file__).parent
     # file_path = (base_path / 'config.json').resolve()
 
     with open(base_path / '2017-11-02-51-7637_py3.pkl', 'rb') as fid:
@@ -446,7 +458,8 @@ def print_pretty_changes_algorithm(kind, algorithm):
 
 def get_insight(tt, movie_path, algorithm):
     all_mg = get_mg()
-
+    base_path = Path(__file__).parent.parent.parent
+    movie_path = base_path / "vi_json/{}.json".format(movie_path)
     alg = ""
     if algorithm == 1:
         alg = algorithm_1(movie_path, create_faces_list(movie_path))
@@ -468,7 +481,7 @@ def get_insight(tt, movie_path, algorithm):
 
 
 if __name__ == '__main__':
-# print(get_insight('tt0988595', dress_27, 1))
+    # print(get_insight('tt0988595', dress_27, 1))
     print_pretty_changes_algorithm('with', 1)
 # print_pretty_changes_algorithm('without', 1)
 

@@ -9,6 +9,7 @@ import pickle
 
 # all_mg is a dictionary of MovieGraph objects
 # indexed by imdb unique movie identifiers
+from pathlib import Path
 
 scene_dir = '../../mg_videoinfo/scene_boundaries/'  # Change to your path
 vid_dir = '../../mg_videoinfo/video_boundaries/'  # Change to your path
@@ -28,7 +29,13 @@ def load_scene_gt(all_mg, movie_id):
 
 def load_vid_events(vid_dir, movie_id):
     vid_events = [(0, 0.0)]
-    with open(vid_dir + movie_id + '.videvents', 'r') as f:
+
+    base_path = Path(__file__).parent.parent.parent
+    vid_event_path = base_path / "mg_videoinfo/video_boundaries/{}.videvents".format(movie_id)
+    vid_matidx_path = base_path / "mg_videoinfo/video_boundaries/{}.matidx".format(movie_id)
+    temp = vid_dir + movie_id + '.videvents'
+    temp2 = vid_dir + movie_id + '.matidx'
+    with open(vid_event_path, 'r') as f:
         for row in f:
             if len(row.split(' ')) != 3:
                 continue
@@ -37,7 +44,7 @@ def load_vid_events(vid_dir, movie_id):
             timestamp = float(row.split(' ')[1])
             vid_events.append((frame, timestamp))
 
-    with open(vid_dir + movie_id + '.matidx', 'r') as frame_file:
+    with open(vid_matidx_path, 'r') as frame_file:
         lines = frame_file.read().splitlines()
         last_line = lines[-1]
         if last_line != '\n':
