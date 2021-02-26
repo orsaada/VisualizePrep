@@ -17,6 +17,7 @@ class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
+        fig.subplots_adjust(0.2, 0.3, 0.8, 0.8)  # left,bottom,right,top
         super(MplCanvas, self).__init__(fig)
 
 
@@ -24,10 +25,9 @@ class KeywordGraph(QMainWindow):
 
     def __init__(self):
         super().__init__()
-        self.resize(1000,1000)
+        self.resize(1000, 1000)
         self.sc = self.init_chart(1)
         self.setCentralWidget(self.sc)
-        # self.show()
 
     def init_chart(self, path):
         langs, students = analyze_keywords_graph()

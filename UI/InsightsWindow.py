@@ -4,17 +4,15 @@ import json
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog, QStyle, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QComboBox, QHBoxLayout, \
     QWidget, QStackedLayout, QApplication, QTableView
-
 from BussinesLayer.Services.VideoInsights import get_movie_id
-from UI.Graphs import pandasWindow
-from UI.Graphs.pandasWindow import pandasModel
+from UI.Graphs.MplCanvas.pandasWindow import pandasModel
+from UI.Graphs.allGraph import allGraphC
 from UI.Graphs.shotsGraph import shotsGraph
-from UI.Graphs.ChartEmotion import ChartEmotions
+from UI.Graphs.emotionsGraph import ChartEmotions
 from UI.Graphs.keyWordsGraph import KeywordGraph
 from UI.Graphs.namedPeopleGraph import NamedPeopleGraph
 from UI.Graphs.speakersGraph import SpeakersGraph
 from UI.PageWindow import PageWindow
-from UI.dataAsTable import myWindow
 
 
 class MyInsightsWindow(PageWindow):
@@ -41,8 +39,7 @@ class MyInsightsWidget(QDialog):
             data = json.load(f)
         video_name = data["SpecificMoviePage"]
         username = data["UserLoggedIn"]
-        video_id = get_movie_id(username,video_name)
-        # print(video_id)
+        video_id = get_movie_id(username, video_name)
         # label1 = QLabel(value)
         self.button = QPushButton()
         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -82,47 +79,41 @@ class MyInsightsWidget(QDialog):
         # self.comparisonButton.clicked.connect(self.compareImprovments)
         # layoutV.addWidget(self.comparisonButton)
 
-
-        #filter as table button
+        # filter as table button
         # self.filter_table_window = myWindow()
         # self.filter_table_button = QPushButton("Filter as table")
         # self.filter_table_button.clicked.connect(self.filterAsTable)
 
-        #show graph
+        # show graph
         # self.showGraphButton = QPushButton("Show Graph")
         # self.showGraphButton.clicked.connect(self.showGraph)
 
-
-
-
-
-
         # graphs
-        # widget = ChartEmotions()
+        all_graph_attributes = ['faces', 'labels', 'brands', 'namedLocations', 'topics', 'sentiments']
         self.child = SpeakersGraph()
         self.graphs = {"Speakers": SpeakersGraph,
                        "Emotions": ChartEmotions,
                        "Faces": NamedPeopleGraph,
-                       # "Sentiments": anotherGraph,
                        "Keywords": KeywordGraph,
                        "Shots": shotsGraph}
-        self.showingGraphName = list(self.graphs.keys())[0]
         self.graphs = {k: v() for k, v in self.graphs.items()}
+        for i in all_graph_attributes:
+            self.graphs[i] = allGraphC(i)
 
-        #dropdown choosing
+        self.showingGraphName = list(self.graphs.keys())[0]
+
+        # dropdown choosing
         combo = QComboBox(self)
         for k in self.graphs.keys():
             combo.addItem(k)
         combo.move(50, 50)
-        #not neccesrily need
+        # not neccesrily need
         self.qlabel = QLabel(self)
         self.qlabel.move(50, 16)
 
         combo.activated[str].connect(self.onChanged)
 
-
-
-        #button switch
+        # button switch
         self.button_switch()
 
         # layout and

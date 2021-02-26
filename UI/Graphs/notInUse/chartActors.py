@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-from BussinesLayer.Data.data import extract_speakers
+from BussinesLayer.Data.data import extract_speakers, manage_config
 
 
 class MainWindow(QtWidgets.QMainWindow):
@@ -22,10 +22,7 @@ class MainWindow(QtWidgets.QMainWindow):
         self.graphWidget = pg.PlotWidget()
         self.setCentralWidget(self.graphWidget)
 
-
-        # plot colab
-        base_path = Path(__file__).parent.parent.parent
-        file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
+        file_path = manage_config()
         speakers = extract_speakers(file_path)
         df = pd.DataFrame()
         for y in speakers:

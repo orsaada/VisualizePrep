@@ -1,19 +1,10 @@
 import sys
-from pathlib import Path
 
-import matplotlib.pyplot as plt
-from PyQt5.QtChart import QChartView
-from PyQt5.QtWidgets import QVBoxLayout, QMainWindow
-from matplotlib import rcParams
-import matplotlib.ticker as mticker
-
-from BussinesLayer.Data.data import extract_speakers, extract_keywords, extract_attribute, extract_attribute_to_df, \
-    extract_shots_or
-from datetime import datetime
+from PyQt5.QtWidgets import QVBoxLayout, QMainWindow, QWidget
+from BussinesLayer.Data.data import extract_shots_or, manage_config
 from collections import Counter
 import matplotlib.pyplot as plt
-# matplotlib.use('Qt5Agg')
-from PyQt5 import QtCore, QtWidgets
+from PyQt5 import QtWidgets
 import pandas as pd
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
@@ -24,6 +15,7 @@ class MplCanvas(FigureCanvasQTAgg):
     def __init__(self, parent=None, width=5, height=4, dpi=100):
         fig = Figure(figsize=(width, height), dpi=dpi)
         self.axes = fig.add_subplot(111)
+        fig.subplots_adjust(0.2, 0.3, 0.8, 0.8)  # left,bottom,right,top
         super(MplCanvas, self).__init__(fig)
 
 
@@ -33,15 +25,18 @@ class shotsGraph(QMainWindow):
         super().__init__()
         self.resize(1000,1000)
         self.sc = self.init_chart(1)
-        self.setCentralWidget(self.sc)
+        layout = QVBoxLayout()
+        layout.addWidget(self.sc)
+        layout.setContentsMargins(100,100,100,100)
+        widget = QWidget()
+        widget.setLayout(layout)
+        self.setCentralWidget(widget)
+        # self.setCentralWidget(self.sc)
 
         # self.show()
 
     def init_chart(self, path):
-        # changes
-        base_path = Path(__file__).parent.parent
-        file_path = (base_path / "../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json").resolve()
-        # df1 = extract_attribute_to_df(,"shots")
+        file_path = manage_config()
         keywords = extract_shots_or(file_path)
         df1 = pd.DataFrame()
         for y in keywords:
@@ -75,7 +70,8 @@ class shotsGraph(QMainWindow):
         # Create the maptlotlib FigureCanvas object,
         # which defines a single set of axes as self.axes.
         sc = MplCanvas(self, width=5, height=4, dpi=100)
-        sc.axes.plot(x, y)
+        sc.axes.bar(x, y)
+        # sc.axes.plot(x, y)
         sc.axes.set_xticks(x)
         sc.axes.set_xticklabels(x, rotation=90, rotation_mode="default")
 
@@ -89,4 +85,5 @@ class shotsGraph(QMainWindow):
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     w = shotsGraph()
+    w.show()
     app.exec_()

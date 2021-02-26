@@ -39,9 +39,9 @@ def manage_config():
 
 def extract_attribute_to_df(attr):
     file_path = manage_config()
-    print(file_path)
+    # print(file_path)
     attribute_json = extract_attribute(file_path, attr)
-    print(attribute_json)
+    # print(attribute_json)
     df = pd.DataFrame()
     for y in attribute_json:
         if not isinstance(y, str):
@@ -152,7 +152,8 @@ def extract_speakers_list(json_file_path):
         for sid in speaker_instances_data["instances"]:
             speakers.append((sid["start"],sid["end"],speaker_name))
 
-    return  sorted(speakers)
+    return sorted(speakers)
+
 
 def get_actor_appearances(json_file_path, actor_name):
     faces = extract_actors(json_file_path)
@@ -262,7 +263,33 @@ def delete_csv():
         os.remove("{}.csv".format(x))
 
 
+def analyze_speakers_graph():
+    df = extract_attribute_to_df("speakers")
+    by_instance = pd.DataFrame(columns=['instance', 'start', 'end'])
+    if df.empty:
+        a, b = [], []
+    else:
+        a, b = df['instances'], df['name']
+    for instances, name in zip(a, b):
+        for y in instances:
+            by_instance = by_instance.append({'instance': name, 'start': y['start'],
+                                              'end': y['end']}, ignore_index=True)
+    by_instance['start'] = pd.to_datetime(by_instance['start'])
+    by_instance['end'] = pd.to_datetime(by_instance['end'])
 
+    by_instance['range'] = by_instance['end'] - by_instance['start']
+    by_instance = by_instance.groupby(['instance'])['range'].sum().reset_index(name='range')
+    instances, ranges = list(by_instance['instance']), list(by_instance['range'])
+    print(ranges)
+    instances = list(map(lambda x: x.split()[1],instances))
+    sets = []
+    labelsX = []
+    for ttype in instances:
+        labelsX.append(ttype)
+        sets.append(QBarSet(ttype))
+    for i in range(len(ranges)):
+        ranges[i] = ranges[i].total_seconds()
+    return sets, ranges, labelsX
 
 
 def analyze_emotions_graph():
@@ -270,7 +297,7 @@ def analyze_emotions_graph():
     ranges = []
     file_path = manage_config()
     emotions = extract_emotions(file_path)
-    all_emotions_list = ['Sad', 'Joy', 'Fear', 'Angry']
+    all_emotions_list = ['Sad', 'Joy', 'Fear', 'Anger']
     for idx2, i in enumerate(emotions):
         if i['type'] in all_emotions_list:
             all_emotions_list.remove(i['type'])
@@ -280,10 +307,11 @@ def analyze_emotions_graph():
             range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
             sum_time = sum_time + range_time
         ranges.append(sum_time)
+    # if emotion missing add it with zero value
     for ttype in all_emotions_list:
         sets.append(QBarSet(ttype))
         ranges.append(0)
-    return sets,ranges
+    return sets, ranges
 
 
 def analyze_keywords_graph():
@@ -295,7 +323,6 @@ def analyze_keywords_graph():
             df1 = df1.append(y, ignore_index=True)
         else:
             pass
-    print(df1)
     number_of_instances = []
     for x in df1.instances:
         number_of_instances.append(len(x))
@@ -303,6 +330,7 @@ def analyze_keywords_graph():
     langs = df1['text']  # ['C', 'C++', 'Java', 'Python', 'PHP']
     students = df1['number_of_instances']  # [23,17,35,29,12]
     return langs, students
+
 
 if __name__ == '__main__':
     # json_str = "../../BussinesLayer/Algorithms/Visualize/vi_json/bad_santa.json"

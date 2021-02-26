@@ -34,36 +34,16 @@ class ChartEmotions(QMainWindow):
 
     def init_chart(self, path):
         sets, ranges = analyze_emotions_graph()
-        # sets = []
-        # ranges = []
-        # for idx2, i in enumerate(self.emotions):
-        #     sets.append(QBarSet(i['type']))
-        #     sum_time = 0
-        #     for idx, val in enumerate(i['instances']):
-        #         range_time = mktime(format_time(val['end']).timetuple()) - mktime(format_time(val['start']).timetuple())
-        #         # print(mktime(format_time(val['end']).timetuple())-mktime(format_time(val['start']).timetuple()))
-        #         sum_time = sum_time + range_time
-        #         # format_time(val['end'])-format_time(val['start'])
-        #     ranges.append(sum_time)
         print(sets)
-        set0 = sets[0]
-        set1 = sets[1]
-        set2 = sets[2]
-        set3 = sets[3]
-        print(set3)
-        print(ranges[3])
-        # x = datetime.strptime("1:29:37.79", "%H:%M:%S.%f")
-        set0.append(ranges[0])
-        set1.append(ranges[1])
-        set2.append(ranges[2])
-        set3.append(ranges[3])
+        print(ranges)
+        sets_arr = []
+        for i in range(len(sets)):
+            sets_arr.append(sets[i])
+            sets_arr[i].append(ranges[i])
 
         series = QBarSeries()
-        series.append(set0)
-        series.append(set1)
-        series.append(set2)
-        series.append(set3)
-
+        for ele in sets_arr:
+            series.append(ele)
         chart = QChart()
         chart.addSeries(series)
         chart.setTitle('Bar Chart Emotions')

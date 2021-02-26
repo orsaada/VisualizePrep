@@ -1,6 +1,3 @@
-# from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QHBoxLayout, QVBoxLayout, QLabel, \
-#     QSlider, QStyle, QSizePolicy, QFileDialog
-import datetime
 import json
 import os
 import sys
@@ -13,7 +10,6 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from BussinesLayer.Services.VideoInsights import load_video, update_insights_in_db
 from UI.PageWindow import PageWindow
-from UI.dataAsTable import myWindow
 
 
 def find_diffrence_temp():
@@ -46,12 +42,14 @@ class MediaWindow(QWidget):
         p.setColor(QPalette.Window, Qt.black)
         self.setPalette(p)
 
-        self.video_name = ''
+        self.video_path_name = ''
+
+        self.video_name_label = QLabel()
 
         self.init_ui()
 
         # new window opening for qwidget
-        self.newindow = Window1(self)
+        # self.newindow = Window1(self)
 
         # if want to check start app only from the mediaplayer cancell the comment
         self.show()
@@ -140,7 +138,7 @@ class MediaWindow(QWidget):
         hboxLayout = QHBoxLayout()
         hboxLayout.setContentsMargins(0, 0, 0, 0)
 
-        #set widgets to the hbox layout
+        # set widgets to the hbox layout
         hboxLayout.addWidget(openBtn)
         hboxLayout.addWidget(self.playBtn)
         hboxLayout.addWidget(self.slider)
@@ -153,19 +151,17 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(self.sld)
         # hboxLayout.addWidget(self.sldlabel)
 
-        #create vbox layout
+        # create vbox layout
         vboxLayout = QVBoxLayout()
         vboxLayout.addWidget(videowidget)
         vboxLayout.addLayout(hboxLayout)
         vboxLayout.addWidget(self.label)
 
-
         self.setLayout(vboxLayout)
 
         self.mediaPlayer.setVideoOutput(videowidget)
 
-
-        #media player signals
+        # media player signals
 
         self.mediaPlayer.stateChanged.connect(self.mediastate_changed)
         self.mediaPlayer.positionChanged.connect(self.position_changed)
@@ -211,7 +207,7 @@ class MediaWindow(QWidget):
             end: time in ms where playback ends
         """
         self.mediaPlayer.stop()
-        self.mediaPlayer.setMedia(QMediaContent(QtCore.QUrl.fromLocalFile(self.video_name)))
+        self.mediaPlayer.setMedia(QMediaContent(QtCore.QUrl.fromLocalFile(self.video_path_name)))
         self.mediaPlayer.setPosition(start)
         # self._end = end
         self.mediaPlayer.play()
@@ -232,12 +228,13 @@ class MediaWindow(QWidget):
         if filename != '':
             self.mediaPlayer.setMedia(QMediaContent(QUrl.fromLocalFile(filename)))
             self.playBtn.setEnabled(True)
-            self.video_name = filename
+            self.video_path_name = filename
             with open('./../config.json') as f:
                 data = json.load(f)
             if data["ENV_MODE"] == 'production':
                 username = data["UserLoggedIn"]
                 name = os.path.splitext(os.path.basename(filename))[0]
+                self.video_name_label.setText(name)
                 vid_id = load_video(filename, name)
                 update_insights_in_db(username, name, vid_id)
             elif data["ENV_MODE"] == 'development':
@@ -293,121 +290,121 @@ class MediaWindow(QWidget):
         self.label.setText("Error: " + self.mediaPlayer.errorString())
 
 
-class Window1(QDialog):
-    def __init__(self, value, parent=None):
-        super().__init__(parent)
-        self.resize(800, 600)
-        self.setWindowTitle('Window1')
-        self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
-
-        label1 = QLabel(value)
-        self.button = QPushButton()
-        self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-        self.button.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
-        self.button.setIconSize(QSize(200, 200))
-
-        layoutV = QVBoxLayout()
-
-        # close button
-        self.pushButton = QPushButton(self)
-        self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.pushButton.setText('Click me! (close page)')
-        self.pushButton.clicked.connect(self.goMainWindow)
-        layoutV.addWidget(self.pushButton)
-
-        #filter as table button
-        self.filter_table_window = myWindow()
-        self.filter_table_button = QPushButton("Filter as table")
-        self.filter_table_button.clicked.connect(self.filterAsTableButton)
-
-
-        #dropdown choosing
-        combo = QComboBox(self)
-        combo.addItem("Emotions")
-        combo.addItem("Faces")
-        combo.addItem("Sentiments")
-        combo.move(50, 50)
-
-        #call chart
-        #chartClass = ChartEmotions()
-
-
-        #not neccesrily need
-        self.qlabel = QLabel(self)
-        self.qlabel.move(50, 16)
-
-        combo.activated[str].connect(self.onChanged)
-
-
-        #button switch
-        self.button_switch()
-
-        # layout and
-        layoutH = QHBoxLayout()
-        layoutH.addWidget(label1)
-        # layoutH.addWidget(self.button)
-        layoutH.addWidget(combo)
-        layoutH.addWidget(self.filter_table_button)
-        #layoutH.addWidget(chartClass.chartView)
-        layoutV.addLayout(layoutH)
-        self.setLayout(layoutV)
-
-    def goMainWindow(self):
-        self.goto("main")
-        # self.close()
-
-    def onChanged(self, text):
-        self.qlabel.setText(text)
-        self.qlabel.adjustSize()
-
-    def switch_wids(self):
-
-        # LOGIC TO SWITCH
-        if self.front_wid == 1:
-            self.wid1.hide()
-            self.wid2.show()
-            self.front_wid = 2
-        else:
-            self.wid1.show()
-            self.wid2.hide()
-            self.front_wid = 1
-
-    def button_switch(self):
-        # CENTRAL WIDGET
-        self.central_wid = QWidget()
-        self.layout_for_wids = QStackedLayout()
-
-        # BUTTON TO SWITCH BETWEEN WIDGETS
-        self.btn_switch = QPushButton("Switch")
-        self.btn_switch.clicked.connect(self.switch_wids)
-        self.btn_switch.setFixedSize(50, 50)
-        self.btn_switch
-
-        # 2 WIDGETS
-        self.wid1 = QWidget()
-        self.wid1.setStyleSheet("""background: blue;""")
-        self.wid1.setFixedSize(200, 200)
-        self.wid1.move(100, 100)
-        self.wid2 = QWidget()
-        self.wid2.setStyleSheet("""background: green;""")
-        self.wid2.setFixedSize(200, 200)
-        self.wid2.move(100, 100)
-
-        # LAYOUT CONTAINER FOR WIDGETS AND BUTTON
-        self.layout_for_wids.addWidget(self.btn_switch)
-        self.layout_for_wids.addWidget(self.wid1)
-        self.layout_for_wids.addWidget(self.wid2)
-
-        # ENTERING LAYOUT
-        self.central_wid.setLayout(self.layout_for_wids)
-
-        # CHOOSE YOUR CENTRAL WIDGET
-        # self.setCentralWidget(self.central_wid)
-
-        # WHICH WIDGET IS ON THE FRONT
-        self.front_wid = 1
-
-    def filterAsTableButton(self):
+# class Window1(QDialog):
+#     def __init__(self, value, parent=None):
+#         super().__init__(parent)
+#         self.resize(800, 600)
+#         self.setWindowTitle('Window1')
+#         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
+#
+#         label1 = QLabel(value)
+#         self.button = QPushButton()
+#         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+#         self.button.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
+#         self.button.setIconSize(QSize(200, 200))
+#
+#         layoutV = QVBoxLayout()
+#
+#         # close button
+#         self.pushButton = QPushButton(self)
+#         self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+#         self.pushButton.setText('Click me! (close page)')
+#         self.pushButton.clicked.connect(self.goMainWindow)
+#         layoutV.addWidget(self.pushButton)
+#
+#         #filter as table button
+#         self.filter_table_window = myWindow()
+#         self.filter_table_button = QPushButton("Filter as table")
+#         self.filter_table_button.clicked.connect(self.filterAsTableButton)
+#
+#
+#         #dropdown choosing
+#         combo = QComboBox(self)
+#         combo.addItem("Emotions")
+#         combo.addItem("Faces")
+#         combo.addItem("Sentiments")
+#         combo.move(50, 50)
+#
+#         #call chart
+#         #chartClass = ChartEmotions()
+#
+#
+#         #not neccesrily need
+#         self.qlabel = QLabel(self)
+#         self.qlabel.move(50, 16)
+#
+#         combo.activated[str].connect(self.onChanged)
+#
+#
+#         #button switch
+#         self.button_switch()
+#
+#         # layout and
+#         layoutH = QHBoxLayout()
+#         layoutH.addWidget(label1)
+#         # layoutH.addWidget(self.button)
+#         layoutH.addWidget(combo)
+#         layoutH.addWidget(self.filter_table_button)
+#         #layoutH.addWidget(chartClass.chartView)
+#         layoutV.addLayout(layoutH)
+#         self.setLayout(layoutV)
+#
+#     def goMainWindow(self):
+#         self.goto("main")
+#         # self.close()
+#
+#     def onChanged(self, text):
+#         self.qlabel.setText(text)
+#         self.qlabel.adjustSize()
+#
+#     def switch_wids(self):
+#
+#         # LOGIC TO SWITCH
+#         if self.front_wid == 1:
+#             self.wid1.hide()
+#             self.wid2.show()
+#             self.front_wid = 2
+#         else:
+#             self.wid1.show()
+#             self.wid2.hide()
+#             self.front_wid = 1
+#
+#     def button_switch(self):
+#         # CENTRAL WIDGET
+#         self.central_wid = QWidget()
+#         self.layout_for_wids = QStackedLayout()
+#
+#         # BUTTON TO SWITCH BETWEEN WIDGETS
+#         self.btn_switch = QPushButton("Switch")
+#         self.btn_switch.clicked.connect(self.switch_wids)
+#         self.btn_switch.setFixedSize(50, 50)
+#         self.btn_switch
+#
+#         # 2 WIDGETS
+#         self.wid1 = QWidget()
+#         self.wid1.setStyleSheet("""background: blue;""")
+#         self.wid1.setFixedSize(200, 200)
+#         self.wid1.move(100, 100)
+#         self.wid2 = QWidget()
+#         self.wid2.setStyleSheet("""background: green;""")
+#         self.wid2.setFixedSize(200, 200)
+#         self.wid2.move(100, 100)
+#
+#         # LAYOUT CONTAINER FOR WIDGETS AND BUTTON
+#         self.layout_for_wids.addWidget(self.btn_switch)
+#         self.layout_for_wids.addWidget(self.wid1)
+#         self.layout_for_wids.addWidget(self.wid2)
+#
+#         # ENTERING LAYOUT
+#         self.central_wid.setLayout(self.layout_for_wids)
+#
+#         # CHOOSE YOUR CENTRAL WIDGET
+#         # self.setCentralWidget(self.central_wid)
+#
+#         # WHICH WIDGET IS ON THE FRONT
+#         self.front_wid = 1
+#
+#     def filterAsTableButton(self):
         self.filter_table_window.show()
 
     # @QtCore.pyqtSlot('qint64')
@@ -419,6 +416,7 @@ class Window1(QDialog):
     # def btn_clk(self):
     #     self.mediaPlayer.stop()
     #     self.parent().goto('insights')
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)

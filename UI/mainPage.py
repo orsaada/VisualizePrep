@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtWidgets
+from PyQt5.QtGui import QPixmap
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton
 
 from UI.ComparisonWindow import ComparisonWindow
@@ -130,6 +131,18 @@ class MainWidg(QWidget):
         self.cleanFields()
         self.parent().goto("register")
 
+    def change_color_mode(self):
+        if self.darkmode_boolean:
+            self.parent().setStyleSheet("")
+        else:
+            styleFile = './style2.qss'
+            qssStyle = CommonHelper.readQSS(styleFile)
+            self.parent().setStyleSheet(qssStyle)
+            self.parent().update()
+            self.setStyleSheet(qssStyle)
+            self.update()
+        # self.setStyleSheet("")
+
     def __init__(self):
         super().__init__()
         self.setWindowTitle("MainWindow")
@@ -149,10 +162,28 @@ class MainWidg(QWidget):
         self.btnRegisterBox = QPushButton()
         self.btnRegisterBox.setText('Register')
         self.btnRegisterBox.clicked.connect(self.gotoRegister)
+
+        # creating label
+        self.piclabel = QLabel(self)
+
+        # loading image
+        self.pixmap = QPixmap('./bgu-logo.png')
+        self.pixmap = self.pixmap.scaled(self.width()-200, self.height()-200)
+        # adding image to label
+        self.piclabel.setPixmap(self.pixmap)
+
+        # dark mode
+        self.darkmode_boolean = False
+        self.darkmode = QPushButton()
+        self.darkmode.setText('Dark Mode')
+        self.darkmode.clicked.connect(self.change_color_mode)
+
         # Set the layout on the dialog
         dlgLayout.addLayout(formLayout)
         dlgLayout.addWidget(self.btnLoginBox)
         dlgLayout.addWidget(self.btnRegisterBox)
+        dlgLayout.addWidget(self.piclabel)
+        dlgLayout.addWidget(self.darkmode)
         self.setLayout(dlgLayout)
 
 
@@ -227,10 +258,10 @@ if __name__ == "__main__":
         data["ENV_MODE"] = 'development'
         json.dump(data, f, indent=4)
     app = QtWidgets.QApplication(sys.argv)
-    styleFile = './style2.qss'
-    qssStyle = CommonHelper.readQSS(styleFile)
-    app.setStyleSheet(qssStyle)
+    # styleFile = './style2.qss'
+    # qssStyle = CommonHelper.readQSS(styleFile)
+    # app.setStyleSheet(qssStyle)
     w = Window()
-    w.resize(1000, 500)
+    w.resize(1200, 700)
     w.show()
     sys.exit(app.exec_())

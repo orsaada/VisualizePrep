@@ -1,14 +1,14 @@
 import json
 from pathlib import Path
 
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QPushButton, QVBoxLayout, QWidget, QLabel
-
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QLabel, QTableView
+import pandas as pd
 from BussinesLayer.Services.VideoInsights import get_analyzed_data
 from UI.Graphs.comparisonGraph import ComparisonGraph
+from UI.Graphs.MplCanvas.pandasWindow import pandasModel
 from UI.PageWindow import PageWindow
 import sys
-from PyQt5.QtWidgets import (QToolTip, QPushButton, QApplication)
-from PyQt5.QtGui import QFont
+from PyQt5.QtWidgets import (QPushButton, QApplication)
 
 
 class ComparisonWindow(PageWindow):
@@ -37,6 +37,11 @@ class ComparisonWindow(PageWindow):
         a, b = list(map(float, a)), list(map(float, b))
         a[2] *= 100
         b[2] *= 100
+        d = {'col1': [1, 2], 'col2': [3, 4]}
+        df = pd.DataFrame(d)
+        model = pandasModel(df)
+        view = QTableView()
+        view.setModel(model)
         b3 = ComparisonGraph(data['algo'], a, b)
         b3.update()
 
@@ -50,6 +55,7 @@ class ComparisonWindow(PageWindow):
         layout.addWidget(b3)
         layout.addWidget(label_values1)
         layout.addWidget(label_values2)
+        # layout.addWidget(view)
         layout.addWidget(details)
 
         widget.setLayout(layout)
