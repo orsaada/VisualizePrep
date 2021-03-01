@@ -133,8 +133,12 @@ class MainWidg(QWidget):
 
     def change_color_mode(self):
         if self.darkmode_boolean:
+            self.darkmode_boolean = False
             self.parent().setStyleSheet("")
+            self.update()
+            self.layout().update()
         else:
+            self.darkmode_boolean = True
             styleFile = './style2.qss'
             qssStyle = CommonHelper.readQSS(styleFile)
             self.parent().setStyleSheet(qssStyle)
