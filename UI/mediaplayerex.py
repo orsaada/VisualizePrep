@@ -9,6 +9,7 @@ from PyQt5 import QtCore
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 from BussinesLayer.Services.VideoInsights import load_video, update_insights_in_db
+from DB.db_api import add_new_video
 from UI.PageWindow import PageWindow
 
 
@@ -94,8 +95,11 @@ class MediaWindow(QWidget):
         hours = (duration / 3600000) % 24
         # print(duration)
         QTime(hours, minutes, seconds)
-        self.positionLabel = QLabel('00:00:000')
+        self.positionLabel = QLabel('00:00:00')
         self.positionLabel.setStyleSheet("background-color: lightgreen")
+
+        # movie name
+        # self.video_name_label = QLabel('wow')
 
         # logout button
         self.logoutButton = QPushButton(self)
@@ -119,10 +123,10 @@ class MediaWindow(QWidget):
         self.archiveButton.clicked.connect(self.goMyArchive)
 
         # goback button
-        self.goBackButton = QPushButton(self)
-        self.goBackButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        self.goBackButton.setText('GO BACK')
-        self.goBackButton.clicked.connect(self.goMediaWindow)
+        # self.goBackButton = QPushButton(self)
+        # self.goBackButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        # self.goBackButton.setText('GO BACK')
+        # self.goBackButton.clicked.connect(self.goMediaWindow)
 
         # volume
         self.sld = QSlider(Qt.Horizontal, self)
@@ -144,10 +148,11 @@ class MediaWindow(QWidget):
         hboxLayout.addWidget(self.slider)
         # hboxLayout.addWidget(gotoInsights)
         hboxLayout.addWidget(self.positionLabel)
+        hboxLayout.addWidget(self.video_name_label)
         hboxLayout.addWidget(self.logoutButton)
         # hboxLayout.addWidget(self.diffButton)
         hboxLayout.addWidget(self.archiveButton)
-        hboxLayout.addWidget(self.goBackButton)
+        # hboxLayout.addWidget(self.goBackButton)
         hboxLayout.addWidget(self.sld)
         # hboxLayout.addWidget(self.sldlabel)
 
@@ -178,7 +183,7 @@ class MediaWindow(QWidget):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
             data['UserLoggedIn'] = ""
-        print(data['UserLoggedIn'])
+        # print(data['UserLoggedIn'])
         os.remove('./../config.json')
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
@@ -231,12 +236,13 @@ class MediaWindow(QWidget):
             self.video_path_name = filename
             with open('./../config.json') as f:
                 data = json.load(f)
+            username = data["UserLoggedIn"]
+            name = os.path.splitext(os.path.basename(filename))[0]
+            self.video_name_label.setText(name)
             if data["ENV_MODE"] == 'production':
-                username = data["UserLoggedIn"]
-                name = os.path.splitext(os.path.basename(filename))[0]
-                self.video_name_label.setText(name)
                 vid_id = load_video(filename, name)
                 update_insights_in_db(username, name, vid_id)
+                add_new_video(username, data['name'], name)
             elif data["ENV_MODE"] == 'development':
                 i = 0  # to delete jsut to example
 
@@ -267,7 +273,8 @@ class MediaWindow(QWidget):
         # seconds = (duration / 1000) % 60
         # minutes = (duration / 60000) % 60
         import pandas as pd
-        print(pd.to_datetime(position, unit='ms').to_pydatetime())
+        # print(pd.to_datetime(position, unit='ms').to_pydatetime())
+        self.positionLabel.setText(str(pd.to_datetime(position, unit='ms').to_pydatetime().time()))
         # time = pd.to_datetime(position, unit='ms').to_pydatetime().seconds
         # print(time)
         # print(datetime.datetime.fromtimestamp(position/1000.0))

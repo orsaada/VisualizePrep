@@ -2,7 +2,7 @@ import sys
 import dateutil.parser
 from PyQt5.QtWidgets import (QApplication, QMainWindow)
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
-from PyQt5.Qt import Qt
+from PyQt5.QtCore import Qt
 from BussinesLayer.Data.data import analyze_speakers_graph
 from UI.Graphs.Graph import GraphBar
 
