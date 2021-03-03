@@ -1,14 +1,20 @@
 import os
 import sys
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
+from PyQt5.QtCore import QThread, Qt
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication, \
+    QProgressDialog
 
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.algorithm import get_progress_val
 from UI.Graphs.comparisonGraph import ComparisonGraph
 from UI.PageWindow import PageWindow
 import json
 
 
 # Movie Page
+from UI.Worker import Worker
+
+
 class MyMovie(PageWindow):
     def __init__(self):
         super().__init__()
@@ -31,6 +37,24 @@ class MyMovieWidget(QWidget):
         name = data["SpecificMoviePage"]
         formLayout.addRow(name + " Page - Menu", QLabel())
         dlgLayout.addLayout(formLayout)
+
+        # progress bar
+        self.worker = Worker()
+        self.thread = QThread()
+        self.worker.moveToThread(self.thread)
+        self.worker.workRequested.connect(self.thread.start)
+        self.thread.started.connect(self.worker.add_tabs)
+        self.worker.finished.connect(self.on_finish)
+
+        self.button = QPushButton("Add tabs")
+        self.button.clicked.connect(self.on_button_click)
+
+        # self.progress = QProgressDialog("Progress", "cancel", 0, 10)
+        # self.progress.setCancelButton(None)
+
+        self.worker.relay.connect(self.update_progress)
+
+        dlgLayout.addWidget(self.button)
 
         algo_buttons_list = list(map(lambda x: QPushButton, range(4)))
         self.btn_algo1 = QPushButton()
@@ -80,6 +104,27 @@ class MyMovieWidget(QWidget):
 
     def gotToInsights(self):
         self.parent().goto("insights")
+
+    # functions for progress bar: on_button_click, on_finish, update_progress, responsive
+    def on_button_click(self):
+        self.button.setEnabled(False)
+        self.worker.request_work()
+        self.progress.setValue(0)
+
+    def on_finish(self):
+        self.button.setEnabled(True)
+        self.thread.quit()
+
+    def update_progress(self, value):
+        value = get_progress_val()
+        self.progress.setValue(value)
+
+    def create_progres_bar(self):
+        self.progress = QProgressDialog("Progress", "cancel", 0, 10)
+        self.progress.setCancelButton(None)
+
+    def responsive(self):
+        print("Yes!")
 
 
 if __name__ == '__main__':

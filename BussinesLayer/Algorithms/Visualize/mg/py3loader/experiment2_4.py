@@ -28,6 +28,8 @@ pulp_fiction = "./../../vi_json/tt0110912.json"
 the_day_the_earth_stood_still = "./../../vi_json/tt0970416.json"
 the_social_network = "./../../vi_json/tt1285016.json"
 
+loading_value = 0
+
 
 def cast_list(movie_id):
     """given the imdb id of a movie,

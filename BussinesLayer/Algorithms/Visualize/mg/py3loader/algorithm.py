@@ -1,5 +1,30 @@
-from BussinesLayer.Data.data import extract_actors,extract_shots,extract_speakers_list,extract_speakers_list_from_transcript_data
+from math import inf
+
+from BussinesLayer.Data.data import extract_actors, extract_shots, extract_speakers_list, \
+    extract_speakers_list_from_transcript_data
 import itertools
+
+
+max_progress_val = float('inf')
+progress_val = 0
+
+
+def set_max_progress_val(val):
+    global max_progress_val
+    max_progress_val = val
+
+
+def set_progress_val(val):
+    global progress_val
+    progress_val = val//max_progress_val
+
+
+def get_max_progress_val():
+    return max_progress_val
+
+
+def get_progress_val():
+    return progress_val
 
 
 def time_to_secs(t):
@@ -85,9 +110,11 @@ def faces_shots_verification(shots, prev_face_end, cur_face_start, cur_face_end,
 
 def algorithm_2_improved(json,faces_instances):
     shots = extract_shots(json)
-    #faces_instances = create_faces_list(json)
+    # faces_instances = create_faces_list(json)
     result = []
+    set_max_progress_val(len(faces_instances))
     for idx, (start, end, name) in enumerate(faces_instances):
+        set_progress_val(idx)
         if "Unknown" in name:
             if 0 < idx < len(faces_instances) - 1:
                 (s1, e1, name_before) = get_previous_face(faces_instances,idx,start)
@@ -95,8 +122,8 @@ def algorithm_2_improved(json,faces_instances):
                 # predicate difference from algorithm2
                 if 'Unknown' not in name_before and name_before == name_after and faces_shots_verification(shots, e1, start, end, s2):
                     result.append((start, end, name_after))
-                    #print("start:"+start+". end: "+end + ". name before:" + name_before +
-                    #". name middle:" + name + ". name after:" + name_after +"\n")
+                    # print("start:"+start+". end: "+end + ". name before:" + name_before +
+                    # ". name middle:" + name + ". name after:" + name_after +"\n")
                 else:
                     result.append((start, end, name))
             else:
@@ -107,10 +134,12 @@ def algorithm_2_improved(json,faces_instances):
 
 
 #  Nati
-def algorithm_2(json,faces_instances):
+def algorithm_2(json, faces_instances):
     shots = extract_shots(json)
     result = []
+    set_max_progress_val(len(faces_instances))
     for idx, (start, end, name) in enumerate(faces_instances):
+        set_progress_val(idx)
         if "Unknown" in name:
             if 0 < idx < len(faces_instances) - 1:
                 (s1, e1, name_before) = get_previous_face(faces_instances,idx,start)
@@ -131,7 +160,9 @@ def algorithm_2(json,faces_instances):
 
 def algorithm_1(json,faces_instances):
     result = []
+    set_max_progress_val(len(faces_instances))
     for idx, (start, end, name) in enumerate(faces_instances):
+        set_progress_val(idx)
         if "Unknown" in name:
             if idx < len(faces_instances) - 1 and idx > 0:
                 (s1, e1, name_before) = faces_instances[idx - 1]
@@ -152,35 +183,36 @@ def algorithm_1(json,faces_instances):
     return result
 
 
-def map_face_to_speaker(speakers_instances,faces_instances):
+def map_face_to_speaker(speakers_instances, faces_instances):
     result = []
-    for (speaker_start,speaker_end,speaker_id) in speakers_instances:
+    for (speaker_start, speaker_end, speaker_id) in speakers_instances:
         faces = []
-        for (face_start,face_end,name) in faces_instances:
+        for (face_start, face_end, name) in faces_instances:
             face_start_float = time_to_secs(face_start)
             face_end_float = time_to_secs(face_end)
 
             speaker_start_float = time_to_secs(str(speaker_start))
             speaker_end_float = time_to_secs(str(speaker_end))
-            if face_start<=speaker_start<speaker_end<=face_end:
-            # if 0<=abs(face_start_float - speaker_start_float)<=0.5 and 0<=abs(face_end_float - speaker_end_float)<=0.5 :
-            # if speaker_start < face_start < speaker_end or speaker_start < face_end < speaker_end or
-            # if  face_start<=speaker_start<speaker_end<=face_end:
-            #   print(str(time_to_secs(face_end) - time_to_secs(face_start)))
-            #   print([face_start,speaker_start,speaker_end,face_end])
+            if face_start <= speaker_start < speaker_end <= face_end:
+                # if 0<=abs(face_start_float - speaker_start_float)<=0.5 and 0<=abs(face_end
+                #   _float - speaker_end_float)<=0.5 :
+                # if speaker_start < face_start < speaker_end or speaker_start < face_end < speaker_end or
+                # if  face_start<=speaker_start<speaker_end<=face_end:
+                #   print(str(time_to_secs(face_end) - time_to_secs(face_start)))
+                #   print([face_start,speaker_start,speaker_end,face_end])
                 faces.append(name)
-        #print([speaker_id,speaker_start,speaker_end,faces])
+        # print([speaker_id,speaker_start,speaker_end,faces])
         result.append((str(speaker_id),faces))
-    #print(sorted(result))
+    # print(sorted(result))
     key_f = lambda x: x[0]
     r = itertools.groupby(sorted(result), key_f)
     r2 = []
     for key, group in r:
-       # print( key + ": " + str(list(group)))
+        # print( key + ": " + str(list(group)))
         t = [lis[1] for lis in list(group)]
 
         r2.append((key,sorted([item for sublist in t for item in sublist])))
-    #print(r2)
+    # print(r2)
     mapping = []
     for (speaker_id,faces) in r2:
         if len(faces)>0:
@@ -205,7 +237,9 @@ def algorithm_faces_speakers(json, faces_instances):
     speakers_instances = extract_speakers_list_from_transcript_data(json)
     speakers_actors_mapping = map_face_to_speaker(speakers_instances, faces_instances)
     result = []
+    set_max_progress_val(len(faces_instances))
     for idx, (start, end, name) in enumerate(faces_instances):
+        set_progress_val(idx)
         if "Unknown" in name:
             speakers = get_speakers(speakers_instances, start, end)
             #print(speakers)

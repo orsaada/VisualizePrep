@@ -55,7 +55,6 @@ class ComparisonWindow(PageWindow):
         layout.addWidget(b3)
         layout.addWidget(label_values1)
         layout.addWidget(label_values2)
-        # layout.addWidget(view)
         layout.addWidget(details)
 
         widget.setLayout(layout)
