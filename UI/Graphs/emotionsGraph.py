@@ -2,8 +2,6 @@ import json
 import sys
 import dateutil.parser
 import pandas as pd
-from pathlib import Path
-from time import mktime
 from PyQt5.QtWidgets import (QApplication, QMainWindow)
 from PyQt5.QtChart import QChart, QChartView, QValueAxis, QBarCategoryAxis, QBarSet, QBarSeries
 from PyQt5.Qt import Qt

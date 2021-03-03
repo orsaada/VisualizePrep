@@ -3,6 +3,7 @@ import sys
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
 
+from BussinesLayer.Services.ExportInsights import export_json_of_video_to_file
 from UI.Graphs.comparisonGraph import ComparisonGraph
 from UI.PageWindow import PageWindow
 import json
@@ -49,6 +50,10 @@ class MyMovieWidget(QWidget):
         self.btn_algo4.setText('algo 4')
         self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 4'))
 
+        self.btn_algo5 = QPushButton()
+        self.btn_algo5.setText('transcript comparison')
+        self.btn_algo5.clicked.connect(lambda: self.compareGraph('transcript'))
+
         self.insights = QPushButton()
         self.insights.setText('insights graphs')
         self.insights.clicked.connect(self.gotToInsights)
@@ -56,15 +61,22 @@ class MyMovieWidget(QWidget):
         # self.comparisonGraph.setText('comparison Graph')
         # self.comparisonGraph.clicked.connect(self.compareGraph)
 
+        self.exportButton = QPushButton()
+        self.exportButton.setText('export data to JSON file')
+        self.exportButton.clicked.connect(self.exportFunction)
+
         dlgLayout.addWidget(self.btn_algo1)
         dlgLayout.addWidget(self.btn_algo2)
         dlgLayout.addWidget(self.btn_algo3)
         dlgLayout.addWidget(self.btn_algo4)
+        dlgLayout.addWidget(self.btn_algo5)
         dlgLayout.addWidget(self.insights)
+        dlgLayout.addWidget(self.exportButton)
         # dlgLayout.addWidget(self.comparisonGraph)
 
         self.btnBackBox = QPushButton()
         self.btnBackBox.setText('Back')
+        self.btnBackBox.setStyleSheet("background-color: red;")
         self.btnBackBox.clicked.connect(self.gotoBack)
         dlgLayout.addWidget(self.btnBackBox)
         self.setLayout(dlgLayout)
@@ -80,6 +92,11 @@ class MyMovieWidget(QWidget):
 
     def gotToInsights(self):
         self.parent().goto("insights")
+
+    def exportFunction(self):
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+        export_json_of_video_to_file(data['ttMovie'], data['SpecificMoviePage'])
 
 
 if __name__ == '__main__':

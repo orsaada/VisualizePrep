@@ -1,5 +1,6 @@
 # from BussinesLayer.Algorithms.Visualize.mg.py3loader.experiment2_4 import get_insight
 from BussinesLayer.Algorithms.Visualize.mg.py3loader.experiment2_4 import get_insight
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.transcript_check import run_transcript
 from BussinesLayer.Services.APIconnection import upload_video, get_info_json_from_video
 from DB.db_api import add_new_video, get_my_movies, get_movieId
 
@@ -22,6 +23,10 @@ def get_analyzed_data(tt_movie, json_path, alg):
 
 def get_movie_id(username, name):
     return get_movieId(username, name)
+
+
+def get_transcript_algo(tt_movie):
+    return run_transcript(tt_movie)
 
 
 def get_my_uploaded_videos(username):

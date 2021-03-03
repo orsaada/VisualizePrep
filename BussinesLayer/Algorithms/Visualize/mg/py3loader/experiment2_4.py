@@ -1,3 +1,4 @@
+import json
 import pickle
 from pathlib import Path
 from BussinesLayer.Algorithms.Visualize.mg.py3loader import moviegraphs
@@ -34,9 +35,9 @@ def cast_list(movie_id):
     returns a dictionary where the keys are associcated to the
     characters and the values are the actors that play them"""
     roles = dict()
-    print(movie_id[2:])
+    # print(movie_id[2:])
     base_path = Path(__file__).parent.parent.parent
-    print(base_path / 'vi_json/{}.json'.format(movie_id))
+    # print(base_path / 'vi_json/{}.json'.format(movie_id))
 
     try:
         ia = IMDb(accessSystem='http', reraiseExceptions=True)
@@ -50,7 +51,7 @@ def cast_list(movie_id):
     # except:
     #     print("error")
 
-    print(movie['cast'])
+    # print(movie['cast'])
     for i in movie['cast']:
         actor = i["name"]
         character = i.currentRole
@@ -478,6 +479,41 @@ def get_insight(tt, movie_path, algorithm):
     before_f_score = f_score(before_precision, before_recall)
     after_f_score = f_score(after_precision, after_recall)
     return [before_precision, before_recall, before_jaccard, before_f_score], [after_precision, after_recall, after_jaccard, after_f_score]
+
+
+def get_data(tt, alg):
+    all_mg = get_mg()
+    movie_json = {}
+    before_precision = str(char_precision(tt, all_mg, 1, "", 'with'))
+    after_precision = str(char_precision(tt, all_mg, 2, alg, 'with'))
+    before_recall = str(char_recall(tt, all_mg, 1, "", 'with'))
+    after_recall = str(char_recall(tt, all_mg, 2, alg, 'with'))
+    before_jaccard = str(jaccard(tt, all_mg, 1, "", 'with'))
+    after_jaccard = str(jaccard(tt, all_mg, 2, alg, 'with'))
+    before_f_score = f_score(before_precision, before_recall)
+    after_f_score = f_score(after_precision, after_recall)
+    movie_json["before"] = {"precision": before_precision, "recall": before_recall, "jaccard": before_jaccard,
+                            "fscore": before_f_score}
+    movie_json["after"] = {"precision": after_precision, "recall": after_recall, "jaccard": after_jaccard,
+                           "fscore": after_f_score}
+    return movie_json
+
+
+def extract_movie_results_to_json(tt, movie_name):
+    full_json = {}
+    base_path = Path(__file__).parent.parent.parent
+    movie_path = base_path / "vi_json/{}.json".format(tt)
+    alg1 = algorithm_1(movie_path, create_faces_list(movie_path))
+    alg2 = algorithm_2_improved(movie_path, create_faces_list(movie_path))
+    alg3 = algorithm_faces_speakers(movie_path, create_faces_list(movie_path))
+    alg4 = pipeline_algorithm([algorithm_faces_speakers, algorithm_2_improved, algorithm_1], movie_path)
+    full_json["algo1"] = get_data(tt, alg1)
+    full_json["algo2"] = get_data(tt, alg2)
+    full_json["algo3"] = get_data(tt, alg3)
+    full_json["algo4"] = get_data(tt, alg4)
+    with open('extracted_' + movie_name + '.json', 'w') as outfile:
+        json.dump(full_json, outfile)
+
 
 
 if __name__ == '__main__':

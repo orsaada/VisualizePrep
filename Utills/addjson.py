@@ -22,6 +22,3 @@ def add_json():
 if __name__ == '__main__':
     s = manage_config()
     print(check_attributes_exists(s))
-    pass
-    # print(connect())
-    # add_json()

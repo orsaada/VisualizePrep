@@ -57,10 +57,10 @@ class MyInsightsWidget(QDialog):
 
         # close button
         self.archiveButton = QPushButton(self)
-        self.archiveButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        self.archiveButton.setStyleSheet('background-color: red;')
         self.archiveButton.setText('Back To Movie')
         self.archiveButton.clicked.connect(self.goToMovie)
-        layoutV.addWidget(self.archiveButton)
+        # layoutV.addWidget(self.archiveButton)
 
         movie_name_label = QLabel()
         movie_name_label.setText(video_name)
@@ -123,6 +123,7 @@ class MyInsightsWidget(QDialog):
         # self.layoutH.addWidget(self.showGraphButton)
         self.layoutH.addWidget(self.child)
         layoutV.addLayout(self.layoutH)
+        layoutV.addWidget(self.archiveButton)
         self.setLayout(layoutV)
 
     def goMainWindow(self):

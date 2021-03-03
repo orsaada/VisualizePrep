@@ -3,10 +3,17 @@ import json
 from BussinesLayer.Services.Logger import info
 
 
+# OR SAADA
+# CONFIG = {
+#     'SUBSCRIPTION_KEY': '992fc8ddd8114d8f97048dc7efada7aa',
+#     'LOCATION': 'trial',
+#     'ACCOUNT_ID': 'ec3b46b9-654c-4465-9d74-1b7d5f8110c7'
+# }
+
 CONFIG = {
-    'SUBSCRIPTION_KEY': '992fc8ddd8114d8f97048dc7efada7aa',
+    'SUBSCRIPTION_KEY': '05c4761dfdc04d899bb1c6eb6b98d882',
     'LOCATION': 'trial',
-    'ACCOUNT_ID': 'ec3b46b9-654c-4465-9d74-1b7d5f8110c7'
+    'ACCOUNT_ID': '53ca1faf-9a1a-4951-a303-fd27f2f790a3'
 }
 
 # connect to Or Saada account
@@ -28,6 +35,8 @@ def get_info_json_from_video(vid_id):  # get json of info from a video in indexe
 
 # upload a video to video indexer - param1: path video, param2: future name in video indexer of video was upload
 def upload_video(video_path, future_video_name):  # upload a video to video indexer. return video id
+    print(video_path)
+    print(future_video_name)
     info("Video Path: " + video_path + ", Video Name: " + future_video_name + " - was uploaded to video indexer")
     return vi.upload_to_video_indexer(
                 input_filename=video_path,

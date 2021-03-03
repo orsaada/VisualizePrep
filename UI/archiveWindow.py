@@ -76,7 +76,7 @@ class MyArchiveWidget(QWidget):
 
 
         self.widget.setLayout(self.vbox)
-        #Scroll Area Properties
+        # Scroll Area Properties
         self.scroll.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOn)
         self.scroll.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.scroll.setWidgetResizable(True)
@@ -90,9 +90,10 @@ class MyArchiveWidget(QWidget):
         dlgLayout.addLayout(formLayout)
         # for btn in buttons:
         #     dlgLayout.addWidget(btn)
-        dlgLayout.addWidget(self.btnBackBox)
         dlgLayout.addWidget(qlabel_title)
         dlgLayout.addWidget(self.scroll)
+        dlgLayout.addWidget(self.btnBackBox)
+
 
         self.setLayout(dlgLayout)
 

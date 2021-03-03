@@ -17,7 +17,7 @@ class ServicesTests(unittest.TestCase):
     info("--------------UNIT TESTS RUN: --------------")
 
     def test_success_login(self):
-        self.assertEqual(log_in('orel', '123456'), "Successfully Login")
+        self.assertEqual(log_in('orel', '1234'), "Successfully Login")
 
     def test_fail_login(self):
         self.assertEqual(log_in('or', 'or'), 'No user Found')
