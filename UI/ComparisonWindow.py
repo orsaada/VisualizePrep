@@ -50,8 +50,8 @@ class ComparisonWindow(PageWindow):
         b3 = ComparisonGraph(data['algo'], a, b)
         b3.update()
 
+        label_values1 = QLabel()
         if data['algo'] != 'transcript':
-            label_values1 = QLabel()
             label_values1.setText(str(a))
         label_values2 = QLabel()
         label_values2.setText(str(b))

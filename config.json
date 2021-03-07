@@ -1,7 +1,7 @@
 {
-    "UserLoggedIn": "",
-    "SpecificMoviePage": "",
-    "ttMovie": "",
-    "algo": "",
+    "UserLoggedIn": "aaaa",
+    "SpecificMoviePage": "THE_UGLY_TRUTH_SCALED",
+    "ttMovie": "tt1142988",
+    "algo": "transcript",
     "ENV_MODE": "development"
 }
