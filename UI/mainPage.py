@@ -151,6 +151,7 @@ class MainWidg(QWidget):
         formLayout = QFormLayout()
         self.username = QLineEdit()
         self.password = QLineEdit()
+        self.password.setEchoMode(QLineEdit.Password)
         formLayout.addRow("Login Page", QLabel())
         formLayout.addRow("Username:", self.username)
         formLayout.addRow("Password:", self.password)

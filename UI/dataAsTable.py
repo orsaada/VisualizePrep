@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-#-*- coding:utf-8 -*-
+# -*- coding:utf-8 -*-
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-
-import pandas as pd
-
 from BussinesLayer.Data.data import extract_actors
+import pandas as pd
 
 
 class PandasModel(QtCore.QAbstractTableModel):
@@ -23,13 +21,13 @@ class PandasModel(QtCore.QAbstractTableModel):
         if orientation == QtCore.Qt.Horizontal:
             try:
                 return self._df.columns.tolist()[section]
-            except (IndexError, ):
+            except (IndexError,):
                 return QtCore.QVariant()
         elif orientation == QtCore.Qt.Vertical:
             try:
                 # return self.df.index.tolist()
                 return self._df.index.tolist()[section]
-            except (IndexError, ):
+            except (IndexError,):
                 return QtCore.QVariant()
 
     def data(self, index, role=QtCore.Qt.DisplayRole):
@@ -64,7 +62,7 @@ class PandasModel(QtCore.QAbstractTableModel):
     def sort(self, column, order):
         colname = self._df.columns.tolist()[column]
         self.layoutAboutToBeChanged.emit()
-        self._df.sort_values(colname, ascending= order == QtCore.Qt.AscendingOrder, inplace=True)
+        self._df.sort_values(colname, ascending=order == QtCore.Qt.AscendingOrder, inplace=True)
         self._df.reset_index(inplace=True, drop=True)
         self.layoutChanged.emit()
 
@@ -75,11 +73,11 @@ class myWindow(QtWidgets.QMainWindow):
 
         self.resize(800, 600)
 
-        self.centralwidget  = QtWidgets.QWidget(self)
-        self.lineEdit       = QtWidgets.QLineEdit(self.centralwidget)
-        self.view           = QtWidgets.QTableView(self.centralwidget)
-        self.comboBox       = QtWidgets.QComboBox(self.centralwidget)
-        self.label          = QtWidgets.QLabel(self.centralwidget)
+        self.centralwidget = QtWidgets.QWidget(self)
+        self.lineEdit = QtWidgets.QLineEdit(self.centralwidget)
+        self.view = QtWidgets.QTableView(self.centralwidget)
+        self.comboBox = QtWidgets.QComboBox(self.centralwidget)
+        self.label = QtWidgets.QLabel(self.centralwidget)
 
         self.gridLayout = QtWidgets.QGridLayout(self.centralwidget)
         self.gridLayout.addWidget(self.lineEdit, 0, 1, 1, 1)
@@ -99,9 +97,7 @@ class myWindow(QtWidgets.QMainWindow):
         self.horizontalHeader = self.view.horizontalHeader()
         self.horizontalHeader.sectionClicked.connect(self.on_view_horizontalHeader_sectionClicked)
 
-
     def load_sites(self):
-
         df = pd.DataFrame(extract_actors('../BussinesLayer/Algorithms/Visualize/vi_json/tt0988595.json'))
 
         self.model = PandasModel(df)
@@ -112,10 +108,9 @@ class myWindow(QtWidgets.QMainWindow):
 
     @QtCore.pyqtSlot(int)
     def on_view_horizontalHeader_sectionClicked(self, logicalIndex):
-
-        self.logicalIndex   = logicalIndex
-        self.menuValues     = QtWidgets.QMenu(self)
-        self.signalMapper   = QtCore.QSignalMapper(self)
+        self.logicalIndex = logicalIndex
+        self.menuValues = QtWidgets.QMenu(self)
+        self.signalMapper = QtCore.QSignalMapper(self)
         self.comboBox.blockSignals(True)
         self.comboBox.setCurrentIndex(self.logicalIndex)
         self.comboBox.blockSignals(True)
@@ -141,10 +136,10 @@ class myWindow(QtWidgets.QMainWindow):
     @QtCore.pyqtSlot()
     def on_actionAll_triggered(self):
         filterColumn = self.logicalIndex
-        filterString = QtCore.QRegExp(  "",
-                                        QtCore.Qt.CaseInsensitive,
-                                        QtCore.QRegExp.RegExp
-                                        )
+        filterString = QtCore.QRegExp("",
+                                      QtCore.Qt.CaseInsensitive,
+                                      QtCore.QRegExp.RegExp
+                                      )
 
         self.proxy.setFilterRegExp(filterString)
         self.proxy.setFilterKeyColumn(filterColumn)
@@ -153,20 +148,20 @@ class myWindow(QtWidgets.QMainWindow):
     def on_signalMapper_mapped(self, i):
         stringAction = self.signalMapper.mapping(i).text()
         filterColumn = self.logicalIndex
-        filterString = QtCore.QRegExp(  stringAction,
-                                        QtCore.Qt.CaseSensitive,
-                                        QtCore.QRegExp.FixedString
-                                        )
+        filterString = QtCore.QRegExp(stringAction,
+                                      QtCore.Qt.CaseSensitive,
+                                      QtCore.QRegExp.FixedString
+                                      )
 
         self.proxy.setFilterRegExp(filterString)
         self.proxy.setFilterKeyColumn(filterColumn)
 
     @QtCore.pyqtSlot(str)
     def on_lineEdit_textChanged(self, text):
-        search = QtCore.QRegExp(    text,
-                                    QtCore.Qt.CaseInsensitive,
-                                    QtCore.QRegExp.RegExp
-                                    )
+        search = QtCore.QRegExp(text,
+                                QtCore.Qt.CaseInsensitive,
+                                QtCore.QRegExp.RegExp
+                                )
 
         self.proxy.setFilterRegExp(search)
 
@@ -177,7 +172,8 @@ class myWindow(QtWidgets.QMainWindow):
 
 if __name__ == "__main__":
     import sys
-    app  = QtWidgets.QApplication(sys.argv)
+
+    app = QtWidgets.QApplication(sys.argv)
     main = myWindow()
     main.show()
     main.resize(800, 600)

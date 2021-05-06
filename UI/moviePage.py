@@ -1,3 +1,4 @@
+import datetime
 import os
 import sys
 
@@ -65,6 +66,10 @@ class MyMovieWidget(QWidget):
         self.exportButton.setText('export data to JSON file')
         self.exportButton.clicked.connect(self.exportFunction)
 
+        self.emotionAnalysisButton = QPushButton()
+        self.emotionAnalysisButton.setText('EMOTION ANALYSIS')
+        self.emotionAnalysisButton.clicked.connect(self.generate_emotion_analysis)
+
         dlgLayout.addWidget(self.btn_algo1)
         dlgLayout.addWidget(self.btn_algo2)
         dlgLayout.addWidget(self.btn_algo3)
@@ -72,6 +77,7 @@ class MyMovieWidget(QWidget):
         dlgLayout.addWidget(self.btn_algo5)
         dlgLayout.addWidget(self.insights)
         dlgLayout.addWidget(self.exportButton)
+        dlgLayout.addWidget(self.emotionAnalysisButton)
         # dlgLayout.addWidget(self.comparisonGraph)
 
         self.btnBackBox = QPushButton()
@@ -97,6 +103,40 @@ class MyMovieWidget(QWidget):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
         export_json_of_video_to_file(data['ttMovie'], data['SpecificMoviePage'])
+
+    def generate_emotion_analysis(self):
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+        video_name = data["SpecificMoviePage"]
+        print(video_name)
+        ### temp - need change
+        with open("./../BussinesLayer/Algorithms/Visualize/vi_json/tt0037884.json", 'r') as f:
+            data = json.load(f)
+            # print(data['videos'][0]['insights']['scenes'])
+            scenes = []
+            for i in data['videos'][0]['insights']['scenes']:
+                scene = i['instances'][0]
+                print(scene['start'])
+                t = try_parsing_date(scene['start'])
+                delta1 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
+                print(delta1)
+                t = try_parsing_date(scene['end'])
+                delta2 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
+                scenes.append((delta1, delta2))
+                # date_time_obj = datetime.datetime.strptime(date_time_str, '%b %d %Y %I:%M%p')
+
+            print(scenes)
+            pass
+
+
+def try_parsing_date(text):
+    print(text)
+    for fmt in ('%H:%M:%S', '%H:%M:%S.%f'):
+        try:
+            return datetime.datetime.strptime(text, fmt)
+        except ValueError:
+            pass
+    raise ValueError('no valid date format found')
 
 
 if __name__ == '__main__':
