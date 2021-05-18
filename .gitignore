@@ -2,3 +2,4 @@
 *.xml
 *.iml
 BussinesLayer/Algorithms/Visualize/movies
+venv
