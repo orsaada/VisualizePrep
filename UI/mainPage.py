@@ -189,7 +189,7 @@ class MainWidg(QWidget):
 
 
 # App Window
-class Window(QtWidgets.QMainWindow):
+class mainWindow(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -256,13 +256,13 @@ if __name__ == "__main__":
         data["SpecificMoviePage"] = ""
         data["ttMovie"] = ""
         data["algo"] = ""
-        data["ENV_MODE"] = 'development'
+        data["ENV_MODE"] = 'production'
         json.dump(data, f, indent=4)
     app = QtWidgets.QApplication(sys.argv)
     # styleFile = './style2.qss'
     # qssStyle = CommonHelper.readQSS(styleFile)
     # app.setStyleSheet(qssStyle)
-    w = Window()
+    w = mainWindow()
     w.resize(1200, 700)
     w.show()
     sys.exit(app.exec_())

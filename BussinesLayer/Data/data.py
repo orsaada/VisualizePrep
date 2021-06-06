@@ -6,10 +6,9 @@ import dateutil.parser
 import pandas as pd
 from PyQt5.QtChart import QBarSet
 
-aaa = []
-
 
 def check_attributes_exists(json_file_path):
+    aaa = []
     json_file = open(json_file_path, encoding="utf-8")
     parsed_json = json.load(json_file)
     for i in parsed_json["videos"][0]["insights"]:
@@ -114,7 +113,7 @@ def extract_all_data_to_csv(json_file_path):
         df_array[x] = df
 
 
-#Nati
+# Nati
 def extract_shots(json_file_path):
     json_file = open(json_file_path, encoding="utf-8")
     data = json.load(json_file)
@@ -131,15 +130,17 @@ def extract_speakers_list_from_transcript_data(json_file_path):
     speakers = []
     for transcript_data in data["videos"][0]["insights"]["transcript"]:
         if transcript_data["text"] != "":
-            speaker_name = "Speaker #"+ str(transcript_data["speakerId"])
+            speaker_name = "Speaker #" + str(transcript_data["speakerId"])
             start = transcript_data["instances"][0]["start"]
             end = transcript_data["instances"][0]["end"]
-            speakers.append((start,end,speaker_name))
-        #else:
-         #   print( transcript_data["text"])
-    #print(sorted(speakers))
-    return  sorted(speakers)
-#extract_speakers_list_from_transcript_data("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json")
+            speakers.append((start, end, speaker_name))
+        # else:
+        #   print( transcript_data["text"])
+    # print(sorted(speakers))
+    return sorted(speakers)
+
+
+# extract_speakers_list_from_transcript_data("C:\\Users\\orel kakon\\Desktop\\תואר תכנה\\visualizeBGU2021\\27_dress_scaled.json")
 
 
 # Nati
@@ -150,7 +151,7 @@ def extract_speakers_list(json_file_path):
     for speaker_instances_data in data["videos"][0]["insights"]["speakers"]:
         speaker_name = speaker_instances_data["name"]
         for sid in speaker_instances_data["instances"]:
-            speakers.append((sid["start"],sid["end"],speaker_name))
+            speakers.append((sid["start"], sid["end"], speaker_name))
 
     return sorted(speakers)
 
@@ -176,6 +177,8 @@ def numpy_fix():
 # transcript
 def transcript(json_file_path):
     return extract_attribute(json_file_path, "transcript")
+
+
 #
 # # ocr
 # def ocr():
@@ -236,8 +239,10 @@ def format_time(str):
     return dateutil.parser.parse(str)
     # return datetime.strptime(str, "%H:%M:%S.%f")
 
+
 def to_integer(dt_time):
-    return 10000*dt_time.year + 100*dt_time.month + dt_time.day
+    return 10000 * dt_time.year + 100 * dt_time.month + dt_time.day
+
 
 def create_csvs():
     json_file_path = "../../BussinesLayer/Algorithms/Visualize/vi_json/27_dresses.json"
@@ -281,7 +286,7 @@ def analyze_speakers_graph():
     by_instance = by_instance.groupby(['instance'])['range'].sum().reset_index(name='range')
     instances, ranges = list(by_instance['instance']), list(by_instance['range'])
     print(ranges)
-    instances = list(map(lambda x: x.split()[1],instances))
+    instances = list(map(lambda x: x.split()[1], instances))
     sets = []
     labelsX = []
     for ttype in instances:
@@ -345,5 +350,3 @@ if __name__ == '__main__':
     # df.to_csv('transcript.csv')
     create_csvs()
     # delete_csv()
-
-

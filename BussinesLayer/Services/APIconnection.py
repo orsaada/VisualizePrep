@@ -2,7 +2,6 @@ from video_indexer import VideoIndexer
 import json
 from BussinesLayer.Services.Logger import info
 
-
 # OR SAADA
 # CONFIG = {
 #     'SUBSCRIPTION_KEY': '992fc8ddd8114d8f97048dc7efada7aa',
@@ -38,16 +37,22 @@ def upload_video(video_path, future_video_name):  # upload a video to video inde
     print(video_path)
     print(future_video_name)
     info("Video Path: " + video_path + ", Video Name: " + future_video_name + " - was uploaded to video indexer")
-    return vi.upload_to_video_indexer(
-                input_filename=video_path,
-                video_name=future_video_name,
-                video_language='English'
+    try:
+        return vi.upload_to_video_indexer(
+            input_filename=video_path,
+            video_name=future_video_name,
+            video_language='English'
         )
+    except Exception as inst:
+        print('was an error')
+        info(str(inst))
+        return str(inst)
 
+
+# upload_video("/Users/orsaada/university/FINAL PROJECT/27dresses_very_reduces.mp4", "movietry1")
 
 # export json(result) to exterior file
 def export_json_to_file(json_file, future_filename):  # export json file
     info("Video Name: " + future_filename + " - was extracted to file")
-    with open(future_filename+'.json', 'w', encoding='utf-8') as f:
+    with open(future_filename + '.json', 'w', encoding='utf-8') as f:
         json.dump(json_file, f, ensure_ascii=False, indent=4)
-

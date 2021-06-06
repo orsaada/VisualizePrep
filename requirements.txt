@@ -168,7 +168,7 @@ typing-extensions==3.7.4.3
 ui==0.1.4
 unicode==2.8
 urllib3==1.24.3
-video-indexer==0.1.7
+video-indexer==0.1.8
 vine==5.0.0
 wcwidth==0.2.5
 webencodings==0.5.1

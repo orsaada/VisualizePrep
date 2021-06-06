@@ -14,7 +14,8 @@ from UI.PageWindow import PageWindow
 
 
 def find_diffrence_temp():
-    with open('/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visualizePrep-master/BussinesLayer/Algorithms/Visualize/mg/py3loader/diff.json') as json_file:
+    with open(
+            '/Users/orsaada/Documents/programming development/אוניברסיטה/פרויקט גמר/visualizePrep-master/BussinesLayer/Algorithms/Visualize/mg/py3loader/diff.json') as json_file:
         data = json.load(json_file)
         # for p in data['people']:
         #     print('Name: ' + p['name'])
@@ -201,7 +202,7 @@ class MediaWindow(QWidget):
 
     def find_diffrence(self):
         data = find_diffrence_temp()
-        self.mediaPlayer.setPosition(data[self.ind][0]*1000)
+        self.mediaPlayer.setPosition(data[self.ind][0] * 1000)
         self.ind += 1
         # print(str(data[self.ind][0]) + '   ' + str(data[self.ind][1]))
 
@@ -221,9 +222,9 @@ class MediaWindow(QWidget):
         self.mediaPlayer.setVolume(value)
         if value == 0:
             self.label.setPixmap(QPixmap('mute.png'))
-        elif value > 0 and value <=30:
+        elif value > 0 and value <= 30:
             self.label.setPixmap(QPixmap('min.png'))
-        elif value >30 and value <= 80:
+        elif value > 30 and value <= 80:
             self.label.setPixmap(QPixmap('mid.png'))
         else:
             self.label.setPixmap(QPixmap('max.png'))
@@ -242,7 +243,8 @@ class MediaWindow(QWidget):
             if data["ENV_MODE"] == 'production':
                 vid_id = load_video(filename, name)
                 update_insights_in_db(username, name, vid_id)
-                add_new_video(username, data['name'], name)
+
+                # add_new_video(username, name, data['ttMovie'])
             elif data["ENV_MODE"] == 'development':
                 i = 0  # to delete jsut to example
 
@@ -281,137 +283,132 @@ class MediaWindow(QWidget):
         hours = (position / 3600000) % 24
         # print(hours)
 
-
-
     def duration_changed(self, duration):
         self.slider.setRange(0, duration)
         # print(duration)
 
-
     def set_position(self, position):
         self.mediaPlayer.setPosition(position)
-
 
     def handle_errors(self):
         self.playBtn.setEnabled(False)
         self.label.setText("Error: " + self.mediaPlayer.errorString())
 
-
-# class Window1(QDialog):
-#     def __init__(self, value, parent=None):
-#         super().__init__(parent)
-#         self.resize(800, 600)
-#         self.setWindowTitle('Window1')
-#         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
-#
-#         label1 = QLabel(value)
-#         self.button = QPushButton()
-#         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
-#         self.button.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
-#         self.button.setIconSize(QSize(200, 200))
-#
-#         layoutV = QVBoxLayout()
-#
-#         # close button
-#         self.pushButton = QPushButton(self)
-#         self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-#         self.pushButton.setText('Click me! (close page)')
-#         self.pushButton.clicked.connect(self.goMainWindow)
-#         layoutV.addWidget(self.pushButton)
-#
-#         #filter as table button
-#         self.filter_table_window = myWindow()
-#         self.filter_table_button = QPushButton("Filter as table")
-#         self.filter_table_button.clicked.connect(self.filterAsTableButton)
-#
-#
-#         #dropdown choosing
-#         combo = QComboBox(self)
-#         combo.addItem("Emotions")
-#         combo.addItem("Faces")
-#         combo.addItem("Sentiments")
-#         combo.move(50, 50)
-#
-#         #call chart
-#         #chartClass = ChartEmotions()
-#
-#
-#         #not neccesrily need
-#         self.qlabel = QLabel(self)
-#         self.qlabel.move(50, 16)
-#
-#         combo.activated[str].connect(self.onChanged)
-#
-#
-#         #button switch
-#         self.button_switch()
-#
-#         # layout and
-#         layoutH = QHBoxLayout()
-#         layoutH.addWidget(label1)
-#         # layoutH.addWidget(self.button)
-#         layoutH.addWidget(combo)
-#         layoutH.addWidget(self.filter_table_button)
-#         #layoutH.addWidget(chartClass.chartView)
-#         layoutV.addLayout(layoutH)
-#         self.setLayout(layoutV)
-#
-#     def goMainWindow(self):
-#         self.goto("main")
-#         # self.close()
-#
-#     def onChanged(self, text):
-#         self.qlabel.setText(text)
-#         self.qlabel.adjustSize()
-#
-#     def switch_wids(self):
-#
-#         # LOGIC TO SWITCH
-#         if self.front_wid == 1:
-#             self.wid1.hide()
-#             self.wid2.show()
-#             self.front_wid = 2
-#         else:
-#             self.wid1.show()
-#             self.wid2.hide()
-#             self.front_wid = 1
-#
-#     def button_switch(self):
-#         # CENTRAL WIDGET
-#         self.central_wid = QWidget()
-#         self.layout_for_wids = QStackedLayout()
-#
-#         # BUTTON TO SWITCH BETWEEN WIDGETS
-#         self.btn_switch = QPushButton("Switch")
-#         self.btn_switch.clicked.connect(self.switch_wids)
-#         self.btn_switch.setFixedSize(50, 50)
-#         self.btn_switch
-#
-#         # 2 WIDGETS
-#         self.wid1 = QWidget()
-#         self.wid1.setStyleSheet("""background: blue;""")
-#         self.wid1.setFixedSize(200, 200)
-#         self.wid1.move(100, 100)
-#         self.wid2 = QWidget()
-#         self.wid2.setStyleSheet("""background: green;""")
-#         self.wid2.setFixedSize(200, 200)
-#         self.wid2.move(100, 100)
-#
-#         # LAYOUT CONTAINER FOR WIDGETS AND BUTTON
-#         self.layout_for_wids.addWidget(self.btn_switch)
-#         self.layout_for_wids.addWidget(self.wid1)
-#         self.layout_for_wids.addWidget(self.wid2)
-#
-#         # ENTERING LAYOUT
-#         self.central_wid.setLayout(self.layout_for_wids)
-#
-#         # CHOOSE YOUR CENTRAL WIDGET
-#         # self.setCentralWidget(self.central_wid)
-#
-#         # WHICH WIDGET IS ON THE FRONT
-#         self.front_wid = 1
-#
-#     def filterAsTableButton(self):
+        # class Window1(QDialog):
+        #     def __init__(self, value, parent=None):
+        #         super().__init__(parent)
+        #         self.resize(800, 600)
+        #         self.setWindowTitle('Window1')
+        #         self.setWindowIcon(self.style().standardIcon(QStyle.SP_FileDialogInfoView))
+        #
+        #         label1 = QLabel(value)
+        #         self.button = QPushButton()
+        #         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
+        #         self.button.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
+        #         self.button.setIconSize(QSize(200, 200))
+        #
+        #         layoutV = QVBoxLayout()
+        #
+        #         # close button
+        #         self.pushButton = QPushButton(self)
+        #         self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
+        #         self.pushButton.setText('Click me! (close page)')
+        #         self.pushButton.clicked.connect(self.goMainWindow)
+        #         layoutV.addWidget(self.pushButton)
+        #
+        #         #filter as table button
+        #         self.filter_table_window = myWindow()
+        #         self.filter_table_button = QPushButton("Filter as table")
+        #         self.filter_table_button.clicked.connect(self.filterAsTableButton)
+        #
+        #
+        #         #dropdown choosing
+        #         combo = QComboBox(self)
+        #         combo.addItem("Emotions")
+        #         combo.addItem("Faces")
+        #         combo.addItem("Sentiments")
+        #         combo.move(50, 50)
+        #
+        #         #call chart
+        #         #chartClass = ChartEmotions()
+        #
+        #
+        #         #not neccesrily need
+        #         self.qlabel = QLabel(self)
+        #         self.qlabel.move(50, 16)
+        #
+        #         combo.activated[str].connect(self.onChanged)
+        #
+        #
+        #         #button switch
+        #         self.button_switch()
+        #
+        #         # layout and
+        #         layoutH = QHBoxLayout()
+        #         layoutH.addWidget(label1)
+        #         # layoutH.addWidget(self.button)
+        #         layoutH.addWidget(combo)
+        #         layoutH.addWidget(self.filter_table_button)
+        #         #layoutH.addWidget(chartClass.chartView)
+        #         layoutV.addLayout(layoutH)
+        #         self.setLayout(layoutV)
+        #
+        #     def goMainWindow(self):
+        #         self.goto("main")
+        #         # self.close()
+        #
+        #     def onChanged(self, text):
+        #         self.qlabel.setText(text)
+        #         self.qlabel.adjustSize()
+        #
+        #     def switch_wids(self):
+        #
+        #         # LOGIC TO SWITCH
+        #         if self.front_wid == 1:
+        #             self.wid1.hide()
+        #             self.wid2.show()
+        #             self.front_wid = 2
+        #         else:
+        #             self.wid1.show()
+        #             self.wid2.hide()
+        #             self.front_wid = 1
+        #
+        #     def button_switch(self):
+        #         # CENTRAL WIDGET
+        #         self.central_wid = QWidget()
+        #         self.layout_for_wids = QStackedLayout()
+        #
+        #         # BUTTON TO SWITCH BETWEEN WIDGETS
+        #         self.btn_switch = QPushButton("Switch")
+        #         self.btn_switch.clicked.connect(self.switch_wids)
+        #         self.btn_switch.setFixedSize(50, 50)
+        #         self.btn_switch
+        #
+        #         # 2 WIDGETS
+        #         self.wid1 = QWidget()
+        #         self.wid1.setStyleSheet("""background: blue;""")
+        #         self.wid1.setFixedSize(200, 200)
+        #         self.wid1.move(100, 100)
+        #         self.wid2 = QWidget()
+        #         self.wid2.setStyleSheet("""background: green;""")
+        #         self.wid2.setFixedSize(200, 200)
+        #         self.wid2.move(100, 100)
+        #
+        #         # LAYOUT CONTAINER FOR WIDGETS AND BUTTON
+        #         self.layout_for_wids.addWidget(self.btn_switch)
+        #         self.layout_for_wids.addWidget(self.wid1)
+        #         self.layout_for_wids.addWidget(self.wid2)
+        #
+        #         # ENTERING LAYOUT
+        #         self.central_wid.setLayout(self.layout_for_wids)
+        #
+        #         # CHOOSE YOUR CENTRAL WIDGET
+        #         # self.setCentralWidget(self.central_wid)
+        #
+        #         # WHICH WIDGET IS ON THE FRONT
+        #         self.front_wid = 1
+        #
+        #     def filterAsTableButton(self):
         self.filter_table_window.show()
 
     # @QtCore.pyqtSlot('qint64')

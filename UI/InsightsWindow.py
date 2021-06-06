@@ -1,9 +1,12 @@
+import os
 import sys
 import json
 
 from PyQt5.QtCore import QSize
 from PyQt5.QtWidgets import QDialog, QStyle, QLabel, QPushButton, QSizePolicy, QVBoxLayout, QComboBox, QHBoxLayout, \
     QWidget, QStackedLayout, QApplication, QTableView
+
+from BussinesLayer.Data.data import check_attributes_exists
 from BussinesLayer.Services.VideoInsights import get_movie_id
 from UI.Graphs.MplCanvas.pandasWindow import pandasModel
 from UI.Graphs.allGraph import allGraphC
@@ -65,39 +68,33 @@ class MyInsightsWidget(QDialog):
         movie_name_label = QLabel()
         movie_name_label.setText(video_name)
         layoutV.addWidget(movie_name_label)
-        # export json
-        # self.exportButton = QPushButton(self)
-        # self.exportButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        # self.exportButton.setText('export')
-        # self.exportButton.clicked.connect(self.exportJson)
-        # layoutV.addWidget(self.exportButton)
-
-        # show improvment
-        # self.comparisonButton = QPushButton(self)
-        # self.comparisonButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        # self.comparisonButton.setText('comparison improvement')
-        # self.comparisonButton.clicked.connect(self.compareImprovments)
-        # layoutV.addWidget(self.comparisonButton)
-
-        # filter as table button
-        # self.filter_table_window = myWindow()
-        # self.filter_table_button = QPushButton("Filter as table")
-        # self.filter_table_button.clicked.connect(self.filterAsTable)
-
-        # show graph
-        # self.showGraphButton = QPushButton("Show Graph")
-        # self.showGraphButton.clicked.connect(self.showGraph)
 
         # graphs
         all_graph_attributes = ['faces', 'labels', 'brands', 'namedLocations', 'topics', 'sentiments']
-        self.child = SpeakersGraph()
-        self.graphs = {"Speakers": SpeakersGraph,
-                       "Emotions": ChartEmotions,
-                       "Faces": NamedPeopleGraph,
-                       "Keywords": KeywordGraph,
-                       "Shots": shotsGraph}
-        self.graphs = {k: v() for k, v in self.graphs.items()}
+        ROOT_DIR = os.path.abspath(os.curdir)
+        ttmovie_number = data['ttMovie']
+        path = os.path.join(ROOT_DIR + '/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
+        attributes_in_json = check_attributes_exists(path)
         for i in all_graph_attributes:
+            if i not in attributes_in_json:
+                all_graph_attributes.remove(i)
+        print(all_graph_attributes)
+        self.child = SpeakersGraph()
+        self.graphs = {"speakers": SpeakersGraph,
+                       "emotions": ChartEmotions,
+                       "namedPeople": NamedPeopleGraph,
+                       "keywords": KeywordGraph,
+                       "shots": shotsGraph}
+        if 'namedPeople' not in attributes_in_json:
+            self.graphs.pop('namedPeople')
+        existed_dictionary = {}
+        for i in self.graphs:
+            if i in all_graph_attributes:
+                existed_dictionary[i] = self.graphs[i]
+        self.graphs = existed_dictionary
+        print(self.graphs)
+        self.graphs = {k: v() for k, v in self.graphs.items()}
+        for i in self.graphs:
             self.graphs[i] = allGraphC(i)
 
         self.showingGraphName = list(self.graphs.keys())[0]
@@ -128,14 +125,11 @@ class MyInsightsWidget(QDialog):
 
     def goMainWindow(self):
         self.parent().goto("media")
-        # self.close()
 
     def onChanged(self, text):
         self.showingGraphName = text
         self.layoutH.removeWidget(self.child)
         self.child.setParent(None)
-        print(type(self.graphs[text]))
-        # self.child = self.graphs[text]()
         self.child = self.graphs[text]
         self.layoutH.addWidget(self.child)
 

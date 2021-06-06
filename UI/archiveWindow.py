@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit
 
 from DB.db_api import get_movieId
 from UI.PageWindow import PageWindow
-from BussinesLayer.Services.VideoInsights import get_my_uploaded_videos
+from BussinesLayer.Services.VideoInsights import get_my_uploaded_videos, get_insights
 import json
 import os
 
@@ -22,18 +22,31 @@ class MyArchiveWidget(QWidget):
     def gotoBack(self):
         self.parent().goto("media")
 
+    def pop_message(self, text):
+        msg = QWidget.QMessageBox()
+        msg.setText("{}".format(text))
+        msg.exec_()
+
     def gotoMovie(self, video_name):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
-            print(get_movieId(data['UserLoggedIn'], video_name))
             data['SpecificMoviePage'] = video_name
             data['ttMovie'] = get_movieId(data['UserLoggedIn'], video_name)[0][0]
+            json_insights_need_check = get_insights(data['ttMovie'])
+            if json_insights_need_check['state'] == 'Processing':
+                # need to alert ('Until Processing, please wait!')
+                self.parent().goto("archive")
+            elif json_insights_need_check['state'] == 'Processed':
+                ROOT_DIR = os.path.abspath(os.curdir)
+                ttmovie_number = data['ttMovie']
+                path = os.path.join(ROOT_DIR+'/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
+                with open(path, 'w') as f:
+                    json.dump(json_insights_need_check, f)
+                self.parent().goto("movie")
         os.remove('./../config.json')
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
-        # changed
-        # self.parent().goto("insights")
-        self.parent().goto("movie")
+
 
     def __init__(self):
         super().__init__()
@@ -65,15 +78,11 @@ class MyArchiveWidget(QWidget):
         self.widget = QWidget()  # Widget that contains the collection of Vertical Box
         self.vbox = QVBoxLayout()  # The Vertical Box that contains the Horizontal Boxes of  labels and buttons
 
-        # for i in range(1, 50):
-        #     object = QLabel("TextLabel")
-        #     self.vbox.addWidget(object)
         for video in my_videos:
             self.btnBox = QPushButton()
             self.btnBox.setText(video[0])
             self.btnBox.clicked.connect(lambda state, x=video[0]: self.gotoMovie(x))
             self.vbox.addWidget(self.btnBox)
-
 
         self.widget.setLayout(self.vbox)
         # Scroll Area Properties
