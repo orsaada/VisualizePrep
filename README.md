@@ -3,6 +3,7 @@
 please install the requirments before running the project by the command:
 pip install -r requirements.txt
 
+need to add .pkl file - big file can't be upload to github
 
 open a user on  Microsoft Video Indexer on the link:
 https://www.videoindexer.ai/
