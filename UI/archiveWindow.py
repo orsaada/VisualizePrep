@@ -32,21 +32,21 @@ class MyArchiveWidget(QWidget):
             data = json.load(f)
             data['SpecificMoviePage'] = video_name
             data['ttMovie'] = get_movieId(data['UserLoggedIn'], video_name)[0][0]
-            json_insights_need_check = get_insights(data['ttMovie'])
-            if json_insights_need_check['state'] == 'Processing':
-                # need to alert ('Until Processing, please wait!')
-                self.parent().goto("archive")
-            elif json_insights_need_check['state'] == 'Processed':
-                ROOT_DIR = os.path.abspath(os.curdir)
-                ttmovie_number = data['ttMovie']
-                path = os.path.join(ROOT_DIR+'/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
-                with open(path, 'w') as f:
-                    json.dump(json_insights_need_check, f)
-                self.parent().goto("movie")
+            ROOT_DIR = os.path.abspath(os.curdir)
+            ttmovie_number = data['ttMovie']
+            path = os.path.join(ROOT_DIR + '/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
+            if not os.path.exists(path):
+                json_insights_need_check = get_insights(data['ttMovie'])
+                if json_insights_need_check['state'] == 'Processing':
+                    # need to alert ('Until Processing, please wait!')
+                    self.parent().goto("archive")
+                elif json_insights_need_check['state'] == 'Processed':
+                    with open(path, 'w') as f:
+                        json.dump(json_insights_need_check, f)
         os.remove('./../config.json')
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
-
+        self.parent().goto("movie")
 
     def __init__(self):
         super().__init__()

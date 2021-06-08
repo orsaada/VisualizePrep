@@ -28,7 +28,6 @@ class MyInsightsWindow(PageWindow):
             self.form_widget = MyInsightsWidget()
             self.setWindowTitle("MyInsightsWindow")
             self.setCentralWidget(self.form_widget)
-        # self.form_widget.update()
 
 
 class MyInsightsWidget(QDialog):
@@ -42,8 +41,7 @@ class MyInsightsWidget(QDialog):
             data = json.load(f)
         video_name = data["SpecificMoviePage"]
         username = data["UserLoggedIn"]
-        video_id = get_movie_id(username, video_name)
-        # label1 = QLabel(value)
+        # video_id = get_movie_id(username, video_name)
         self.button = QPushButton()
         self.button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Expanding)
         self.button.setIcon(self.style().standardIcon(QStyle.SP_ArrowLeft))
@@ -52,21 +50,13 @@ class MyInsightsWidget(QDialog):
         layoutV = QVBoxLayout()
 
         # close button
-        # self.pushButton = QPushButton(self)
-        # self.pushButton.setStyleSheet('background-color: rgb(0,0,255); color: #fff')
-        # self.pushButton.setText('Back To Media Window')
-        # self.pushButton.clicked.connect(self.goMainWindow)
-        # layoutV.addWidget(self.pushButton)
-
-        # close button
         self.archiveButton = QPushButton(self)
         self.archiveButton.setStyleSheet('background-color: red;')
         self.archiveButton.setText('Back To Movie')
         self.archiveButton.clicked.connect(self.goToMovie)
-        # layoutV.addWidget(self.archiveButton)
 
         movie_name_label = QLabel()
-        movie_name_label.setText(video_name)
+        movie_name_label.setText(f'Video Name: {video_name}')
         layoutV.addWidget(movie_name_label)
 
         # graphs
@@ -75,9 +65,8 @@ class MyInsightsWidget(QDialog):
         ttmovie_number = data['ttMovie']
         path = os.path.join(ROOT_DIR + '/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
         attributes_in_json = check_attributes_exists(path)
-        for i in all_graph_attributes:
-            if i not in attributes_in_json:
-                all_graph_attributes.remove(i)
+        print(f'attributes_in_json: {attributes_in_json}')
+        all_graph_attributes = [x for x in all_graph_attributes if x in attributes_in_json]
         print(all_graph_attributes)
         self.child = SpeakersGraph()
         self.graphs = {"speakers": SpeakersGraph,
@@ -85,18 +74,15 @@ class MyInsightsWidget(QDialog):
                        "namedPeople": NamedPeopleGraph,
                        "keywords": KeywordGraph,
                        "shots": shotsGraph}
-        if 'namedPeople' not in attributes_in_json:
-            self.graphs.pop('namedPeople')
-        existed_dictionary = {}
-        for i in self.graphs:
-            if i in all_graph_attributes:
-                existed_dictionary[i] = self.graphs[i]
-        self.graphs = existed_dictionary
-        print(self.graphs)
+        for i in list(self.graphs.keys()):
+            if i not in attributes_in_json:
+                del self.graphs[i]
         self.graphs = {k: v() for k, v in self.graphs.items()}
-        for i in self.graphs:
+        print(self.graphs)
+        for i in all_graph_attributes:
             self.graphs[i] = allGraphC(i)
 
+        print(f'this is graphs: {self.graphs}')
         self.showingGraphName = list(self.graphs.keys())[0]
 
         # dropdown choosing
@@ -104,7 +90,7 @@ class MyInsightsWidget(QDialog):
         for k in self.graphs.keys():
             combo.addItem(k)
         combo.move(50, 50)
-        # not neccesrily need
+        # not necessarily need
         self.qlabel = QLabel(self)
         self.qlabel.move(50, 16)
 
@@ -116,8 +102,6 @@ class MyInsightsWidget(QDialog):
         # layout and
         self.layoutH = QHBoxLayout()
         self.layoutH.addWidget(combo)
-        # self.layoutH.addWidget(self.filter_table_button)
-        # self.layoutH.addWidget(self.showGraphButton)
         self.layoutH.addWidget(self.child)
         layoutV.addLayout(self.layoutH)
         layoutV.addWidget(self.archiveButton)
@@ -179,15 +163,6 @@ class MyInsightsWidget(QDialog):
         # WHICH WIDGET IS ON THE FRONT
         self.front_wid = 1
 
-    # def filterAsTable(self):
-    #     self.filter_table_window.show()
-    #
-    # def exportJson(self):
-    #     pass
-    #
-    # def compareImprovments(self):
-    #     pass
-
     def showGraph(self):
         df = self.graphs[self.showingGraphName].get_df()
         model = pandasModel(df)
@@ -204,10 +179,6 @@ class MyInsightsWidget(QDialog):
 
     # replace widget
     def update(self):
-        # self.layout().removeWidget(self.child)
-        # self.child.setParent(None)
-        # self.child = QLabel("bar", self)
-        # self.layout().addWidget(self.child)
         self.layoutH.removeWidget(self.child)
         self.child.setParent(None)
         self.child = QLabel("bar", self)

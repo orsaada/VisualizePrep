@@ -31,9 +31,7 @@ class shotsGraph(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
-        # self.setCentralWidget(self.sc)
 
-        # self.show()
 
     def init_chart(self, path):
         file_path = manage_config()
@@ -56,22 +54,17 @@ class shotsGraph(QMainWindow):
         counter = Counter()
         for ar in by_instance['instance']:
             counter.update(ar)
-            # for a in ar:
-            #   print(type(a))
-            #   counter.update(a)
-        # print(counter)
+
         plt.bar(counter.keys(), counter.values())
         plt.xticks(rotation=90)
 
-        # print(counter.keys())
-        # print(counter.values())
         x = list(counter.keys())
         y = list(counter.values())
         # Create the maptlotlib FigureCanvas object,
         # which defines a single set of axes as self.axes.
         sc = MplCanvas(self, width=5, height=4, dpi=100)
         sc.axes.bar(x, y)
-        # sc.axes.plot(x, y)
+
         sc.axes.set_xticks(x)
         sc.axes.set_xticklabels(x, rotation=90, rotation_mode="default")
 
