@@ -4,7 +4,7 @@ from pathlib import Path
 
 from PyQt5.QtChart import QChart, QChartView, QPieSeries
 from PyQt5.QtCore import QRect
-from PyQt5.QtWidgets import QVBoxLayout, QWidget, QComboBox, QLabel
+from PyQt5.QtWidgets import QVBoxLayout, QWidget, QComboBox, QLabel, QHBoxLayout
 
 # from BussinesLayer.Algorithms.Visualize.mg.py3loader.action_recognition import get_action_recognition
 from BussinesLayer.Algorithms.Visualize.mg.py3loader.split_movie import split_movie
@@ -30,10 +30,23 @@ class ActionRecognitionWindow(PageWindow):
         b1.setStyleSheet("background-color: red;")
         b1.clicked.connect(self.goToMovie)
 
+        self.graphs = []
+        with open('./../config.json') as f:
+            data = json.load(f)
+        if data['video_path'] != '':
+            arr = [[('contact juggling', 39.15), ('dining', 17.6), ('bartending', 8.57), ('setting table', 3.75),
+                    ('drinking', 3.29)],
+                   [('zumba', 3.29), ('garbage collecting', 3.29), ('filling eyebrows', 3.29),
+                    ('finger snapping', 3.29),
+                    ('fixing hair', 3.29)]]
+            action_result = self.analysis_action_reco()
+            for scene in action_result:
+                self.graphs.append(self.create_action_graph(scene))
+
         # dropdown choosing
         combo = QComboBox(self)
-        for k in range(10):
-            combo.addItem(str(k))
+        for k in range(len(self.graphs)):
+            combo.addItem(f'scene number {k + 1}')
         combo.move(50, 50)
         # not necessarily need
         self.qlabel = QLabel(self)
@@ -41,15 +54,24 @@ class ActionRecognitionWindow(PageWindow):
 
         combo.activated[str].connect(self.onChanged)
 
-        layout.addWidget(b1)
-        layout.addWidget(combo)
-        layout.addWidget(self.make_graph([1,2],[7,8]))
-        widget.setLayout(layout)
+        # layout.addWidget(b1)
+        # layout.addWidget(combo)
+        # layout.addWidget(self.make_graph([1,2],[7,8]))
+        # widget.setLayout(layout)
 
-        with open('./../config.json') as f:
-            data = json.load(f)
-        if data['video_path'] != '':
-            self.analysis_action_reco()
+        if len(self.graphs) == 0:
+            self.child = QWidget()
+        else:
+            self.child = self.graphs[0]
+
+        layoutV = QVBoxLayout()
+
+        self.layoutH = QHBoxLayout()
+        self.layoutH.addWidget(combo)
+        self.layoutH.addWidget(self.child)
+        layoutV.addLayout(self.layoutH)
+        widget.setLayout(layoutV)
+
         # else:
         #     self.w = MyPopup(self, 'you')
         #     self.w.setGeometry(QRect(100, 100, 400, 200))
@@ -70,7 +92,9 @@ class ActionRecognitionWindow(PageWindow):
             print(f'name: {file_name}')
             # split_movie(video_path, ttmovie, file_name)
             # folder_splitted_path = 'BussinesLayer/Algorithms/Visualize/mg/py3loader/' + file_name
-            # get_action_recognition()
+            # action_results = get_action_recognition()
+            action_results = []
+            return action_results
         except:
             self.w = MyPopup(self, 'you')
             self.w.setGeometry(QRect(100, 100, 400, 200))
@@ -78,10 +102,6 @@ class ActionRecognitionWindow(PageWindow):
             self.parent().goto('movie')
 
     def create_action_graph(self, arr):
-        arr = [[('contact juggling', 39.15), ('dining', 17.6), ('bartending', 8.57), ('setting table', 3.75),
-          ('drinking', 3.29)],
-         [('zumba', 3.29), ('garbage collecting', 3.29), ('filling eyebrows', 3.29), ('finger snapping', 3.29),
-          ('fixing hair', 3.29)]]
         graphs_data = []
         for scene in arr:
             x = []
@@ -98,15 +118,16 @@ class ActionRecognitionWindow(PageWindow):
         series = QPieSeries()
         series.setHoleSize(0.40)
 
+        for ele_index in range(len(x)):
+            series.append(f'{x[ele_index]} {y[ele_index]}', y[ele_index])
         series.append("Protein 4,3%", 4.3)
 
         my_slice = series.append("Fat 15.6%", 15.6)
-        my_slice.setExploded(True)
+        # my_slice.setExploded(True)
         my_slice.setLabelVisible(True)
 
         series.append("Other 30%", 30)
         series.append("Carbs 57%", 57)
-
 
         chart = QChart()
         chart.addSeries(series)
@@ -116,10 +137,10 @@ class ActionRecognitionWindow(PageWindow):
 
         chartview = QChartView(chart)
 
-        vbox = QVBoxLayout()
-        vbox.addWidget(chartview)
+        # vbox = QVBoxLayout()
+        # vbox.addWidget(chartview)
 
-        self.setLayout(vbox)
+        # self.setLayout(vbox)
         return chartview
 
     def goToMovie(self):
@@ -131,6 +152,7 @@ class ActionRecognitionWindow(PageWindow):
         self.child.setParent(None)
         self.child = self.graphs[text]
         self.layoutH.addWidget(self.child)
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
