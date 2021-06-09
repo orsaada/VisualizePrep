@@ -1,8 +1,8 @@
 import json
 import os
 import datetime
-from action_recognition import get_action_recognition
-from analyze_action_data import get_clean_results
+# from action_recognition import get_action_recognition
+# from analyze_action_data import get_clean_results
 
 
 def try_parsing_date(text):
@@ -69,7 +69,7 @@ def split_movie(movie_path_from_load_movie, video_id_or_tt_movie, movie_name):
     json_path = f'{root}/../../vi_json/{video_id_or_tt_movie}.json'
     movie_path = movie_path_from_load_movie
     split_it(movie_path, json_path)
-    get_action_recognition(f'./{movie_name}', movie_name)
+    # get_action_recognition(f'./{movie_name}', movie_name)
     result = get_clean_results(f'{movie_name}.txt')
     return result
 

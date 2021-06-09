@@ -5,6 +5,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit
 from UI.ComparisonWindow import ComparisonWindow
 from UI.InsightsWindow import MyInsightsWindow
 from UI.PageWindow import PageWindow
+from UI.actionRecognitionPage import ActionRecognitionWindow
 from UI.mediaplayerex import MyMainWindow
 from UI.archiveWindow import MyArchive
 from UI.moviePage import MyMovie
@@ -204,6 +205,7 @@ class mainWindow(QtWidgets.QMainWindow):
         self.register(MyMovie(), 'movie')
         self.register(MyInsightsWindow(), 'insights')
         self.register(ComparisonWindow("wow"), 'comparison')
+        self.register(ActionRecognitionWindow(), 'actionRecognition')
 
         self.goto("main")
 
@@ -235,6 +237,13 @@ class mainWindow(QtWidgets.QMainWindow):
                 widget = ComparisonWindow(data["algo"])
                 self.stacked_widget.addWidget(widget)
                 widget.gotoSignal.connect(self.goto)
+            elif name == 'actionRecognition':
+                print(
+                    'action reco in'
+                )
+                widget = ActionRecognitionWindow()
+                self.stacked_widget.addWidget(widget)
+                widget.gotoSignal.connect(self.goto)
             self.stacked_widget.setCurrentWidget(widget)
             self.setWindowTitle(widget.windowTitle())
 
@@ -256,7 +265,8 @@ if __name__ == "__main__":
         data["SpecificMoviePage"] = ""
         data["ttMovie"] = ""
         data["algo"] = ""
-        data["ENV_MODE"] = 'production'
+        data["ENV_MODE"] = 'development'
+        # data['video_path'] = ''
         json.dump(data, f, indent=4)
     app = QtWidgets.QApplication(sys.argv)
     # styleFile = './style2.qss'

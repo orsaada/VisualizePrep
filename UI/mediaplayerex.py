@@ -237,6 +237,10 @@ class MediaWindow(QWidget):
             self.video_path_name = filename
             with open('./../config.json') as f:
                 data = json.load(f)
+            data['video_path'] = filename
+            os.remove('./../config.json')
+            with open('./../config.json', 'w') as f:
+                json.dump(data, f, indent=4)
             username = data["UserLoggedIn"]
             name = os.path.splitext(os.path.basename(filename))[0]
             self.video_name_label.setText(name)

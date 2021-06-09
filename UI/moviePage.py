@@ -42,19 +42,19 @@ class MyMovieWidget(QWidget):
 
         algo_buttons_list = list(map(lambda x: QPushButton, range(4)))
         self.btn_algo1 = QPushButton()
-        self.btn_algo1.setText('algo 1')
+        self.btn_algo1.setText('face recognition improvement algo 1')
         self.btn_algo1.clicked.connect(lambda: self.compareGraph('algo 1'))
 
         self.btn_algo2 = QPushButton()
-        self.btn_algo2.setText('algo 2')
+        self.btn_algo2.setText('face recognition improvement algo 2')
         self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 2'))
 
         self.btn_algo3 = QPushButton()
-        self.btn_algo3.setText('algo 3')
+        self.btn_algo3.setText('face recognition improvement algo 3')
         self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 3'))
 
         self.btn_algo4 = QPushButton()
-        self.btn_algo4.setText('algo 4')
+        self.btn_algo4.setText('face recognition improvement algo 4')
         self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 4'))
 
         self.btn_algo5 = QPushButton()
@@ -73,17 +73,18 @@ class MyMovieWidget(QWidget):
         self.exportButton.clicked.connect(self.exportFunction)
 
         self.emotionAnalysisButton = QPushButton()
-        self.emotionAnalysisButton.setText('EMOTION ANALYSIS')
-        self.emotionAnalysisButton.clicked.connect(self.generate_emotion_analysis)
+        self.emotionAnalysisButton.setText('action recognition external analysis')
+        self.emotionAnalysisButton.clicked.connect(self.goToActionRecognition)
 
+        dlgLayout.addWidget(self.insights)
         dlgLayout.addWidget(self.btn_algo1)
         dlgLayout.addWidget(self.btn_algo2)
         dlgLayout.addWidget(self.btn_algo3)
         dlgLayout.addWidget(self.btn_algo4)
         dlgLayout.addWidget(self.btn_algo5)
-        dlgLayout.addWidget(self.insights)
-        dlgLayout.addWidget(self.exportButton)
         dlgLayout.addWidget(self.emotionAnalysisButton)
+        dlgLayout.addWidget(self.exportButton)
+
         # dlgLayout.addWidget(self.comparisonGraph)
 
         self.btnBackBox = QPushButton()
@@ -105,27 +106,31 @@ class MyMovieWidget(QWidget):
     def gotToInsights(self):
         self.parent().goto("insights")
 
+    def goToActionRecognition(self):
+        self.parent().goto("actionRecognition")
+
     def exportFunction(self):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
         export_json_of_video_to_file(data['ttMovie'], data['SpecificMoviePage'])
 
-    def generate_emotion_analysis(self):
-        with open('./../config.json', 'r') as f:
-            data = json.load(f)
-        video_name = data["SpecificMoviePage"]
-        print(video_name)
-        ### temp - need change
-        with open("./../BussinesLayer/Algorithms/Visualize/vi_json/tt0037884.json", 'r') as f:
-            data = json.load(f)
-            scenes = []
-            for i in data['videos'][0]['insights']['scenes']:
-                scene = i['instances'][0]
-                t = try_parsing_date(scene['start'])
-                delta1 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
-                t = try_parsing_date(scene['end'])
-                delta2 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
-                scenes.append((delta1, delta2))
+    # def generate_emotion_analysis(self):
+    #     with open('./../config.json', 'r') as f:
+    #         data = json.load(f)
+    #     video_name = data["SpecificMoviePage"]
+    #     print(video_name)
+    #     ### temp - need change
+    #     with open("./../BussinesLayer/Algorithms/Visualize/vi_json/tt0037884.json", 'r') as f:
+    #         data = json.load(f)
+    #         scenes = []
+    #         for i in data['videos'][0]['insights']['scenes']:
+    #             scene = i['instances'][0]
+    #             t = try_parsing_date(scene['start'])
+    #             delta1 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
+    #             t = try_parsing_date(scene['end'])
+    #             delta2 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
+    #             scenes.append((delta1, delta2))
+
 
 
 def try_parsing_date(text):

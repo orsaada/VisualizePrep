@@ -39,6 +39,7 @@ class ComparisonWindow(PageWindow):
             b = [i for i in b]
         else:
             a, b = get_analyzed_data(data["ttMovie"], data["ttMovie"], int(data['algo'].split()[1]))
+            print(a)
             a, b = list(map(float, a)), list(map(float, b))
             a[2] *= 100
             b[2] *= 100
