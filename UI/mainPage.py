@@ -6,6 +6,7 @@ from UI.ComparisonWindow import ComparisonWindow
 from UI.InsightsWindow import MyInsightsWindow
 from UI.PageWindow import PageWindow
 from UI.actionRecognitionPage import ActionRecognitionWindow
+from UI.algoImprovePage import AlgoImprovePage
 from UI.mediaplayerex import MyMainWindow
 from UI.archiveWindow import MyArchive
 from UI.moviePage import MyMovie
@@ -206,6 +207,8 @@ class mainWindow(QtWidgets.QMainWindow):
         self.register(MyInsightsWindow(), 'insights')
         self.register(ComparisonWindow("wow"), 'comparison')
         self.register(ActionRecognitionWindow(), 'actionRecognition')
+        self.register(ActionRecognitionWindow(), 'algoImprove')
+
 
         self.goto("main")
 
@@ -244,6 +247,12 @@ class mainWindow(QtWidgets.QMainWindow):
                 widget = ActionRecognitionWindow()
                 self.stacked_widget.addWidget(widget)
                 widget.gotoSignal.connect(self.goto)
+            elif name == 'algoImprove':
+                with open('./../config.json', 'r') as f:
+                    data = json.load(f)
+                widget = AlgoImprovePage(data["algo"])
+                self.stacked_widget.addWidget(widget)
+                widget.gotoSignal.connect(self.goto)
             self.stacked_widget.setCurrentWidget(widget)
             self.setWindowTitle(widget.windowTitle())
 
@@ -265,8 +274,8 @@ if __name__ == "__main__":
         data["SpecificMoviePage"] = ""
         data["ttMovie"] = ""
         data["algo"] = ""
-        data["ENV_MODE"] = 'development'
-        # data['video_path'] = ''
+        data["ENV_MODE"] = 'production'
+        data['video_path'] = ''
         json.dump(data, f, indent=4)
     app = QtWidgets.QApplication(sys.argv)
     # styleFile = './style2.qss'

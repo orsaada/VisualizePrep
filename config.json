@@ -1,8 +1,8 @@
 {
     "UserLoggedIn": "aaaa",
-    "SpecificMoviePage": "BAD_SANTA_SCALED",
-    "ttMovie": "tt0307987",
+    "SpecificMoviePage": "movie_display",
+    "ttMovie": "4b560c0502",
     "algo": "",
-    "ENV_MODE": "development",
-    "video_path": "/Users/orsaada/university/FINAL PROJECT/very_reduced.mp4"
+    "ENV_MODE": "production",
+    "video_path": ""
 }

@@ -36,34 +36,42 @@ class MyMovieWidget(QWidget):
         name = data["SpecificMoviePage"]
         username = data['UserLoggedIn']
 
-
         formLayout.addRow(name + " Page - Menu", QLabel())
         dlgLayout.addLayout(formLayout)
-
-        algo_buttons_list = list(map(lambda x: QPushButton, range(4)))
-        self.btn_algo1 = QPushButton()
-        self.btn_algo1.setText('face recognition improvement algo 1')
-        self.btn_algo1.clicked.connect(lambda: self.compareGraph('algo 1'))
-
-        self.btn_algo2 = QPushButton()
-        self.btn_algo2.setText('face recognition improvement algo 2')
-        self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 2'))
-
-        self.btn_algo3 = QPushButton()
-        self.btn_algo3.setText('face recognition improvement algo 3')
-        self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 3'))
-
-        self.btn_algo4 = QPushButton()
-        self.btn_algo4.setText('face recognition improvement algo 4')
-        self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 4'))
-
-        self.btn_algo5 = QPushButton()
-        self.btn_algo5.setText('transcript comparison')
-        self.btn_algo5.clicked.connect(lambda: self.compareGraph('transcript'))
 
         self.insights = QPushButton()
         self.insights.setText('insights graphs')
         self.insights.clicked.connect(self.gotToInsights)
+
+        self.btn_algo1 = QPushButton()
+        self.btn_algo1.setText('face recognition improvement algo 1')
+
+        self.btn_algo2 = QPushButton()
+        self.btn_algo2.setText('face recognition improvement algo 2')
+
+        self.btn_algo3 = QPushButton()
+        self.btn_algo3.setText('face recognition improvement algo 3')
+
+        self.btn_algo5 = QPushButton()
+        self.btn_algo5.setText('transcript comparison')
+
+        if data['ttMovie'].startswith('tt'):
+            algo_buttons_list = list(map(lambda x: QPushButton, range(4)))
+            self.btn_algo4 = QPushButton()
+            self.btn_algo4.setText('face recognition improvement algo 4')
+
+            self.btn_algo1.clicked.connect(lambda: self.compareGraph('algo 1'))
+            self.btn_algo2.clicked.connect(lambda: self.compareGraph('algo 2'))
+            self.btn_algo3.clicked.connect(lambda: self.compareGraph('algo 3'))
+            self.btn_algo4.clicked.connect(lambda: self.compareGraph('algo 4'))
+            self.btn_algo5.clicked.connect(lambda: self.compareGraph('transcript'))
+        else:
+            self.btn_algo1.clicked.connect(lambda: self.algo_improve_algo('algo 1'))
+            self.btn_algo2.clicked.connect(lambda: self.algo_improve_algo('algo 2'))
+            self.btn_algo3.clicked.connect(lambda: self.algo_improve_algo('algo 3'))
+            # self.btn_algo4.clicked.connect(lambda: self.algo_improve_algo('algo 4'))
+            # self.btn_algo5.clicked.connect(lambda: self.algo_improve_algo('transcript'))
+
         # self.comparisonGraph = QPushButton()
         # self.comparisonGraph.setText('comparison Graph')
         # self.comparisonGraph.clicked.connect(self.compareGraph)
@@ -80,8 +88,9 @@ class MyMovieWidget(QWidget):
         dlgLayout.addWidget(self.btn_algo1)
         dlgLayout.addWidget(self.btn_algo2)
         dlgLayout.addWidget(self.btn_algo3)
-        dlgLayout.addWidget(self.btn_algo4)
-        dlgLayout.addWidget(self.btn_algo5)
+        if data['ttMovie'].startswith('tt'):
+            dlgLayout.addWidget(self.btn_algo4)
+            dlgLayout.addWidget(self.btn_algo5)
         dlgLayout.addWidget(self.emotionAnalysisButton)
         dlgLayout.addWidget(self.exportButton)
 
@@ -102,6 +111,15 @@ class MyMovieWidget(QWidget):
         with open('./../config.json', 'w') as f:
             json.dump(data, f, indent=4)
         self.parent().goto("comparison")
+
+    def algo_improve_algo(self, algo_name):
+        with open('./../config.json', 'r') as f:
+            data = json.load(f)
+            data["algo"] = algo_name
+        os.remove('./../config.json')
+        with open('./../config.json', 'w') as f:
+            json.dump(data, f, indent=4)
+        self.parent().goto("algoImprove")
 
     def gotToInsights(self):
         self.parent().goto("insights")
@@ -130,7 +148,6 @@ class MyMovieWidget(QWidget):
     #             t = try_parsing_date(scene['end'])
     #             delta2 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
     #             scenes.append((delta1, delta2))
-
 
 
 def try_parsing_date(text):

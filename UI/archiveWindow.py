@@ -1,7 +1,7 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication, QScrollArea
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication, QScrollArea, QMessageBox
 
 from DB.db_api import get_movieId
 from UI.PageWindow import PageWindow
@@ -23,7 +23,7 @@ class MyArchiveWidget(QWidget):
         self.parent().goto("media")
 
     def pop_message(self, text):
-        msg = QWidget.QMessageBox()
+        msg = QMessageBox()
         msg.setText("{}".format(text))
         msg.exec_()
 
@@ -37,9 +37,14 @@ class MyArchiveWidget(QWidget):
             path = os.path.join(ROOT_DIR + '/../BussinesLayer/Algorithms/Visualize/vi_json/', f'{ttmovie_number}.json')
             if not os.path.exists(path):
                 json_insights_need_check = get_insights(data['ttMovie'])
+                if 'state' not in json_insights_need_check:
+                    self.pop_message('No state - please try upload a movie again')
+                    return
                 if json_insights_need_check['state'] == 'Processing':
                     # need to alert ('Until Processing, please wait!')
+                    self.pop_message(f'Video still processing')
                     self.parent().goto("archive")
+                    return
                 elif json_insights_need_check['state'] == 'Processed':
                     with open(path, 'w') as f:
                         json.dump(json_insights_need_check, f)

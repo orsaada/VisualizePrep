@@ -64,11 +64,16 @@ class ActionRecognitionWindow(PageWindow):
         else:
             self.child = self.graphs[0]
 
+        b1 = QPushButton('Back To Movie Page')
+        b1.setStyleSheet("background-color: red;")
+        b1.clicked.connect(self.goToMovie)
+
         layoutV = QVBoxLayout()
 
         self.layoutH = QHBoxLayout()
         self.layoutH.addWidget(combo)
         self.layoutH.addWidget(self.child)
+        self.layoutH.addWidget(b1)
         layoutV.addLayout(self.layoutH)
         widget.setLayout(layoutV)
 
