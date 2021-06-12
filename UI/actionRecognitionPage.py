@@ -30,18 +30,20 @@ class ActionRecognitionWindow(PageWindow):
         b1.setStyleSheet("background-color: red;")
         b1.clicked.connect(self.goToMovie)
 
-        self.graphs = []
+        self.graphs = {}
         with open('./../config.json') as f:
             data = json.load(f)
         if data['video_path'] != '':
-            arr = [[('contact juggling', 39.15), ('dining', 17.6), ('bartending', 8.57), ('setting table', 3.75),
-                    ('drinking', 3.29)],
-                   [('zumba', 3.29), ('garbage collecting', 3.29), ('filling eyebrows', 3.29),
-                    ('finger snapping', 3.29),
-                    ('fixing hair', 3.29)]]
+            # arr = [[('contact juggling', 39.15), ('dining', 17.6), ('bartending', 8.57), ('setting table', 3.75),
+            #         ('drinking', 3.29)],
+            #        [('zumba', 3.29), ('garbage collecting', 3.29), ('filling eyebrows', 3.29),
+            #         ('finger snapping', 3.29),
+            #         ('fixing hair', 3.29)]]
+            # action_result = arr
             action_result = self.analysis_action_reco()
-            for scene in action_result:
-                self.graphs.append(self.create_action_graph(scene))
+            for scene_id, scene in enumerate(action_result):
+                self.graphs[f'scene number {scene_id + 1}'] = self.create_action_graph(scene)
+                # self.graphs.append()
 
         # dropdown choosing
         combo = QComboBox(self)
@@ -60,9 +62,9 @@ class ActionRecognitionWindow(PageWindow):
         # widget.setLayout(layout)
 
         if len(self.graphs) == 0:
-            self.child = QWidget()
+            self.child = QLabel('No Action Recognized')
         else:
-            self.child = self.graphs[0]
+            self.child = self.graphs['scene number 1']
 
         b1 = QPushButton('Back To Movie Page')
         b1.setStyleSheet("background-color: red;")
@@ -73,8 +75,8 @@ class ActionRecognitionWindow(PageWindow):
         self.layoutH = QHBoxLayout()
         self.layoutH.addWidget(combo)
         self.layoutH.addWidget(self.child)
-        self.layoutH.addWidget(b1)
         layoutV.addLayout(self.layoutH)
+        layoutV.addWidget(b1)
         widget.setLayout(layoutV)
 
         # else:
@@ -106,17 +108,15 @@ class ActionRecognitionWindow(PageWindow):
             self.w.show()
             self.parent().goto('movie')
 
-    def create_action_graph(self, arr):
+    def create_action_graph(self, scene):
         graphs_data = []
-        for scene in arr:
-            x = []
-            y = []
-            for action, percentage in scene:
-                x.append(action)
-                y.append(percentage)
-            graphs_data.append(self.make_graph(x, y))
-            # graphs_data.append((x,y))
-        print(graphs_data)
+        x = []
+        y = []
+        for action, percentage in scene:
+            x.append(action)
+            y.append(percentage)
+        return self.make_graph(x, y)
+        # graphs_data.append((x,y))
 
     def make_graph(self, x, y):
 
@@ -125,19 +125,20 @@ class ActionRecognitionWindow(PageWindow):
 
         for ele_index in range(len(x)):
             series.append(f'{x[ele_index]} {y[ele_index]}', y[ele_index])
-        series.append("Protein 4,3%", 4.3)
+            series.setLabelsVisible(True)
+        # series.append("Protein 4,3%", 4.3)
 
-        my_slice = series.append("Fat 15.6%", 15.6)
+        # my_slice = series.append("Fat 15.6%", 15.6)
         # my_slice.setExploded(True)
-        my_slice.setLabelVisible(True)
+        # my_slice.setLabelVisible(True)
 
-        series.append("Other 30%", 30)
-        series.append("Carbs 57%", 57)
+        # series.append("Other 30%", 30)
+        # series.append("Carbs 57%", 57)
 
         chart = QChart()
         chart.addSeries(series)
         chart.setAnimationOptions(QChart.SeriesAnimations)
-        chart.setTitle("Dount Chart")
+        chart.setTitle("Action per Scene - Chart")
         chart.setTheme(QChart.ChartThemeBlueCerulean)
 
         chartview = QChartView(chart)
