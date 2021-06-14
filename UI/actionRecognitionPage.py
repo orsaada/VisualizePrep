@@ -41,6 +41,8 @@ class ActionRecognitionWindow(PageWindow):
             #         ('fixing hair', 3.29)]]
             # action_result = arr
             action_result = self.analysis_action_reco()
+
+
             for scene_id, scene in enumerate(action_result):
                 self.graphs[f'scene number {scene_id + 1}'] = self.create_action_graph(scene)
                 # self.graphs.append()
@@ -97,10 +99,8 @@ class ActionRecognitionWindow(PageWindow):
             file_name = os.path.splitext(tail)[0]
             print(f'movie_path: {video_path}')
             print(f'name: {file_name}')
-            # split_movie(video_path, ttmovie, file_name)
-            # folder_splitted_path = 'BussinesLayer/Algorithms/Visualize/mg/py3loader/' + file_name
-            # action_results = get_action_recognition()
-            action_results = []
+            action_results = split_movie(video_path, ttmovie, file_name)
+            # action_results = []
             return action_results
         except:
             self.w = MyPopup(self, 'you')

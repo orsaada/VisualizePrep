@@ -16,11 +16,6 @@ class MyPopup(QWidget):
         self.move(frameGm.topLeft())
         QWidget.__init__(self)
 
-    # def paintEvent(self, e):
-    #     dc = QPainter(self)
-    #     dc.drawLine(0, 0, 100, 100)
-    #     dc.drawLine(100, 0, 0, 100)
-
     def popup_message(self):
         msg = QMessageBox()
         msg.setIcon(QMessageBox.Information)
