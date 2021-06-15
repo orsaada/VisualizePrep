@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 from BussinesLayer.Algorithms.Visualize.mg.py3loader.algorithm import create_faces_list, get_previous_face, \
@@ -64,7 +65,21 @@ def algorithm_faces_speakers_without_mg(json, faces_instances):
     return result
 
 
-if __name__ == '__main__':
+def extract_movie_results_to_json_without_tt(idMovie, movie_name):
+    full_json = {}
     base_path = Path(__file__).parent.parent.parent
-    movie_path = base_path / "vi_json/{}.json".format('tt0073486')
-    print(algorithm_1_without_mg(movie_path, create_faces_list(movie_path)))
+    movie_path = base_path / "vi_json/{}.json".format(idMovie)
+    alg1 = algorithm_1_without_mg(movie_path, create_faces_list(movie_path))
+    alg2 = algorithm_2_improved_without_mg(movie_path, create_faces_list(movie_path))
+    alg3 = algorithm_faces_speakers_without_mg(movie_path, create_faces_list(movie_path))
+    full_json["algo1"] = alg1
+    full_json["algo2"] = alg2
+    full_json["algo3"] = alg3
+    with open('extracted_' + movie_name + '.json', 'w') as outfile:
+        json.dump(full_json, outfile)
+
+
+# if __name__ == '__main__':
+    # base_path = Path(__file__).parent.parent.parent
+    # movie_path = base_path / "vi_json/{}.json".format('tt0073486')
+    # print(extract_movie_results_to_json("tt0073486", "yosef"))

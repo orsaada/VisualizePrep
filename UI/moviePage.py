@@ -4,10 +4,7 @@ import sys
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QPushButton, QApplication
 
-from BussinesLayer.Services.ExportInsights import export_json_of_video_to_file
-from BussinesLayer.Services.VideoInsights import get_insights
-from DB.db_api import get_movieId
-from UI.Graphs.comparisonGraph import ComparisonGraph
+from BussinesLayer.Services.ExportInsights import export_json_of_video_to_file, export_json_of_video_to_file_without_tt
 from UI.PageWindow import PageWindow
 import json
 
@@ -36,7 +33,7 @@ class MyMovieWidget(QWidget):
         name = data["SpecificMoviePage"]
         username = data['UserLoggedIn']
 
-        formLayout.addRow(name + " Page - Menu", QLabel())
+        formLayout.addRow(username + ': ' + name + " Page - Menu", QLabel())
         dlgLayout.addLayout(formLayout)
 
         self.insights = QPushButton()
@@ -130,24 +127,10 @@ class MyMovieWidget(QWidget):
     def exportFunction(self):
         with open('./../config.json', 'r') as f:
             data = json.load(f)
-        export_json_of_video_to_file(data['ttMovie'], data['SpecificMoviePage'])
-
-    # def generate_emotion_analysis(self):
-    #     with open('./../config.json', 'r') as f:
-    #         data = json.load(f)
-    #     video_name = data["SpecificMoviePage"]
-    #     print(video_name)
-    #     ### temp - need change
-    #     with open("./../BussinesLayer/Algorithms/Visualize/vi_json/tt0037884.json", 'r') as f:
-    #         data = json.load(f)
-    #         scenes = []
-    #         for i in data['videos'][0]['insights']['scenes']:
-    #             scene = i['instances'][0]
-    #             t = try_parsing_date(scene['start'])
-    #             delta1 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
-    #             t = try_parsing_date(scene['end'])
-    #             delta2 = datetime.timedelta(hours=t.hour, minutes=t.minute, seconds=t.second,microseconds=t.microsecond)
-    #             scenes.append((delta1, delta2))
+        if 'tt' in data['ttMovie']:
+            export_json_of_video_to_file(data['ttMovie'], data['SpecificMoviePage'])
+        else:
+            export_json_of_video_to_file_without_tt(data['ttMovie'], data['SpecificMoviePage'])
 
 
 def try_parsing_date(text):
