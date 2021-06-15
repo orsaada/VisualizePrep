@@ -42,12 +42,9 @@ class ActionRecognitionWindow(PageWindow):
             action_result = self.analysis_action_reco()
             if action_result is None:
                 self.pop_message('Action Recognition Hardware Problem')
-                self.goToMovie()
-                return
-
-            for scene_id, scene in enumerate(action_result):
-                self.graphs[f'scene number {scene_id + 1}'] = self.create_action_graph(scene)
-                # self.graphs.append()
+            else:
+                for scene_id, scene in enumerate(action_result):
+                    self.graphs[f'scene number {scene_id + 1}'] = self.create_action_graph(scene)
 
         # dropdown choosing
         combo = QComboBox(self)
@@ -59,11 +56,6 @@ class ActionRecognitionWindow(PageWindow):
         self.qlabel.move(50, 16)
 
         combo.activated[str].connect(self.onChanged)
-
-        # layout.addWidget(b1)
-        # layout.addWidget(combo)
-        # layout.addWidget(self.make_graph([1,2],[7,8]))
-        # widget.setLayout(layout)
 
         if len(self.graphs) == 0:
             self.child = QLabel('No Action Recognized')
@@ -82,12 +74,6 @@ class ActionRecognitionWindow(PageWindow):
         layoutV.addLayout(self.layoutH)
         layoutV.addWidget(b1)
         widget.setLayout(layoutV)
-
-        # else:
-        #     self.w = MyPopup(self, 'you')
-        #     self.w.setGeometry(QRect(100, 100, 400, 200))
-        #     self.w.show()
-        #     self.goToMovie()
         self.setCentralWidget(widget)
 
     def analysis_action_reco(self):
