@@ -275,7 +275,7 @@ if __name__ == "__main__":
         data["ttMovie"] = ""
         data["algo"] = ""
         data["ENV_MODE"] = 'production'
-        # data['video_path'] = ''
+        data['video_path'] = ''
         json.dump(data, f, indent=4)
     app = QtWidgets.QApplication(sys.argv)
     # styleFile = './style2.qss'

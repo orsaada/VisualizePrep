@@ -1,8 +1,8 @@
 import json
 import os
 import datetime
-# from action_recognition import get_action_recognition
-# from analyze_action_data import get_clean_results
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.action_recognition import get_action_recognition
+from BussinesLayer.Algorithms.Visualize.mg.py3loader.analyze_action_data import get_clean_results
 
 
 def try_parsing_date(text):
@@ -58,18 +58,13 @@ def split_it(movie_path, json_path):
         i += 1
 
 
-# json_folder_path = "/Users/orsaada/university/FINAL PROJECT/visPrep/BussinesLayer/Algorithms/Visualize/vi_json"
-# json_path = 'C:\\Users\\orel kakon\\Desktop' + '/' + 'tt_test.json'
-# movies_folder_path = "/Users/orsaada/university/FINAL PROJECT/visPrep/BussinesLayer/Algorithms/Visualize/movies"
-# movie_path = 'C:\\Users\\orel kakon\\Desktop' + '/' + 'test.mp4'
-
-
 def split_movie(movie_path_from_load_movie, video_id_or_tt_movie, movie_name):
-    root = os.path.abspath(os.curdir)
-    json_path = f'{root}/../../vi_json/{video_id_or_tt_movie}.json'
+    print('start 1 level')
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    json_path = f'{root_dir}/../../vi_json/{video_id_or_tt_movie}.json'
     movie_path = movie_path_from_load_movie
     split_it(movie_path, json_path)
-    # get_action_recognition(f'./{movie_name}', movie_name)
+    get_action_recognition(f'./{movie_name}', movie_name)
     result = get_clean_results(f'{movie_name}.txt')
     return result
 
@@ -80,8 +75,6 @@ def remove_ir():
         os.remove(i)
 
 # remove_ir()
-
-if __name__ == '__main__':
-    # split_it('C:\\Users\\saada_z0zeuyu\\Desktop\\files\\test.mp4','C:\\Users\\saada_z0zeuyu\\Desktop\\files\\tt_test.json')
-    s = split_movie('C:\\Users\\saada_z0zeuyu\\Desktop\\files\\test.mp4', 'tt_test', 'test')
-    print(s)
+#
+# if _name_ == "_main_":
+#     print(split_movie())
