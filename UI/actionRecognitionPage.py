@@ -1,18 +1,17 @@
 import json
 import os
 from pathlib import Path
-
+from PyQt5 import QtWidgets
 from PyQt5.QtChart import QChart, QChartView, QPieSeries
 from PyQt5.QtCore import QRect
 from PyQt5.QtWidgets import QVBoxLayout, QWidget, QComboBox, QLabel, QHBoxLayout
 
 # from BussinesLayer.Algorithms.Visualize.mg.py3loader.action_recognition import get_action_recognition
+
 from BussinesLayer.Algorithms.Visualize.mg.py3loader.split_movie import split_movie
 from UI.PageWindow import PageWindow
 import sys
 from PyQt5.QtWidgets import (QPushButton, QApplication)
-
-from UI.popUpWindow import MyPopup
 
 
 class ActionRecognitionWindow(PageWindow):
@@ -26,9 +25,9 @@ class ActionRecognitionWindow(PageWindow):
         widget = QWidget()
         layout = QVBoxLayout()
         self.w = None
-        b1 = QPushButton('Back To Movie Page')
-        b1.setStyleSheet("background-color: red;")
-        b1.clicked.connect(self.goToMovie)
+        # b1 = QPushButton('Back To Movie Page')
+        # b1.setStyleSheet("background-color: red;")
+        # b1.clicked.connect(self.goToMovie)
 
         self.graphs = {}
         with open('./../config.json') as f:
@@ -41,7 +40,10 @@ class ActionRecognitionWindow(PageWindow):
             #         ('fixing hair', 3.29)]]
             # action_result = arr
             action_result = self.analysis_action_reco()
-
+            if action_result is None:
+                self.pop_message('Action Recognition Hardware Problem')
+                self.goToMovie()
+                return
 
             for scene_id, scene in enumerate(action_result):
                 self.graphs[f'scene number {scene_id + 1}'] = self.create_action_graph(scene)
@@ -103,10 +105,12 @@ class ActionRecognitionWindow(PageWindow):
             # action_results = []
             return action_results
         except:
-            self.w = MyPopup(self, 'you')
-            self.w.setGeometry(QRect(100, 100, 400, 200))
-            self.w.show()
-            self.parent().goto('movie')
+            return None
+            # self.w = MyPopup(self, 'you')
+            # self.w.setGeometry(QRect(100, 100, 400, 200))
+            # self.w.show()
+            # print(self.parent())
+            # # self.parent().goto('movie')
 
     def create_action_graph(self, scene):
         graphs_data = []
@@ -158,6 +162,11 @@ class ActionRecognitionWindow(PageWindow):
         self.child.setParent(None)
         self.child = self.graphs[text]
         self.layoutH.addWidget(self.child)
+
+    def pop_message(self, text):
+        msg = QtWidgets.QMessageBox()
+        msg.setText("{}".format(text))
+        msg.exec_()
 
 
 if __name__ == '__main__':
